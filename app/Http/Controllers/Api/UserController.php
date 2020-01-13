@@ -15,7 +15,7 @@ class UserController extends Controller
             $success['id'] = $user->id;
             $success['name'] = $user->name;
             $success['token'] = $user->createToken('Passport Token')->accessToken;
-            return response()->json(['message' => 200, 'results' => $success]);
+            return response()->json(['status' => 200, 'message' => $success]);
         }
     }
 }
