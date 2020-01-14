@@ -29,7 +29,7 @@ class UserController extends Controller
             $success['token'] = $user->createToken('Passport Token')->accessToken;
             return response()->json(['status' => 200, 'message' => $success]);
         } else {
-            return response()->json(['status' => 401, 'message' => 'Unauthorized']);
+            return response()->json(['status' => 401, 'message' => 'Email atau password salah!']);
         }
     }
 
