@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Http\Request;
+use App\Helpers\ApiResponse;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,8 +17,13 @@ use Illuminate\Http\Request;
 Route::post('auth/login', 'Api\UserController@login');
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+    // return $request->user();
 });
-Route::get('/user', 'Api\UserController@index');
 
-Route::post('/user/store', 'Api\UserController@store');
+Route::group(['middleware' => ['auth:api']], function () {
+    Route::get('/user', 'Api\UserController@index');
+    Route::get('/user/{id}', 'Api\UserController@show');
+
+    Route::post('/user/store', 'Api\UserController@store');
+});
+
