@@ -59,7 +59,8 @@ class UserController extends Controller
 
     public function editPassword(Request $request)
     {
-            $request->validate($request,[
+            $request->validate([
+                'user_id' => ['required'],
                 'current_password' => ['required', new MatchOldPassword],
                 'new_password' => ['required'],
             ],
@@ -67,11 +68,12 @@ class UserController extends Controller
                 'current_password.required' => 'masukkan password anda terlebih dahulu',
                 'new_password.required' => 'masukkan password baru anda terlebih daulu',
             ]);
-
-        $id = Auth::user()->id;
+        $id = $request->user_id;
         $user = User::find($id)->update([
             'password' => Hash::make($request->new_password),
         ]);
+
+        return response()->json(['success' => 200, 'message' => 'Berhasil mengganti password', 'data' => $user]);
 
     }
 
@@ -106,7 +108,7 @@ class UserController extends Controller
         $image->save();
 
         return response()->json([
-            'code' => 201,
+            'code' => 200,
             'url' => url('storage/profiles/' . $hashNameImage),
         ]);
 
