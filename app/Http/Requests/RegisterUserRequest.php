@@ -30,7 +30,7 @@ class RegisterUserRequest extends FormRequest
             'name' => 'required|max:100',
             'email' => 'required|email|unique:users,email',
             'password' => 'required',
-            'profile_imgpath' => 'image|mimes:jpeg,png,gif,svg|max:1024',
+            'profile' => 'image|mimes:jpeg,png,svg|max:1024',
         ];
     }
     public function messages()
@@ -42,8 +42,8 @@ class RegisterUserRequest extends FormRequest
             'email.email' => 'Format email yang anda masukan salah',
             'email.unique' => 'Email ini telah ada sebelumnya',
             'password.required' => 'Password tidak boleh kosong',
-            'profile_imgpath.image' => 'File yang harus dimasukkan harus gambar',
-            'profile_imgpath.mimes' => 'Extensi gambar yang anda masukan tidak dapat digunakan',
+            'profile.image' => 'File yang harus dimasukkan harus gambar',
+            'profile.mimes' => 'Extensi gambar yang anda masukan tidak dapat digunakan',
         ];
     }
 
