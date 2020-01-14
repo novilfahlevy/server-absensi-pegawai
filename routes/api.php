@@ -22,9 +22,16 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::group(['middleware' => ['auth:api']], function () {
-    Route::get('/user', 'Api\UserController@index');
-    Route::get('/user/{id}', 'Api\UserController@show');
 
-    Route::post('/user/store', 'Api\UserController@store');
+    Route::group(['middleware' => ['role:Admin']], function () {
+        Route::get('/user', 'Api\UserController@index');
+        Route::get('/user/{id}', 'Api\UserController@show');
+        Route::post('/user/store', 'Api\UserController@store');
+    });
+
+    Route::group(['middleware' => ['role:Admin|User']], function () {
+        Route::post('user/password', 'Api\UserController@editPassword');
+        Route::post('user/edit', 'Api\UserController@editProfile');
+    });
 });
 
