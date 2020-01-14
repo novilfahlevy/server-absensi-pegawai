@@ -166,7 +166,7 @@ return [
          * Package Service Providers...
          */
         Spatie\Permission\PermissionServiceProvider::class,
-        \Fruitcake\Cors\HandleCors::class,
+        Fruitcake\Cors\CorsServiceProvider::class,
 
         /*
          * Application Service Providers...
