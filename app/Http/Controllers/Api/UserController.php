@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\RegisterUserRequest;
 use App\User;
 use App\Role;
-use ApiResponse;
+use App\Helpers\ApiResponse;
 
 class UserController extends Controller
 {
@@ -19,6 +19,13 @@ class UserController extends Controller
 
         return response()->json(['status' => '200', 'message' => 'Sukses', 'user' => $user]);
     }
+
+    public function show($id){
+        $user = User::with('roles')->where('id',$id)->first();
+
+        return response()->json(['status' => '200' , 'message' => 'sukses', 'user' => $user]);
+    }
+
 
     public function login()
     {
@@ -42,4 +49,10 @@ class UserController extends Controller
 
         return response()->json(['status' => '200', 'message' => 'Sukses', 'user' => $user]);
     }
+
+    public function unauthorized()
+    {
+        return response()->json(['status' => 'Unauthorized'],401);
+    }
+
 }
