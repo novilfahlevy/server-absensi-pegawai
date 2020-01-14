@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\File;
 use App\User;
 use App\Role;
 use App\Helpers\ApiResponse;
+use Illuminate\Support\Facades\Storage;
 use Laravel\Passport\Passport;
 
 class UserController extends Controller
@@ -79,38 +80,49 @@ class UserController extends Controller
 
     public function editProfile(Request $request)
     {
-        $profile_path = storage_path('app/public/profiles');
-        $request->validate($request,[
-            'profile' => 'require|image|mimes:jpeg,png,svg|max:2048',
+
+        $request->validate([
+            'profile' => 'required|image|mimes:jpeg,png,svg|max:2048',
         ],
         [
-            'profile.require' => 'Masukkan gambar terlebih dahulu',
+            'profile.required' => 'Masukkan gambar terlebih dahulu',
             'profile.image' => 'File yang harus dimasukkan harus gambar',
             'profile.mimes' => 'Extensi gambar yang anda masukan tidak dapat digunakan',
             'profile.max' => 'Profile anda sudah melebihi batas ukuran'
         ]);
-        if(!File::isDirectory($profile_path)){
-            File::makeDirectory($profile_path);
-        }
-        $input = $request->file('profile');
-        $hashNameImage = time().'_'. $input->getClientOriginalName();
 
-        $canvas = Image::canvas(300,300);
-        $resizeImage = Image::make($input)->resize(300,300, function ($constrait){
-            $constrait->aspecRatio();
-        });
+            if ($request->hasFile('profile')) {
+                //Get filename with the extention
+                $fileNameWithExtention = $request->file('profile')->getClientOriginalName();
+                //get just filename
+                $fileName = pathinfo($fileNameWithExtention, PATHINFO_FILENAME);
+                //Get just extention
+                $extention = $request->file('profile')->getClientOriginalExtension();
+                //Filename to store
+                $filenameToStore = $fileName.'_'.time().'.'.$extention;
+                //saving Image
+                $user = User::find($request->user_id);
 
-        $canvas->insert($resizeImage, 'center');
-        $canvas->save($profile_path.'/'. $hashNameImage);
+                if($user->profile !== 'default.jpg'){
+                    Storage::delete('public/profiles/'.$user->profil);
+                }
+                $profileimagepath = public_path().'/storage/profiles/';
+                $profileimage = Image::make($request->file('profile'));
+                $canvas = Image::canvas(300,300);
+                $profileimage->resize(300,300, function ($constrait){
+                    $constrait->aspectRatio();
+                });
+                $canvas->insert($profileimage, 'center');
+                $canvas->save($profileimagepath.$filenameToStore);
+                //Updating user
+                $user->profile = $filenameToStore;
+                $user->save();
 
-        $image = new User();
-        $image->profile = $hashNameImage;
-        $image->save();
+                return response()->json(['status' => 200, 'message' => 'Profil anda telah di update' , 'data' => url($profileimagepath)]);
+            }
 
-        return response()->json([
-            'code' => 200,
-            'url' => url('storage/profiles/' . $hashNameImage),
-        ]);
+
+
 
     }
 
