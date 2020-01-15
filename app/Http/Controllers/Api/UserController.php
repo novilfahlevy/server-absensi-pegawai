@@ -9,9 +9,9 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\RegisterUserRequest;
 use Intervention\Image\Facades\Image;
-use Illuminate\Support\Facades\File;
 use App\User;
 use App\Role;
+use File;
 use App\Helpers\ApiResponse;
 use Illuminate\Support\Facades\Storage;
 use Laravel\Passport\Passport;
@@ -45,7 +45,15 @@ class UserController extends Controller
         } else {
             return response()->json(['status' => 401, 'message' => 'Email atau password salah!']);
         }
-        return $this->unauthorized();
+        // return $this->unauthorized();
+        return response()->json(['message' => 'Unauthorized'],401);
+    }
+
+    public function logout(Request $request)
+    {
+        $request->user()->token()->revoke();
+
+        return response()->json(['message' => 'Logout berhasil']);
     }
 
     public function store(RegisterUserRequest $request)
@@ -75,8 +83,11 @@ class UserController extends Controller
         $user = User::find($id)->update([
             'password' => Hash::make($request->new_password),
         ]);
+        if($user){
+            return response()->json(['code' => 200, 'message' => 'Berhasil mengganti password', 'data' => $user]);
+        }
+        return response()->json(['code' => 400, 'message' => 'your current passwor was wrong']);
 
-        return response()->json(['success' => 200, 'message' => 'Berhasil mengganti password', 'data' => $user]);
 
     }
 
@@ -106,7 +117,7 @@ class UserController extends Controller
                 $user = User::find($request->user_id);
 
                 if($user->profile !== 'default.jpg'){
-                    Storage::delete('public/profiles/'.$user->profil);
+                    Storage::delete('public/profiles/'.$user->profile);
                 }
                 $profileimagepath = public_path().'/storage/profiles/';
                 $profileimage = Image::make($request->file('profile'));
