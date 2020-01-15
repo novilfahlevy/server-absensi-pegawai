@@ -42,6 +42,8 @@ class UserController extends Controller
             $success['token'] = $user->createToken('Passport Token')->accessToken;
             Passport::personalAccessTokensExpireIn(now()->addHours(12));
             return response()->json(['status' => 200, 'message' => $success]);
+        } else {
+            return response()->json(['status' => 401, 'message' => 'Email atau password salah!']);
         }
         // return $this->unauthorized();
         return response()->json(['message' => 'Unauthorized'],401);
