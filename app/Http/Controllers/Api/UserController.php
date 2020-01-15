@@ -124,6 +124,7 @@ class UserController extends Controller
 >>>>>>> 77c12f66f87e4d7abac15426d7235ca87c9d1a2a
                 }
                 $profileimagepath = public_path().'/storage/profiles/';
+                $profileimageUrl = 'File://'.public_path().'/storage/profiles/'.$filenameToStore;
                 $profileimage = Image::make($request->file('profile'));
                 $canvas = Image::canvas(300,300);
                 $profileimage->resize(300,300, function ($constrait){
@@ -135,7 +136,7 @@ class UserController extends Controller
                 $user->profile = $filenameToStore;
                 $user->save();
 
-                return response()->json(['status' => 200, 'message' => 'Profil anda telah di update' , 'data' => url($profileimagepath)]);
+                return response()->json(['status' => 200, 'message' => 'Profil anda telah di update' , 'data' => $profileimageUrl]);
             }
 
 
