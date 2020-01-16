@@ -24,10 +24,9 @@ class UsersTableSeeder extends Seeder
         // set admin roles ID = 1
         $admin = User::create([
             'name' => 'Admin',
-            'email' => 'muharirinajib@gmail.com',
-            'password' => bcrypt('admin123'),
+            'email' => 'localmrm@gmail.com',
+            'password' => bcrypt('localmrm'),
         ]);
         $admin->assignRole(Role::find(1));
-
     }
 }

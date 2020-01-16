@@ -37,4 +37,3 @@ Route::group(['middleware' => ['auth:api']], function () {
         Route::put('user/edit', 'Api\UserController@editProfile');
     });
 });
-

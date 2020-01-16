@@ -15,6 +15,7 @@ use File;
 use App\Helpers\ApiResponse;
 use Illuminate\Support\Facades\Storage;
 use Laravel\Passport\Passport;
+use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
