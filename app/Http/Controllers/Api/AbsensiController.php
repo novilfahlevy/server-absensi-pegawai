@@ -31,7 +31,7 @@ class AbsensiController extends Controller
         $this->absensi->tanggal = $this->carbon->toDateString();
         $this->absensi->absensi_masuk = $this->carbon->toTimeString();
         $this->absensi->keterangan = request('keterangan');
-        $this->absensi->foto_bukti = request('foto_bukti');
+        $this->absensi->foto_absensi_masuk = request('foto_absensi_masuk');
         $this->absensi->latitude = '1.111';
         $this->absensi->longitude = '1.111';
         $this->absensi->save();
