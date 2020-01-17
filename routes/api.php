@@ -33,8 +33,7 @@ Route::group(['middleware' => ['auth:api']], function () {
     });
 
     Route::group(['middleware' => ['role:Admin|User']], function () {
-        Route::put('user/password', 'Api\UserController@editPassword');
-        Route::put('user/edit', 'Api\UserController@editProfile');
+        Route::post('user/password', 'Api\UserController@editPassword');
+        Route::post('user/edit', 'Api\UserController@editProfile');
     });
 });
-
