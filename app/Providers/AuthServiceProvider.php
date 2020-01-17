@@ -28,6 +28,6 @@ class AuthServiceProvider extends ServiceProvider
         $this->registerPolicies();
         Passport::routes();
         Passport::personalAccessTokensExpireIn(Carbon::now()->addHours(12));
-        //
+        date_default_timezone_set('Asia/Makassar');
     }
 }
