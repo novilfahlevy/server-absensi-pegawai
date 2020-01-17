@@ -17,13 +17,7 @@ use App\Helpers\ApiResponse;
 Route::post('auth/login', 'Api\UserController@login')->name('login');
 Route::get('unauthorized', 'Api\UserController@unauthorized')->name('unauthorized');
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    // return $request->user();
-});
-
 Route::group(['middleware' => ['auth:api']], function () {
-
-
     Route::post('auth/logout', 'Api\UserController@logout');
 
     Route::group(['middleware' => ['role:Admin']], function () {
@@ -36,5 +30,8 @@ Route::group(['middleware' => ['auth:api']], function () {
         Route::post('user/password', 'Api\UserController@editPassword');
         Route::post('user/edit', 'Api\UserController@editProfile');
     });
-});
 
+    Route::group(['middleware' => ['role:User']], function () {
+        Route::post('/user/absensiMasuk', 'Api\AbsensiController@absensiMasuk');
+    });
+});
