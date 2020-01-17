@@ -33,5 +33,6 @@ Route::group(['middleware' => ['auth:api']], function () {
 
     Route::group(['middleware' => ['role:User']], function () {
         Route::post('/user/absensiMasuk', 'Api\AbsensiController@absensiMasuk');
+        Route::post('/user/absensiKeluar', 'Api\AbsensiController@absensiKeluar');
     });
 });
