@@ -22,8 +22,6 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::group(['middleware' => ['auth:api']], function () {
-
-
     Route::post('auth/logout', 'Api\UserController@logout');
 
     Route::group(['middleware' => ['role:Admin']], function () {

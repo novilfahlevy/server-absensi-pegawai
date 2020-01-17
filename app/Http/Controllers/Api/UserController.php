@@ -21,7 +21,6 @@ class UserController extends Controller
 {
     public function index()
     {
-
         $user = User::all();
 
         return response()->json(['status' => '200', 'message' => 'Sukses', 'user' => $user]);
@@ -60,7 +59,6 @@ class UserController extends Controller
 
     public function store(RegisterUserRequest $request)
     {
-
         $input = $request->all();
         $input['password'] = bcrypt($input['password']);
         $user = User::create($input);
@@ -95,7 +93,6 @@ class UserController extends Controller
 
     public function editProfile(Request $request)
     {
-
         $request->validate(
             [
                 'profile' => 'required|image|mimes:jpeg,png,svg|max:2048',
