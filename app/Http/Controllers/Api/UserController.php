@@ -120,7 +120,7 @@ class UserController extends Controller
                     Storage::delete('public/profiles/'.$user->profile);
                 }
                 $profileimagepath = public_path().'/storage/profiles/';
-                $profileimageUrl = 'File://'.public_path().'/storage/profiles/'.$filenameToStore;
+                $profileimageUrl = '/storage/profiles/'.$filenameToStore;
                 $profileimage = Image::make($request->file('profile'));
                 $canvas = Image::canvas(300,300);
                 $profileimage->resize(300,300, function ($constrait){
@@ -132,7 +132,7 @@ class UserController extends Controller
                 $user->profile = $filenameToStore;
                 $user->save();
 
-                return response()->json(['status' => 200, 'message' => 'Profil anda telah di update' , 'data' => $profileimageUrl]);
+                return response()->json(['status' => 200, 'message' => 'Profil anda telah di update' , 'data' => url($profileimageUrl)]);
             }
 
 
