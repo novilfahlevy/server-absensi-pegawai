@@ -146,7 +146,15 @@ class UserController extends Controller
             $user->save();
 
             return response()->json(['status' => 200, 'message' => 'Profil anda telah di update', 'data' => url($profileimagepath)]);
-        }
+    }
+
+    public function cari(Request $request)
+    {
+        $cari = $request->cari;
+
+        $user = User::where('name', 'like',"%".$cari."%")->get();
+
+        return response()->json(['code' => 200, 'message' => 'berhasil mencari data' , 'data' => $user]);
     }
 
     public function unauthorized()
