@@ -150,10 +150,8 @@ class UserController extends Controller
 
     public function cari(Request $request)
     {
-        $cari = $request->cari;
 
-        $user = User::where('name', 'like',"%".$cari."%")->get();
-
+        $user = User::where('name', 'LIKE', '%'. $request->input('cari') . '%')->get();
         if($user){
             return response()->json(['code' => 200, 'message' => 'berhasil mencari data' , 'data' => $user]);
         }
