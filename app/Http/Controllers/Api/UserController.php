@@ -43,7 +43,7 @@ class UserController extends Controller
         } else {
             return response()->json(['status' => 401, 'message' => 'Email atau password salah!']);
         }
-        // return $this->unauthorized();
+
         return response()->json(['message' => 'Unauthorized'], 401);
     }
 
@@ -78,13 +78,16 @@ class UserController extends Controller
                 'new_password.required' => 'masukkan password baru anda terlebih daulu',
             ]
         );
+
         $id = $request->user_id;
         $user = User::find($id)->update([
             'password' => Hash::make($request->new_password),
         ]);
+
         if ($user) {
             return response()->json(['code' => 200, 'message' => 'Berhasil mengganti password', 'data' => $user]);
         }
+
         return response()->json(['code' => 400, 'message' => 'your current passwor was wrong']);
     }
 
@@ -103,44 +106,44 @@ class UserController extends Controller
         );
 
         if ($request->hasFile('profile')) {
-            //Get filename with the extention
+
             $fileNameWithExtention = $request->file('profile')->getClientOriginalName();
-            //get just filename
             $fileName = pathinfo($fileNameWithExtention, PATHINFO_FILENAME);
-            //Get just extention
             $extention = $request->file('profile')->getClientOriginalExtension();
-            //Filename to store
             $filenameToStore = $fileName . '_' . time() . '.' . $extention;
-            //saving Image
             $user = User::find($request->user_id);
 
             if ($user->profile !== 'default.jpg') {
                 Storage::delete('public/profiles/' . $user->profile);
             }
+
             $profileimagepath = public_path() . '/storage/profiles/';
             $profileimageUrl = '/storage/profiles/' . $filenameToStore;
             $profileimage = Image::make($request->file('profile'));
             $canvas = Image::canvas(300, 300);
+
             $profileimage->resize(300, 300, function ($constrait) {
                 $constrait->aspectRatio();
             });
+
             $canvas->insert($profileimage, 'center');
             $canvas->save($profileimagepath . $filenameToStore);
-            //Updating user
             $user->profile = $filenameToStore;
             $user->save();
 
             return response()->json(['status' => 200, 'message' => 'Profil anda telah di update', 'data' => url($profileimageUrl)]);
         }
+
         $profileimagepath = public_path() . '/storage/profiles/';
         $profileimage = Image::make($request->file('profile'));
         $canvas = Image::canvas(300, 300);
+
         $profileimage->resize(300, 300, function ($constrait) {
             $constrait->aspectRatio();
         });
+
         $canvas->insert($profileimage, 'center');
         $canvas->save($profileimagepath . $filenameToStore);
-        //Updating user
         $user->profile = $filenameToStore;
         $user->save();
 
@@ -151,9 +154,11 @@ class UserController extends Controller
     {
 
         $user = User::where('name', 'LIKE', '%' . $name . '%')->get();
+
         if (!$user->isEmpty()) {
             return response()->json(['code' => 200, 'message' => 'berhasil mencari data', 'data' => $user]);
         }
+
         return response()->json(['code' => 400, 'message' => 'Kata yang anda cari tidak ditemukan']);
     }
 
