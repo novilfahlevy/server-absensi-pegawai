@@ -22,14 +22,14 @@ Route::group(['middleware' => ['auth:api']], function () {
 
     Route::group(['middleware' => ['role:Admin']], function () {
         Route::get('/user', 'Api\UserController@index');
-        Route::post('/user/cari', 'Api\UserController@cari');
-        Route::get('/user/{id}', 'Api\UserController@show');
+        Route::get('/user/cari/{name}', 'Api\UserController@cari');
         Route::post('/user/store', 'Api\UserController@store');
     });
 
     Route::group(['middleware' => ['role:Admin|User']], function () {
         Route::post('user/password', 'Api\UserController@editPassword');
         Route::post('user/edit', 'Api\UserController@editProfile');
+        Route::get('/user/{id}', 'Api\UserController@show');
     });
 
     Route::group(['middleware' => ['role:User']], function () {
