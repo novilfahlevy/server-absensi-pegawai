@@ -22,7 +22,7 @@ Route::group(['middleware' => ['auth:api']], function () {
 
     Route::group(['middleware' => ['role:Admin']], function () {
         Route::get('/user', 'Api\UserController@index');
-        Route::post('/user/cari', 'Api\UserController@cari');
+        Route::get('/user/cari/{name}', 'Api\UserController@cari');
         Route::get('/user/{id}', 'Api\UserController@show');
         Route::post('/user/store', 'Api\UserController@store');
     });
