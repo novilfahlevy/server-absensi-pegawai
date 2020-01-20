@@ -69,9 +69,11 @@ class AbsensiController extends Controller
             return response()->json(['message' => 'Anda belum absen masuk']);
         } else {
             $check_attendance_out = Absensi::where('user_id', '=', Auth::user()->id)->where('tanggal', '=', $this->carbon->toDateString())->where('absensi_keluar', '!=', null)->get();
+
             if (!$check_attendance_out->isEmpty()) {
                 return response()->json(['message' => 'Anda sudah absensi keluar']);
             }
+
             $input = $request->file('foto_absensi_keluar');
             $hashNameImage = time() . '_' . $input->getClientOriginalName();
             $canvas = Image::canvas(500, 500);
