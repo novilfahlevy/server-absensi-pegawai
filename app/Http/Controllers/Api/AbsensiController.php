@@ -63,23 +63,31 @@ class AbsensiController extends Controller
             File::makeDirectory($this->imagePath);
         }
 
-        if (Absensi::where('absensi_masuk', '=', null)) {
+        $check_attendance_in = Absensi::where('user_id', '=', Auth::user()->id)->where('tanggal', '=', $this->carbon->toDateString())->get();
+
+        if ($check_attendance_in->isEmpty()) {
             return response()->json(['message' => 'Anda belum absen masuk']);
+        } else {
+            $check_attendance_out = Absensi::where('user_id', '=', Auth::user()->id)->where('tanggal', '=', $this->carbon->toDateString())->where('absensi_keluar', '!=', null)->get();
+
+            if (!$check_attendance_out->isEmpty()) {
+                return response()->json(['message' => 'Anda sudah absensi keluar']);
+            }
+
+            $input = $request->file('foto_absensi_keluar');
+            $hashNameImage = time() . '_' . $input->getClientOriginalName();
+            $canvas = Image::canvas(500, 500);
+            $resizeImage = Image::make($input)->resize(500, 500, function ($constraint) {
+                $constraint->aspectRatio();
+            });
+            $canvas->insert($resizeImage, 'center');
+            $canvas->save($this->imagePath . '/' . $hashNameImage);
+
+            $this->absensi->where(['user_id' => Auth::user()->id, 'tanggal' => $this->carbon->toDateString()])->update(['absensi_keluar' => $this->carbon->toTimeString(), 'foto_absensi_keluar' => $hashNameImage, 'keterangan' => request('keterangan')]);
+
+            $data = Absensi::where(['user_id' => Auth::user()->id, 'tanggal' => $this->carbon->toDateString()])->first();
+
+            return response()->json(['status' => 200, 'message' => 'Berhasil absensi keluar', 'data' => $data]);
         }
-
-        $input = $request->file('foto_absensi_keluar');
-        $hashNameImage = time() . '_' . $input->getClientOriginalName();
-        $canvas = Image::canvas(500, 500);
-        $resizeImage = Image::make($input)->resize(500, 500, function ($constraint) {
-            $constraint->aspectRatio();
-        });
-        $canvas->insert($resizeImage, 'center');
-        $canvas->save($this->imagePath . '/' . $hashNameImage);
-
-        $this->absensi->where(['user_id' => Auth::user()->id, 'tanggal' => $this->carbon->toDateString()])->update(['absensi_keluar' => $this->carbon->toTimeString(), 'foto_absensi_keluar' => $hashNameImage, 'keterangan' => request('keterangan')]);
-
-        $data = Absensi::where(['user_id' => Auth::user()->id, 'tanggal' => $this->carbon->toDateString()])->first();
-
-        return response()->json(['status' => 200, 'message' => 'Berhasil absensi keluar', 'data' => $data]);
     }
 }
