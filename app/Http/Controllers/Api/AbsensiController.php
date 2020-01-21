@@ -32,18 +32,18 @@ class AbsensiController extends Controller
         return response()->json(['status' => 200, 'message' => 'Sukses', 'absensi' => $absensi]);
     }
 
-    public function cari(Request $request)
-    {
-        $keyword = $request->cari;
+    // public function cari($query, $search)
+    // {
+    //     $search = trim($search);
 
-        $absensi = Absensi::where('id', 'LIKE', '%' . $keyword . '%')->get();
+    // $absensi = return $query->where(function($query) use ($search)) {}
 
-        if (!$absensi->isEmpty()) {
-            return response()->json(['code' => 200, 'message' => 'berhasil mencari data', 'data' => $absensi]);
-        }
+    // if (!$absensi->isEmpty()) {
+    //     return response()->json(['code' => 200, 'message' => 'berhasil mencari data', 'data' => $absensi]);
+    // }
 
-        return response()->json(['code' => 400, 'message' => 'Kata yang anda cari tidak ditemukan']);
-    }
+    //     return response()->json(['code' => 400, 'message' => 'Kata yang anda cari tidak ditemukan']);
+    // }
 
     public function absensiMasuk(AbsensiMasukRequest $request)
     {
