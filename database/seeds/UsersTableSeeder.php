@@ -28,5 +28,11 @@ class UsersTableSeeder extends Seeder
             'password' => bcrypt('localmrm'),
         ]);
         $admin->assignRole(Role::find(1));
+        $alice = User::create([
+            'name' => 'alice',
+            'email' => 'alice@gmail.com',
+            'password' => bcrypt('12345678')
+        ]);
+        $alice->assignRole(Role::find(1));
     }
 }
