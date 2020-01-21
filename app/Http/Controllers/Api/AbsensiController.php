@@ -32,11 +32,11 @@ class AbsensiController extends Controller
         return response()->json(['status' => 200, 'message' => 'Sukses', 'absensi' => $absensi]);
     }
 
-    public function cari(Request $request)
+    public function cari($query, $search)
     {
-        $keyword = $request->cari;
+        $search = trim($search);
 
-        $absensi = Absensi::where('id', 'LIKE', '%' . $keyword . '%')->get();
+        $absensi = return $query->where(function($query) use ($search)) {}
 
         if (!$absensi->isEmpty()) {
             return response()->json(['code' => 200, 'message' => 'berhasil mencari data', 'data' => $absensi]);
