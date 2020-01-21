@@ -24,6 +24,13 @@ class AbsensiController extends Controller
         $this->imagePath = public_path() . '/storage/attendances_photo/';
     }
 
+    public function index()
+    {
+        $absensi = Absensi::all();
+
+        return response()->json(['status' => 200, 'message' => 'Sukses', 'absensi' => $absensi]);
+    }
+
     public function absensiMasuk(AbsensiMasukRequest $request)
     {
         $check_duplicate_data = Absensi::where(['user_id' => Auth::user()->id, 'tanggal' => $this->carbon->toDateString()])->count();
