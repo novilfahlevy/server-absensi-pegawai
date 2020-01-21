@@ -17,7 +17,13 @@ class LaporanController extends Controller
                 'Novil Fahlevy' => [10, 20, 30, 40],
                 'Nabil Djulfiansyah' => [1, 1, 1, 1]
             ],
-            'total_jam_per_bulan' => [100, 200, 300, 400],
+            'total_jam_per_minggu' => [
+                'minggu1' => 13,
+                'minggu2' => 15,
+                'minggu3' => 29,
+                'minggu4' => 80,
+                'total' => 13 + 15 + 29 + 80
+            ],
             'status_pegawai' => [
                 'terlambat' => 10,
                 'tepat_waktu' => 40,
