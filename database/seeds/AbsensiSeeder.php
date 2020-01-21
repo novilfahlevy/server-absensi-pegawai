@@ -26,5 +26,17 @@ class AbsensiSeeder extends Seeder
             'latitude' => '1.111',
             'longitude' => '1.111',
         ]);
+
+        Absensi::create([
+            'user_id' => 2,
+            'tanggal' => $carbon->now()->subDays(4),
+            'absensi_masuk' => $carbon->toTimeString(),
+            'absensi_keluar' => $carbon->toTimeString(),
+            'keterangan' => 'Absensi',
+            'foto_absensi_masuk' => 'masuk.jpg',
+            'foto_absensi_keluar' => 'keluar.jpg',
+            'latitude' => '1.111',
+            'longitude' => '1.111',
+        ]);
     }
 }
