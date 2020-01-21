@@ -13,9 +13,9 @@ class CreateWaktukerjasTable extends Migration
      */
     public function up()
     {
-        Schema::create('waktukerjas', function (Blueprint $table) {
+        Schema::create('waktu_kerjas', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->integer('waktu_kerja_awal');
+            $table->integer('waktu_kerja');
             $table->string('hari_kerja');
             $table->timestamps();
         });
