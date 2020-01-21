@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Intervention\Image\Facades\Image;
 use App\Http\Requests\AbsensiMasukRequest;
+use GuzzleHttp\Psr7\Request;
 
 class AbsensiController extends Controller
 {
@@ -29,6 +30,19 @@ class AbsensiController extends Controller
         $absensi = Absensi::all();
 
         return response()->json(['status' => 200, 'message' => 'Sukses', 'absensi' => $absensi]);
+    }
+
+    public function cari(Request $request)
+    {
+        $keyword = $request->cari;
+
+        $absensi = Absensi::where('id', 'LIKE', '%' . $keyword . '%')->get();
+
+        if (!$absensi->isEmpty()) {
+            return response()->json(['code' => 200, 'message' => 'berhasil mencari data', 'data' => $absensi]);
+        }
+
+        return response()->json(['code' => 400, 'message' => 'Kata yang anda cari tidak ditemukan']);
     }
 
     public function absensiMasuk(AbsensiMasukRequest $request)
