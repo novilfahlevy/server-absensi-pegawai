@@ -24,6 +24,7 @@ Route::group(['middleware' => ['auth:api']], function () {
         Route::get('/user', 'Api\UserController@index');
         Route::get('/user/cari/{name}', 'Api\UserController@cari');
         Route::post('/user/store', 'Api\UserController@store');
+        Route::post('/admin/tambahWaktuKerja', 'Api\WaktuKerjaController@tambahWaktuKerja');
     });
 
     Route::group(['middleware' => ['role:Admin|User']], function () {
