@@ -25,10 +25,10 @@ class WaktuKerjaController extends Controller
 
     public function tambahWaktuKerja(Request $request)
     {
-        $this->WaktuKerja->waktu_kerja = $request->waktu_kerja;
-        $this->WaktuKerja->hari_kerja = $request->hari_kerja;
-        $this->WaktuKerja->save();
+        WaktuKerja::find(1)->update(['waktu_kerja' => $request->waktu_kerja, 'hari_kerja' => $request->hari_kerja]);
 
-        return response()->json(['status' => 200, 'message' => 'Berhasil menambah waktu kerja!', 'data' => $this->WaktuKerja]);
+        $data = WaktuKerja::find(1)->get();
+
+        return response()->json(['status' => 200, 'message' => 'Berhasil edit waktu kerja!', 'data' => $data]);
     }
 }
