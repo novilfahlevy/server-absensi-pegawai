@@ -16,6 +16,13 @@ class WaktuKerjaController extends Controller
         $this->WaktuKerja = new WaktuKerja();
     }
 
+    public function index()
+    {
+        $waktu_kerja = WaktuKerja::all();
+
+        return response()->json(['status' => 200, 'message' => 'Sukses', 'data' => $waktu_kerja]);
+    }
+
     public function tambahWaktuKerja(Request $request)
     {
         $this->WaktuKerja->waktu_kerja = $request->waktu_kerja;
