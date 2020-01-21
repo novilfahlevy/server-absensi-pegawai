@@ -11,11 +11,8 @@ use App\Http\Requests\RegisterUserRequest;
 use Intervention\Image\Facades\Image;
 use App\User;
 use App\Role;
-use File;
-use App\Helpers\ApiResponse;
 use Illuminate\Support\Facades\Storage;
 use Laravel\Passport\Passport;
-use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
@@ -46,7 +43,7 @@ class UserController extends Controller
         } else {
             return response()->json(['status' => 401, 'message' => 'Email atau password salah!']);
         }
-        // return $this->unauthorized();
+
         return response()->json(['message' => 'Unauthorized'], 401);
     }
 
@@ -81,84 +78,86 @@ class UserController extends Controller
                 'new_password.required' => 'masukkan password baru anda terlebih daulu',
             ]
         );
+
         $id = $request->user_id;
         $user = User::find($id)->update([
             'password' => Hash::make($request->new_password),
         ]);
+
         if ($user) {
             return response()->json(['code' => 200, 'message' => 'Berhasil mengganti password', 'data' => $user]);
         }
+
         return response()->json(['code' => 400, 'message' => 'your current passwor was wrong']);
     }
 
     public function editProfile(Request $request)
     {
-        $request->validate([
-            'profile' => 'required|image|mimes:jpeg,png,svg|max:2048',
-        ],
-        [
-            'profile.required' => 'Masukkan gambar terlebih dahulu',
-            'profile.image' => 'File yang harus dimasukkan harus gambar',
-            'profile.mimes' => 'Extensi gambar yang anda masukan tidak dapat digunakan',
-            'profile.max' => 'Profile anda sudah melebihi batas ukuran'
-        ]);
+        $request->validate(
+            [
+                'profile' => 'required|image|mimes:jpeg,png,svg|max:2048',
+            ],
+            [
+                'profile.required' => 'Masukkan gambar terlebih dahulu',
+                'profile.image' => 'File yang harus dimasukkan harus gambar',
+                'profile.mimes' => 'Extensi gambar yang anda masukan tidak dapat digunakan',
+                'profile.max' => 'Profile anda sudah melebihi batas ukuran'
+            ]
+        );
 
-            if ($request->hasFile('profile')) {
-                //Get filename with the extention
-                $fileNameWithExtention = $request->file('profile')->getClientOriginalName();
-                //get just filename
-                $fileName = pathinfo($fileNameWithExtention, PATHINFO_FILENAME);
-                //Get just extention
-                $extention = $request->file('profile')->getClientOriginalExtension();
-                //Filename to store
-                $filenameToStore = $fileName.'_'.time().'.'.$extention;
-                //saving Image
-                $user = User::find($request->user_id);
+        if ($request->hasFile('profile')) {
+            $fileNameWithExtention = $request->file('profile')->getClientOriginalName();
+            $fileName = pathinfo($fileNameWithExtention, PATHINFO_FILENAME);
+            $extention = $request->file('profile')->getClientOriginalExtension();
+            $filenameToStore = $fileName . '_' . time() . '.' . $extention;
+            $user = User::find($request->user_id);
 
-                if($user->profile !== 'default.jpg'){
-<<<<<<< HEAD
-                    Storage::delete('public/profiles/'.$user->profil);
-=======
-                    Storage::delete('public/profiles/'.$user->profile);
->>>>>>> 77c12f66f87e4d7abac15426d7235ca87c9d1a2a
-                }
-                $profileimagepath = public_path().'/storage/profiles/';
-                $profileimageUrl = '/storage/profiles/'.$filenameToStore;
-                $profileimage = Image::make($request->file('profile'));
-                $canvas = Image::canvas(300,300);
-                $profileimage->resize(300,300, function ($constrait){
-                    $constrait->aspectRatio();
-                });
-                $canvas->insert($profileimage, 'center');
-                $canvas->save($profileimagepath.$filenameToStore);
-                //Updating user
-                $user->profile = $filenameToStore;
-                $user->save();
-
-                return response()->json(['status' => 200, 'message' => 'Profil anda telah di update' , 'data' => url($profileimageUrl)]);
+            if ($user->profile !== 'default.jpg') {
+                Storage::delete('public/profiles/' . $user->profile);
             }
+
             $profileimagepath = public_path() . '/storage/profiles/';
+            $profileimageUrl = '/storage/profiles/' . $filenameToStore;
             $profileimage = Image::make($request->file('profile'));
             $canvas = Image::canvas(300, 300);
+
             $profileimage->resize(300, 300, function ($constrait) {
                 $constrait->aspectRatio();
             });
+
             $canvas->insert($profileimage, 'center');
             $canvas->save($profileimagepath . $filenameToStore);
-            //Updating user
             $user->profile = $filenameToStore;
             $user->save();
 
-            return response()->json(['status' => 200, 'message' => 'Profil anda telah di update', 'data' => url($profileimagepath)]);
+            return response()->json(['status' => 200, 'message' => 'Profil anda telah di update', 'data' => url($profileimageUrl)]);
+        }
+
+        $profileimagepath = public_path() . '/storage/profiles/';
+        $profileimage = Image::make($request->file('profile'));
+        $canvas = Image::canvas(300, 300);
+
+        $profileimage->resize(300, 300, function ($constrait) {
+            $constrait->aspectRatio();
+        });
+
+        $canvas->insert($profileimage, 'center');
+        $canvas->save($profileimagepath . $filenameToStore);
+        $user->profile = $filenameToStore;
+        $user->save();
+
+        return response()->json(['status' => 200, 'message' => 'Profil anda telah di update', 'data' => url($profileimagepath)]);
     }
 
     public function cari($name)
     {
 
-        $user = User::where('name', 'LIKE', '%'. $name . '%')->get();
-        if(!$user->isEmpty()){
-            return response()->json(['code' => 200, 'message' => 'berhasil mencari data' , 'data' => $user]);
+        $user = User::where('name', 'LIKE', '%' . $name . '%')->get();
+
+        if (!$user->isEmpty()) {
+            return response()->json(['code' => 200, 'message' => 'berhasil mencari data', 'data' => $user]);
         }
+
         return response()->json(['code' => 400, 'message' => 'Kata yang anda cari tidak ditemukan']);
     }
 
