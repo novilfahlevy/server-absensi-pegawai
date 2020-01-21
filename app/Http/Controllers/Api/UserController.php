@@ -35,8 +35,10 @@ class UserController extends Controller
     {
         if (Auth::attempt(['email' => request('email'), 'password' => request('password')])) {
             $user = Auth::user();
+            $roles = User::with('roles')->where('id', $user->id)->first();
             $success['id'] = $user->id;
             $success['name'] = $user->name;
+            $success['role'] = $roles->roles[0]['name'];
             $success['token'] = $user->createToken('Passport Token')->accessToken;
             Passport::personalAccessTokensExpireIn(now()->addHours(12));
             return response()->json(['status' => 200, 'message' => $success]);
