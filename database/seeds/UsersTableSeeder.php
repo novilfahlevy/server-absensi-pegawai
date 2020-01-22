@@ -24,7 +24,10 @@ class UsersTableSeeder extends Seeder
         // set admin roles ID = 1
         $admin = User::create([
             'name' => 'Admin',
+            'username' => 'admin',
             'email' => 'admin@admin.com',
+            'nomor_handphone' => '081234567890',
+            'alamat' => 'Jl. Semangka',
             'password' => bcrypt('secret'),
             'profile' => 'default.jpg'
         ]);
@@ -33,7 +36,10 @@ class UsersTableSeeder extends Seeder
         // set user roles ID = 2
         $user = User::create([
             'name' => 'User',
+            'username' => 'user',
             'email' => 'user@user.com',
+            'nomor_handphone' => '089876543210',
+            'alamat' => 'Jl. Nangka',
             'password' => bcrypt('secret'),
             'profile' => 'default.jpg'
         ]);
