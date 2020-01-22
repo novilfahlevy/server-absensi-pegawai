@@ -26,16 +26,17 @@ class UsersTableSeeder extends Seeder
             'name' => 'Admin',
             'email' => 'admin@admin.com',
             'password' => bcrypt('secret'),
+            'profile' => 'default.jpg'
         ]);
         $admin->assignRole(Role::find(1));
-
+            
         // set user roles ID = 2
         $user = User::create([
             'name' => 'User',
             'email' => 'user@user.com',
             'password' => bcrypt('secret'),
+            'profile' => 'default.jpg'
         ]);
-
         $user->assignRole(Role::find(2));
     }
 }
