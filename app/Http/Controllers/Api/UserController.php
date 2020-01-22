@@ -33,7 +33,7 @@ class UserController extends Controller
 
     public function login()
     {
-        if (Auth::attempt(['email' => request('email'), 'password' => request('password')]) || Auth::attempt(['username' => request('username'), 'password' => request('password')])) {
+        if (Auth::attempt(['email' => request('keyword'), 'password' => request('password')]) || Auth::attempt(['username' => request('keyword'), 'password' => request('password')])) {
             $user = Auth::user();
             $roles = User::with('roles')->where('id', $user->id)->first();
             $success['id'] = $user->id;
