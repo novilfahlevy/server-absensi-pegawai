@@ -10,7 +10,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Intervention\Image\Facades\Image;
 use App\Http\Requests\AbsensiMasukRequest;
+use App\User;
 use GuzzleHttp\Psr7\Request;
+use Illuminate\Support\Facades\DB;
 
 class AbsensiController extends Controller
 {
@@ -28,7 +30,10 @@ class AbsensiController extends Controller
     public function index()
     {
         $absensi = Absensi::all();
-
+        $i = 0;
+        foreach ($absensi as $key => $absen) {
+            $absensi[$key]['name'] = $absen->user->name;
+        }
         return response()->json(['status' => 200, 'message' => 'Sukses', 'absensi' => $absensi]);
     }
 

@@ -41,6 +41,6 @@ class User extends Authenticatable
 
     public function absensi()
     {
-        return $this->belongsTo('App\User');
+        return $this->hasMany('App\Absensi');
     }
 }

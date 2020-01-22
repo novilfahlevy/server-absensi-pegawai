@@ -20,10 +20,13 @@ class CreateAbsensisTable extends Migration
             $table->time('absensi_masuk');
             $table->time('absensi_keluar')->nullable();
             $table->string('keterangan')->nullable();
+            $table->string('status');
             $table->string('foto_absensi_masuk');
             $table->string('foto_absensi_keluar')->nullable();
-            $table->string('latitude');
-            $table->string('longitude');
+            $table->string('latitude_absen_masuk');
+            $table->string('longitude_absen_masuk');
+            $table->string('latitude_absen_keluar');
+            $table->string('longitude_absen_keluar');
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
