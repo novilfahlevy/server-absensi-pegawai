@@ -123,7 +123,17 @@ class UserController extends Controller
     public function show($id)
     {
         $user = User::with('roles')->where('id', $id)->first();
-
+        $user['jam_kerja'] = [
+            'minggu1' => 130,
+            'minggu2' => 140,
+            'minggu3' => 150,
+            'minggu4' => 160,
+            'performance' => [
+                'total_jam_per_minggu' => 130 + 140 + 150 + 160,
+                'terlambat' => 2,
+                'total_lembur' => 7
+            ]
+        ];
         return response()->json(['status' => '200', 'message' => 'sukses', 'user' => $user]);
     }
 
