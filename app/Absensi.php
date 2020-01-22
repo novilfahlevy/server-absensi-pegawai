@@ -11,6 +11,6 @@ class Absensi extends Model
 
     public function user()
     {
-        return $this->hasMany('App\Absensi');
+        return $this->belongsTo('App\User');
     }
 }
