@@ -2,13 +2,26 @@
 
 namespace App\Http\Controllers\Api;
 
+use Carbon\Carbon;
+use App\Absensi;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
 class LaporanController extends Controller
 {
+    protected $carbon;
+    protected $attendance;
+    protected $imagePath;
+
+    public function __construct()
+    {
+        $this->carbon = new Carbon();
+        $this->absensi = new Absensi();
+        $this->imagePath = public_path() . '/storage/attendances_photo/';
+    }
     public function index()
     {
+        dd($this->carbon->now()->lastOfMonth()->day);
         return response()->json(['status' => 200, 'message' => 'Sukses', 'data' => [
             'nama_bulan' => 'Januari',
             'total_jam_pegawai' => [
