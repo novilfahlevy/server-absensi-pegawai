@@ -29,6 +29,7 @@ class UsersTableSeeder extends Seeder
             'nomor_handphone' => '081234567890',
             'alamat' => 'Jl. Semangka',
             'password' => bcrypt('secret'),
+            'profile' => 'default.jpg'
         ]);
         $admin->assignRole(Role::find(1));
         $alice = User::create([
@@ -47,6 +48,7 @@ class UsersTableSeeder extends Seeder
             'nomor_handphone' => '089876543210',
             'alamat' => 'Jl. Nangka',
             'password' => bcrypt('secret'),
+            'profile' => 'default.jpg'
         ]);
         $alice->assignRole(Role::find(1));
         $user->assignRole(Role::find(2));
