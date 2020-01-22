@@ -33,8 +33,12 @@ class UsersTableSeeder extends Seeder
         $admin->assignRole(Role::find(1));
         $alice = User::create([
             'name' => 'alice',
+            'username' => 'alice',
             'email' => 'alice@gmail.com',
+            'nomor_handphone' => '082138173918',
+            'alamat' => 'Jl. Semangka',
             'password' => bcrypt('12345678')
+        ]);
         // set user roles ID = 2
         $user = User::create([
             'name' => 'User',
