@@ -29,7 +29,7 @@ Route::group(['middleware' => ['auth:api']], function () {
         Route::get('/absensi', 'Api\AbsensiController@index');
         Route::get('/absensi/{id}', 'Api\AbsensiController@show');
         // Route::get('/absensi/{keterangan}', 'Api\AbsensiController@cari');
-        Route::get('/absensi/laporan', 'Api\LaporanController@index');  
+        Route::get('/absensi/laporan', 'Api\LaporanController@index');
         Route::get('/dashboard', 'Api\DashboardController@index');
     });
 
