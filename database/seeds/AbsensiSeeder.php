@@ -63,24 +63,7 @@ class AbsensiSeeder extends Seeder
             'absensi_masuk' => $carbon->toTimeString(),
             'absensi_keluar' => $carbon->toTimeString(),
             'keterangan' => 'Absensi',
-<<<<<<< HEAD
-            'status' => 'kecepatan',
-            'foto_absensi_masuk' => 'masuk.jpg',
-            'foto_absensi_keluar' => 'keluar.jpg',
-            'latitude_absen_masuk' => '1.111',
-            'longitude_absen_masuk' => '1.111',
-            'latitude_absen_keluar' => '1.111',
-            'longitude_absen_keluar' => '1.111',
-        ]);
-        Absensi::create([
-            'user_id' => 2,
-            'tanggal' => $carbon->toDateString(),
-            'absensi_masuk' => $carbon->toTimeString(),
-            'absensi_keluar' => $carbon->toTimeString(),
-            'keterangan' => 'Absensi',
-=======
             'status' => 'tepat waktu',
->>>>>>> laporan
             'foto_absensi_masuk' => 'masuk.jpg',
             'foto_absensi_keluar' => 'keluar.jpg',
             'latitude_absen_masuk' => '1.111',
