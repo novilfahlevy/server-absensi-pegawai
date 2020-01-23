@@ -36,32 +36,23 @@ class AbsensiController extends Controller
         return response()->json(['status' => 200, 'message' => 'Sukses', 'absensi' => $absensi]);
     }
 
-    public function show($id) {
-        if ( Absensi::find($id) ) {
-            return response()->json([
-                'status' => 200,
-                'absensi' => Absensi::find($id),
-                'lembur' => 'Model lembur belum dibuat.'
-            ]);
+    public function cari($keyword)
+    {
+        $users = User::where('name', 'LIKE', '%' . $keyword . '%')->get()->pluck('id')->toArray();
+        
+        $absensi = [];
+        foreach ( $users as $user_id ) {
+            $absensi[] = Absensi::where('user_id' , '=', $user_id)->get();
         }
-        return response()->json([
-            'status' => 404,
-            'message' => 'Data tidak ditemukan'
-        ]);
+
+        $absensi = $absensi[0];
+
+        foreach ($absensi as $key => $absen) {
+            $absensi[$key]['name'] = User::find($absen->user_id)->name;
+        }
+
+        return response()->json(['absensi' => $absensi]);
     }
-
-    // public function cari($query, $search)
-    // {
-    //     $search = trim($search);
-
-    // $absensi = return $query->where(function($query) use ($search)) {}
-
-    // if (!$absensi->isEmpty()) {
-    //     return response()->json(['code' => 200, 'message' => 'berhasil mencari data', 'data' => $absensi]);
-    // }
-
-    //     return response()->json(['code' => 400, 'message' => 'Kata yang anda cari tidak ditemukan']);
-    // }
 
     public function absensiMasuk(AbsensiMasukRequest $request)
     {
