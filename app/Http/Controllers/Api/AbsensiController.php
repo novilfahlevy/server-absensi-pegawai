@@ -36,6 +36,13 @@ class AbsensiController extends Controller
         return response()->json(['status' => 200, 'message' => 'Sukses', 'absensi' => $absensi]);
     }
 
+    public function show($id) {
+        return response()->json([
+            'absensi' => Absensi::find($id),
+            'lembur' => 'Model lembur belum dibuat.'
+        ]);
+    }
+
     // public function cari($query, $search)
     // {
     //     $search = trim($search);

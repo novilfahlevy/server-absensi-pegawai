@@ -27,6 +27,7 @@ Route::group(['middleware' => ['auth:api']], function () {
         Route::get('/admin/waktuKerja', 'Api\WaktuKerjaController@index');
         Route::post('/admin/waktuKerja', 'Api\WaktuKerjaController@tambahWaktuKerja');
         Route::get('/absensi', 'Api\AbsensiController@index');
+        Route::get('/absensi/{id}', 'Api\AbsensiController@show');
         // Route::get('/absensi/{keterangan}', 'Api\AbsensiController@cari');
         Route::get('/absensi/laporan', 'Api\LaporanController@index');
     });
