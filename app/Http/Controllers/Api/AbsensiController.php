@@ -53,19 +53,24 @@ class AbsensiController extends Controller
     public function cari($keyword)
     {
         $users = User::where('name', 'LIKE', '%' . $keyword . '%')->get()->pluck('id')->toArray();
+
         
         $absensi = [];
         foreach ( $users as $user_id ) {
             $absensi[] = Absensi::where('user_id' , '=', $user_id)->get();
         }
 
-        $absensi = $absensi[0];
+        if ( isset($absensi[0]) ) {
+            $absensi = $absensi[0];
 
-        foreach ($absensi as $key => $absen) {
-            $absensi[$key]['name'] = User::find($absen->user_id)->name;
+            foreach ($absensi as $key => $absen) {
+                $absensi[$key]['name'] = User::find($absen->user_id)->name;
+            }
+
+            return response()->json(['status' => 200, 'absensi' => $absensi]);
         }
 
-        return response()->json(['absensi' => $absensi]);
+        return response()->json(['status' => 404, 'absensi' => []]);
     }
 
     public function absensiMasuk(AbsensiMasukRequest $request)

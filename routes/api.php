@@ -29,10 +29,9 @@ Route::group(['middleware' => ['auth:api']], function () {
         Route::get('/absensi', 'Api\AbsensiController@index');
 
         Route::get('/absensi/laporan', 'Api\LaporanController@index');
-        Route::get('/absensi/{keyword}', 'Api\AbsensiController@cari');
-        Route::get('/absensi/{id}/detail', 'Api\AbsensiController@show');
-        Route::get('/absensi/laporan', 'Api\LaporanController@index');
         Route::get('/absensi/laporan/cari/{month}/{year}', 'Api\LaporanController@cari');
+        Route::get('/absensi/{id}/detail', 'Api\AbsensiController@show');
+        Route::get('/absensi/{keyword}', 'Api\AbsensiController@cari');
         Route::get('/dashboard', 'Api\DashboardController@index');
     });
 
