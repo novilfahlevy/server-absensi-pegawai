@@ -16,12 +16,12 @@ class UsersTableSeeder extends Seeder
         // set default roles
         $role_data = [
             ['name' => 'Admin', 'guard_name' => 'api'],
-            ['name' => 'User', 'guard_name' => 'api']
+            ['name' => 'User', 'guard_name' => 'api'],
+            ['name' => 'Project Manager', 'guard_name' => 'api']
         ];
 
         Role::insert($role_data);
 
-        // set admin roles ID = 1
         $admin = User::create([
             'name' => 'Admin',
             'username' => 'admin',
@@ -32,6 +32,7 @@ class UsersTableSeeder extends Seeder
             'profile' => 'default.jpg'
         ]);
         $admin->assignRole(Role::find(1));
+
         $alice = User::create([
             'name' => 'alice',
             'username' => 'alice',
@@ -40,7 +41,8 @@ class UsersTableSeeder extends Seeder
             'alamat' => 'Jl. Semangka',
             'password' => bcrypt('12345678')
         ]);
-        // set user roles ID = 2
+        $alice->assignRole(Role::find(1));
+
         $user = User::create([
             'name' => 'User',
             'username' => 'user',
@@ -50,7 +52,17 @@ class UsersTableSeeder extends Seeder
             'password' => bcrypt('secret'),
             'profile' => 'default.jpg'
         ]);
-        $alice->assignRole(Role::find(1));
         $user->assignRole(Role::find(2));
+
+        $project_manager = User::create([
+            'name' => 'Project Manager',
+            'username' => 'pm',
+            'email' => 'pm@pm.com',
+            'nomor_handphone' => '0869696969696',
+            'alamat' => 'Jl. PM',
+            'password' => bcrypt('secret'),
+            'profile' => 'default.jpg'
+        ]);
+        $project_manager->assignRole(Role::find(3));
     }
 }
