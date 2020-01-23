@@ -20,8 +20,8 @@ class DashboardController extends Controller
                 'total_pegawai_absen' => $total_pegawai_absen,
                 'total_pegawai_belum_absen' => $total_pegawai - $total_pegawai_absen,
                 'total_pegawai_lembur' => 'Belum dibuat model lembur nya',
-                'pegawai_sudah_absen' => Absensi::all()->take(5)->sortBy('absensi_masuk'),
-                'persetujuan_lembur' => 'Belum dibuat model lembur nya'
+                'pegawai_sudah_absen' => Absensi::all()->sortBy('absensi_masuk')->take(5),
+                'pegawai_minta_lembur' => 'Belum dibuat model lembur nya'
             ]
         ]);
     }
