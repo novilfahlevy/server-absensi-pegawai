@@ -16,7 +16,7 @@ use App\Helpers\ApiResponse;
 
 Route::post('auth/login', 'Api\UserController@login')->name('login');
 Route::get('unauthorized', 'Api\UserController@unauthorized')->name('unauthorized');
-
+Route::get('/absensi/laporan/export', 'Api\LaporanController@export');
 Route::group(['middleware' => ['auth:api']], function () {
     Route::post('auth/logout', 'Api\UserController@logout');
 
@@ -29,6 +29,7 @@ Route::group(['middleware' => ['auth:api']], function () {
         Route::get('/absensi', 'Api\AbsensiController@index');
         // Route::get('/absensi/{keterangan}', 'Api\AbsensiController@cari');
         Route::get('/absensi/laporan', 'Api\LaporanController@index');
+        Route::get('/absensi/laporan/cari/{month}/{year}', 'Api\LaporanController@cari');
     });
 
     Route::group(['middleware' => ['role:Admin|User']], function () {
