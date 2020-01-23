@@ -20,7 +20,11 @@ class CreateAbsensisTable extends Migration
             $table->time('absensi_masuk');
             $table->time('absensi_keluar')->nullable();
             $table->string('keterangan')->nullable();
+<<<<<<< HEAD
             $table->string('status');
+=======
+            $table->string('status')->nullable();
+>>>>>>> laporan
             $table->string('foto_absensi_masuk');
             $table->string('foto_absensi_keluar')->nullable();
             $table->string('latitude_absen_masuk');
