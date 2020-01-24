@@ -27,6 +27,7 @@ Route::group(['middleware' => ['auth:api']], function () {
         Route::get('/admin/waktuKerja', 'Api\WaktuKerjaController@index');
         Route::post('/admin/waktuKerja', 'Api\WaktuKerjaController@tambahWaktuKerja');
         Route::get('/absensi', 'Api\AbsensiController@index');
+        Route::get('/lembur', 'Api\LemburController@index');
 
         Route::get('/absensi/laporan', 'Api\LaporanController@index');
         Route::get('/absensi/laporan/cari/{month}/{year}', 'Api\LaporanController@cari');
@@ -39,7 +40,6 @@ Route::group(['middleware' => ['auth:api']], function () {
         Route::post('user/password', 'Api\UserController@editPassword');
         Route::post('user/edit', 'Api\UserController@editProfile');
         Route::get('/user/{id}', 'Api\UserController@show');
-        Route::get('/lembur', 'Api\LemburController@index');
     });
 
     Route::group(['middleware' => ['role:User|Project Manager']], function () {
