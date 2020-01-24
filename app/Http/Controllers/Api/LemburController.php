@@ -98,7 +98,6 @@ class LemburController extends Controller
         $detail_lembur = Lembur::findOrFail($id);
         $detail_lembur->user->name;
 
-
         return response()->json(['status' => 200, 'data' => [
             'detail_lembur' => $detail_lembur
         ]]);
