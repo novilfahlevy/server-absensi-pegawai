@@ -65,15 +65,13 @@ class LemburController extends Controller
         $lembur = new Lembur();
         $check_absensi_today = Absensi::where('user_id', '=', Auth::user()->id)->where('tanggal', '=', $carbon->toDateString())->first();
 
-        $check_lembur = Lembur::where('user_id', '=', Auth::user()->id)->where('absensi_id', '=', $check_absensi_today)->first();
-
-        dd($check_lembur);
+        $check_lembur = Lembur::where('user_id', '=', Auth::user()->id)->where('absensi_id', '=', $check_absensi_today['id'])->first();
 
         if ($check_absensi_today === null) {
             return response()->json(['status' => 400, 'message' => 'Anda belum absensi hari ini!']);
         }
 
-        if ($check_lembur > 1) {
+        if ($check_lembur !== null) {
             return response()->json(['status' => 400, 'message' => 'Anda sudah mengajukan lembur hari ini!']);
         }
 
@@ -82,6 +80,7 @@ class LemburController extends Controller
         $lembur->lembur_awal = $carbon->toTimeString();
         $lembur->lembur_akhir = $carbon->toTimeString();
         $lembur->konsumsi = 50000;
+        $lembur->keterangan = 'Lembur';
         $lembur->foto = 'lembur.jpg';
         $lembur->status = 'Menunggu';
         $lembur->save();
