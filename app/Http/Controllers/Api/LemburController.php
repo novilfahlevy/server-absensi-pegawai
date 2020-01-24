@@ -117,4 +117,11 @@ class LemburController extends Controller
 
         return response()->json(['status' => 200, 'message' => 'Berhasil update status lembur!']);
     }
+
+    public function show($id)
+    {
+        $detail_lembur = Lembur::findOrFail($id);
+
+        return response()->json(['status' => 200, 'data' => $detail_lembur]);
+    }
 }
