@@ -13,4 +13,9 @@ class Absensi extends Model
     {
         return $this->belongsTo('App\User');
     }
+
+    public function lembur()
+    {
+        return $this->belongsTo('App\Lembur');
+    }
 }
