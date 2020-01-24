@@ -13,6 +13,7 @@ use App\User;
 use App\Role;
 use Illuminate\Support\Facades\Storage;
 use Laravel\Passport\Passport;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class UserController extends Controller
 {
