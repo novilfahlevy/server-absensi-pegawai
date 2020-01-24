@@ -9,7 +9,6 @@ use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use App\Lembur;
-use App\User;
 use Illuminate\Support\Facades\File;
 use Intervention\Image\Facades\Image;
 
