@@ -22,6 +22,7 @@ class LemburController extends Controller
                     'lembur_awal' => '17:00:00',
                     'lembur_akhir' => '12:00:00',
                     'konsumsi' => 100000,
+                    'keterangan' => 'lembur',
                     'foto' => 'lembur.jpg',
                     'status' => 'Menunggu'
                 ],
@@ -31,6 +32,7 @@ class LemburController extends Controller
                     'lembur_awal' => '17:00:00',
                     'lembur_akhir' => '11:00:00',
                     'konsumsi' => 120000,
+                    'keterangan' => 'lembur',
                     'foto' => 'lembur.jpg',
                     'status' => 'Menunggu'
                 ],
@@ -40,6 +42,7 @@ class LemburController extends Controller
                     'lembur_awal' => '18:00:00',
                     'lembur_akhir' => '11:00:00',
                     'konsumsi' => 190000,
+                    'keterangan' => 'lembur',
                     'foto' => 'lembur.jpg',
                     'status' => 'Disetujui'
                 ],
@@ -60,15 +63,22 @@ class LemburController extends Controller
     {
         $carbon = new Carbon();
         $lembur = new Lembur();
-        $absensi_today = Absensi::where('tanggal', '=', $carbon->toDateString())->where('user_id', '=', Auth::user()->id)->get();
-        $check_lembur = Lembur::where('user_id', '=', Auth::user()->id)->where('');
+        $check_absensi_today = Absensi::where('user_id', '=', Auth::user()->id)->where('tanggal', '=', $carbon->toDateString())->first();
 
-        if (!$absensi_today) {
+        $check_lembur = Lembur::where('user_id', '=', Auth::user()->id)->where('absensi_id', '=', $check_absensi_today)->first();
+
+        dd($check_lembur);
+
+        if ($check_absensi_today === null) {
             return response()->json(['status' => 400, 'message' => 'Anda belum absensi hari ini!']);
         }
 
+        if ($check_lembur > 1) {
+            return response()->json(['status' => 400, 'message' => 'Anda sudah mengajukan lembur hari ini!']);
+        }
+
         $lembur->user_id = Auth::user()->id;
-        $lembur->absensi_id = $absensi_today->toArray()[0]['id'];
+        $lembur->absensi_id = $check_absensi_today['id'];
         $lembur->lembur_awal = $carbon->toTimeString();
         $lembur->lembur_akhir = $carbon->toTimeString();
         $lembur->konsumsi = 50000;
