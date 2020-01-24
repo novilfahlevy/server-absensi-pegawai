@@ -39,10 +39,12 @@ Route::group(['middleware' => ['auth:api']], function () {
         Route::post('user/password', 'Api\UserController@editPassword');
         Route::post('user/edit', 'Api\UserController@editProfile');
         Route::get('/user/{id}', 'Api\UserController@show');
+        Route::get('/lembur', 'Api\LemburController@index');
     });
 
     Route::group(['middleware' => ['role:User']], function () {
         Route::post('/user/absensiMasuk', 'Api\AbsensiController@absensiMasuk');
         Route::post('/user/absensiKeluar', 'Api\AbsensiController@absensiKeluar');
+        Route::post('/user/ajukanLembur', 'Api\LemburController@create');
     });
 });
