@@ -20,7 +20,7 @@ Route::get('/absensi/laporan/export', 'Api\LaporanController@export');
 Route::group(['middleware' => ['auth:api']], function () {
     Route::post('auth/logout', 'Api\UserController@logout');
 
-    Route::group(['middleware' => ['role:Admin']], function () {
+    Route::group(['middleware' => ['role:Admin|Project Manager']], function () {
         Route::get('/user', 'Api\UserController@index');
         Route::get('/user/cari/{name}', 'Api\UserController@cari');
         Route::post('/user/store', 'Api\UserController@store');
@@ -35,14 +35,14 @@ Route::group(['middleware' => ['auth:api']], function () {
         Route::get('/dashboard', 'Api\DashboardController@index');
     });
 
-    Route::group(['middleware' => ['role:Admin|User']], function () {
+    Route::group(['middleware' => ['role:Admin|User|Project Manager']], function () {
         Route::post('user/password', 'Api\UserController@editPassword');
         Route::post('user/edit', 'Api\UserController@editProfile');
         Route::get('/user/{id}', 'Api\UserController@show');
         Route::get('/lembur', 'Api\LemburController@index');
     });
 
-    Route::group(['middleware' => ['role:User']], function () {
+    Route::group(['middleware' => ['role:User|Project Manager']], function () {
         Route::post('/user/absensiMasuk', 'Api\AbsensiController@absensiMasuk');
         Route::post('/user/absensiKeluar', 'Api\AbsensiController@absensiKeluar');
         Route::post('/user/ajukanLembur', 'Api\LemburController@create');
