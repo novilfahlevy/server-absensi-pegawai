@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use Carbon\Carbon;
 use App\Absensi;
 use App\User;
+use App\Lembur;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
@@ -116,9 +117,9 @@ class LaporanController extends Controller
             $users_report[$i] = [
                 'name' => $user->name,
                 'total_jam_kerja' => array_sum($total_hours) . ' Jam',
-                'total_terlambat' => Absensi::where(['status' => 'terlambat', 'user_id' => $user->id])->get()->count() . ' Kali',
-                'total_tepat_waktu' => Absensi::where(['status' => 'tepat waktu', 'user_id' => $user->id])->get()->count() . ' Kali',
-                'total_lembur' => '7 Kali'
+                'total_terlambat' => count(DB::select(DB::raw("SELECT * FROM absensis WHERE MONTH(tanggal) = " . $current_month . " AND YEAR(tanggal) = " . $current_year . " AND status = 'terlambat' AND user_id = " . $user->id))) . ' Kali',
+                'total_tepat_waktu' => count(DB::select(DB::raw("SELECT * FROM absensis WHERE MONTH(tanggal) = " . $current_month . " AND YEAR(tanggal) = " . $current_year . " AND status = 'tepat waktu' AND user_id = " . $user->id))) . ' Kali',
+                'total_lembur' => count(DB::select(DB::raw("SELECT * FROM lemburs WHERE MONTH(tanggal) = " . $current_month . " AND YEAR(tanggal) = " . $current_year . " AND user_id = " . $user->id))) . ' Kali',
             ];
             $i++;
         }
