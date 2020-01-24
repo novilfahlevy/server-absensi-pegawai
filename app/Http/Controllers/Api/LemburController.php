@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Absensi;
+use App\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
@@ -13,48 +14,22 @@ class LemburController extends Controller
 {
     public function index()
     {
+        $lates = Lembur::all();
+        $latesStatusIsWaiting = Lembur::where('status', 'menunggu')->get();
+        $latesStatusIsDeniedRejected = Lembur::where('status', '!=', 'menunggu')->get();
+        foreach ($latesStatusIsWaiting as $key => $wait) {
+            $latesStatusIsWaiting[$key]['name'] = User::select('name')->where('id', $wait->user_id)->get()->toArray();
+            $latesStatusIsWaiting[$key]['name'] = $latesStatusIsWaiting[$key]['name'][0]['name'];
+        }
+        foreach ($latesStatusIsDeniedRejected as $key => $denied) {
+            $latesStatusIsDeniedRejected[$key]['name'] = User::select('name')->where('id', $denied->user_id)->get()->toArray();
+            $latesStatusIsDeniedRejected[$key]['name'] = $latesStatusIsDeniedRejected[$key]['name'][0]['name'];
+        }
         return response()->json([
             'status' => 200, 'message' => 'Sukses', 'data' =>
             [
-                [
-                    'user_id' => 1,
-                    'absensi_id' => 2,
-                    'lembur_awal' => '17:00:00',
-                    'lembur_akhir' => '12:00:00',
-                    'konsumsi' => 100000,
-                    'keterangan' => 'lembur',
-                    'foto' => 'lembur.jpg',
-                    'status' => 'Menunggu'
-                ],
-                [
-                    'user_id' => 2,
-                    'absensi_id' => 3,
-                    'lembur_awal' => '17:00:00',
-                    'lembur_akhir' => '11:00:00',
-                    'konsumsi' => 120000,
-                    'keterangan' => 'lembur',
-                    'foto' => 'lembur.jpg',
-                    'status' => 'Menunggu'
-                ],
-                [
-                    'user_id' => 3,
-                    'absensi_id' => 5,
-                    'lembur_awal' => '18:00:00',
-                    'lembur_akhir' => '11:00:00',
-                    'konsumsi' => 190000,
-                    'keterangan' => 'lembur',
-                    'foto' => 'lembur.jpg',
-                    'status' => 'Disetujui'
-                ],
-                [
-                    'user_id' => 4,
-                    'absensi_id' => 8,
-                    'lembur_awal' => '15:00:00',
-                    'lembur_akhir' => '04:00:00',
-                    'konsumsi' => 120000,
-                    'foto' => 'lembur.jpg',
-                    'status' => 'Ditolak'
-                ]
+                'waiting' => $latesStatusIsWaiting,
+                'others' => $latesStatusIsDeniedRejected
             ]
         ]);
     }
