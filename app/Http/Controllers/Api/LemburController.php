@@ -19,7 +19,7 @@ class LemburController extends Controller
                 [
                     'user_id' => 1,
                     'absensi_id' => 2,
-                    'lembur_awal' => '08:00:00',
+                    'lembur_awal' => '17:00:00',
                     'lembur_akhir' => '12:00:00',
                     'konsumsi' => 100000,
                     'foto' => 'lembur.jpg',
@@ -28,7 +28,7 @@ class LemburController extends Controller
                 [
                     'user_id' => 2,
                     'absensi_id' => 3,
-                    'lembur_awal' => '07:00:00',
+                    'lembur_awal' => '17:00:00',
                     'lembur_akhir' => '11:00:00',
                     'konsumsi' => 120000,
                     'foto' => 'lembur.jpg',
@@ -37,11 +37,20 @@ class LemburController extends Controller
                 [
                     'user_id' => 3,
                     'absensi_id' => 5,
-                    'lembur_awal' => '07:00:00',
+                    'lembur_awal' => '18:00:00',
                     'lembur_akhir' => '11:00:00',
                     'konsumsi' => 190000,
                     'foto' => 'lembur.jpg',
                     'status' => 'Disetujui'
+                ],
+                [
+                    'user_id' => 4,
+                    'absensi_id' => 8,
+                    'lembur_awal' => '15:00:00',
+                    'lembur_akhir' => '04:00:00',
+                    'konsumsi' => 120000,
+                    'foto' => 'lembur.jpg',
+                    'status' => 'Ditolak'
                 ]
             ]
         ]);
