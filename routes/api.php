@@ -20,6 +20,10 @@ Route::get('/absensi/laporan/export', 'Api\LaporanController@export');
 Route::group(['middleware' => ['auth:api']], function () {
     Route::post('auth/logout', 'Api\UserController@logout');
 
+    Route::group(['middleware' => ['role:Admin']], function () {
+        Route::post('/user/destroy/{id}', 'Api\UserController@destroy');
+    });
+
     Route::group(['middleware' => ['role:Admin|Project Manager']], function () {
         Route::get('/user', 'Api\UserController@index');
         Route::get('/user/cari/{name}', 'Api\UserController@cari');
@@ -41,10 +45,6 @@ Route::group(['middleware' => ['auth:api']], function () {
         Route::post('user/password', 'Api\UserController@editPassword');
         Route::post('user/edit', 'Api\UserController@editProfile');
         Route::get('/user/{id}', 'Api\UserController@show');
-    });
-
-    Route::group(['middleware' => ['role:Admin']], function () {
-        Route::post('/user/destroy/{id}', 'Api\UserController@destroy');
     });
 
     Route::group(['middleware' => ['role:User|Project Manager']], function () {
