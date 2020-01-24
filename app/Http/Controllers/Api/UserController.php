@@ -173,6 +173,14 @@ class UserController extends Controller
         return response()->json(['code' => 400, 'message' => 'Kata yang anda cari tidak ditemukan']);
     }
 
+    public function destroy($id)
+    {
+        $user = User::findOrFail($id);
+        $user->delete();
+
+        return response()->json(['status' => 200, 'message' => 'Berhasil menghapus user!']);
+    }
+
     public function unauthorized()
     {
         return response()->json(['status' => 'Unauthorized'], 401);
