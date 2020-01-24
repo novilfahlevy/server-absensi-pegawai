@@ -21,7 +21,7 @@ class CreateLembursTable extends Migration
             $table->time('lembur_akhir');
             $table->integer('konsumsi');
             $table->string('foto');
-            $table->boolean('status');
+            $table->string('status');
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
