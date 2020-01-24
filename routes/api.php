@@ -28,6 +28,7 @@ Route::group(['middleware' => ['auth:api']], function () {
         Route::post('/admin/waktuKerja', 'Api\WaktuKerjaController@tambahWaktuKerja');
         Route::get('/absensi', 'Api\AbsensiController@index');
         Route::get('/lembur', 'Api\LemburController@index');
+        Route::post('/lembur/{id}', 'Api\LemburController@edit');
 
         Route::get('/absensi/laporan', 'Api\LaporanController@index');
         Route::get('/absensi/laporan/cari/{month}/{year}', 'Api\LaporanController@cari');

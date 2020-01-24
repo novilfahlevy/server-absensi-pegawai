@@ -110,4 +110,11 @@ class LemburController extends Controller
 
         return response()->json(['status' => 200, 'message' => 'Berhasil lembur!. Mohon tunggu admin untuk mempersetujuinya.']);
     }
+
+    public function edit(Request $request, $id)
+    {
+        Lembur::where('id', '=', $id)->update(['status' => $request->status]);
+
+        return response()->json(['status' => 200, 'message' => 'Berhasil update status lembur!']);
+    }
 }
