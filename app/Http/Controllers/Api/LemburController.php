@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use App\Lembur;
+use App\User;
 use Illuminate\Support\Facades\File;
 use Intervention\Image\Facades\Image;
 
@@ -96,7 +97,11 @@ class LemburController extends Controller
     public function show($id)
     {
         $detail_lembur = Lembur::findOrFail($id);
+        $detail_lembur->user->name;
 
-        return response()->json(['status' => 200, 'data' => $detail_lembur]);
+
+        return response()->json(['status' => 200, 'data' => [
+            'detail_lembur' => $detail_lembur
+        ]]);
     }
 }
