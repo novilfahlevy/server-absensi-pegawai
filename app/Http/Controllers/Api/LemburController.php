@@ -9,9 +9,18 @@ use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use App\Lembur;
+use Illuminate\Support\Facades\File;
+use Intervention\Image\Facades\Image;
 
 class LemburController extends Controller
 {
+    protected $imagePath;
+
+    public function __construct()
+    {
+        $this->imagePath = public_path() . '/storage/lembur/';
+    }
+
     public function index()
     {
         $lates = Lembur::all();
@@ -34,7 +43,7 @@ class LemburController extends Controller
         ]);
     }
 
-    public function create()
+    public function create(Request $request)
     {
         $carbon = new Carbon();
         $lembur = new Lembur();
@@ -50,6 +59,19 @@ class LemburController extends Controller
             return response()->json(['status' => 400, 'message' => 'Anda sudah mengajukan lembur hari ini!']);
         }
 
+        if (!File::isDirectory($this->imagePath)) {
+            File::makeDirectory($this->imagePath);
+        }
+
+        $input = $request->file('foto');
+        $hashNameImage = time() . '_' . $input->getClientOriginalName();
+        $canvas = Image::canvas(500, 500);
+        $resizeImage = Image::make($input)->resize(500, 500, function ($constraint) {
+            $constraint->aspectRatio();
+        });
+        $canvas->insert($resizeImage, 'center');
+        $canvas->save($this->imagePath . '/' . $hashNameImage);
+
         $lembur->user_id = Auth::user()->id;
         $lembur->absensi_id = $check_absensi_today['id'];
         $lembur->tanggal = $carbon->toDateString();
@@ -57,10 +79,24 @@ class LemburController extends Controller
         $lembur->lembur_akhir = $carbon->toTimeString();
         $lembur->konsumsi = 50000;
         $lembur->keterangan = 'Lembur';
-        $lembur->foto = 'lembur.jpg';
+        $lembur->foto = $hashNameImage;
         $lembur->status = 'Menunggu';
         $lembur->save();
 
         return response()->json(['status' => 200, 'message' => 'Berhasil lembur!. Mohon tunggu admin untuk mempersetujuinya.']);
+    }
+
+    public function edit(Request $request, $id)
+    {
+        Lembur::where('id', '=', $id)->update(['status' => $request->status]);
+
+        return response()->json(['status' => 200, 'message' => 'Berhasil update status lembur!']);
+    }
+
+    public function show($id)
+    {
+        $detail_lembur = Lembur::findOrFail($id);
+
+        return response()->json(['status' => 200, 'data' => $detail_lembur]);
     }
 }
