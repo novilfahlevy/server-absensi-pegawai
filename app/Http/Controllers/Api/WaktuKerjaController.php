@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\WaktuKerja;
-use Illuminate\Support\Facades\DB;
 
 class WaktuKerjaController extends Controller
 {
