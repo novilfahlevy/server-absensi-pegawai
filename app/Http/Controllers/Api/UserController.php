@@ -162,6 +162,14 @@ class UserController extends Controller
         return response()->json(['status' => 200, 'message' => 'Profil anda telah di update', 'data' => url($profileimagepath)]);
     }
 
+    public function editKredensial(Request $request, $id)
+    {
+        $user = User::find($id);
+        $user->fill($request->all())->save();
+
+        return response()->json(['status' => 200, 'message' => 'Berhasil edit kredensial!', 'data' => $user]);
+    }
+
     public function cari($name)
     {
 
