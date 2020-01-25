@@ -22,6 +22,7 @@ Route::group(['middleware' => ['auth:api']], function () {
 
     Route::group(['middleware' => ['role:Admin']], function () {
         Route::post('/user/destroy/{id}', 'Api\UserController@destroy');
+        Route::post('/user/edit/{id}', 'Api\UserController@editKredensial');
     });
 
     Route::group(['middleware' => ['role:Admin|Project Manager']], function () {
