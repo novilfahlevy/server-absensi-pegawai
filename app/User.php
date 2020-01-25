@@ -19,7 +19,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'username', 'email', 'nomor_handphone', 'alamat', 'profile_imgpath', 'password', 'deleted_at'
+        'jobdesc_id', 'name', 'username', 'email', 'nomor_handphone', 'alamat', 'profile_imgpath', 'password', 'deleted_at'
     ];
 
     protected $dates = ['deleted_at'];

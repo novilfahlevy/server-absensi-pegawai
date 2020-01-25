@@ -11,6 +11,7 @@ use App\Http\Requests\RegisterUserRequest;
 use Intervention\Image\Facades\Image;
 use App\User;
 use App\Role;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Laravel\Passport\Passport;
 use Illuminate\Database\Eloquent\SoftDeletes;
