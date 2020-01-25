@@ -11,10 +11,8 @@ use App\Http\Requests\RegisterUserRequest;
 use Intervention\Image\Facades\Image;
 use App\User;
 use App\Role;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Laravel\Passport\Passport;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class UserController extends Controller
 {
@@ -39,9 +37,8 @@ class UserController extends Controller
                 'total_lembur' => 7
             ]
         ];
-        return response()->json(['status' => '200', 'message' => 'sukses', 'user' => $user]);
+        return response()->json(['status' => '200', 'message' => 'Sukses', 'user' => $user]);
     }
-
 
     public function login()
     {
@@ -65,7 +62,7 @@ class UserController extends Controller
     {
         $request->user()->token()->revoke();
 
-        return response()->json(['message' => 'Logout berhasil']);
+        return response()->json(['message' => 'Logout berhasil!']);
     }
 
     public function store(RegisterUserRequest $request)
@@ -88,8 +85,8 @@ class UserController extends Controller
                 'new_password' => ['required'],
             ],
             [
-                'current_password.required' => 'masukkan password anda terlebih dahulu',
-                'new_password.required' => 'masukkan password baru anda terlebih daulu',
+                'current_password.required' => 'Masukkan password anda terlebih dahulu!',
+                'new_password.required' => 'Masukkan password baru anda terlebih daulu!',
             ]
         );
 
@@ -99,10 +96,10 @@ class UserController extends Controller
         ]);
 
         if ($user) {
-            return response()->json(['code' => 200, 'message' => 'Berhasil mengganti password', 'data' => $user]);
+            return response()->json(['code' => 200, 'message' => 'Berhasil mengganti password!', 'data' => $user]);
         }
 
-        return response()->json(['code' => 400, 'message' => 'your current passwor was wrong']);
+        return response()->json(['code' => 400, 'message' => 'Password sekarang anda salah!']);
     }
 
     public function editProfile(Request $request)
@@ -112,10 +109,10 @@ class UserController extends Controller
                 'profile' => 'required|image|mimes:jpeg,png,svg|max:2048',
             ],
             [
-                'profile.required' => 'Masukkan gambar terlebih dahulu',
-                'profile.image' => 'File yang harus dimasukkan harus gambar',
-                'profile.mimes' => 'Extensi gambar yang anda masukan tidak dapat digunakan',
-                'profile.max' => 'Profile anda sudah melebihi batas ukuran'
+                'profile.required' => 'Masukkan gambar terlebih dahulu!',
+                'profile.image' => 'File harus gambar!',
+                'profile.mimes' => 'Ekstensi gambar tidak valid!',
+                'profile.max' => 'Profile anda sudah melebihi batas ukuran!'
             ]
         );
 
@@ -144,7 +141,7 @@ class UserController extends Controller
             $user->profile = $filenameToStore;
             $user->save();
 
-            return response()->json(['status' => 200, 'message' => 'Profil anda telah di update', 'data' => url($profileimageUrl)]);
+            return response()->json(['status' => 200, 'message' => 'Profil anda berhasil diupdate!', 'data' => url($profileimageUrl)]);
         }
 
         $profileimagepath = public_path() . '/storage/profiles/';
@@ -160,7 +157,7 @@ class UserController extends Controller
         $user->profile = $filenameToStore;
         $user->save();
 
-        return response()->json(['status' => 200, 'message' => 'Profil anda telah di update', 'data' => url($profileimagepath)]);
+        return response()->json(['status' => 200, 'message' => 'Profil anda berhasil diupdate!', 'data' => url($profileimagepath)]);
     }
 
     public function editKredensial(Request $request, $id)
@@ -177,10 +174,10 @@ class UserController extends Controller
         $user = User::where('name', 'LIKE', '%' . $name . '%')->get();
 
         if (!$user->isEmpty()) {
-            return response()->json(['code' => 200, 'message' => 'berhasil mencari data', 'data' => $user]);
+            return response()->json(['code' => 200, 'message' => 'Berhasil mencari data!', 'data' => $user]);
         }
 
-        return response()->json(['code' => 400, 'message' => 'Kata yang anda cari tidak ditemukan']);
+        return response()->json(['code' => 400, 'message' => 'Kata yang anda cari tidak ditemukan!']);
     }
 
     public function destroy($id)

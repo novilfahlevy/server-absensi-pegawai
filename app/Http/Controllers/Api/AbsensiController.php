@@ -11,8 +11,6 @@ use Illuminate\Support\Facades\File;
 use Intervention\Image\Facades\Image;
 use App\Http\Requests\AbsensiMasukRequest;
 use App\User;
-use GuzzleHttp\Psr7\Request;
-use Illuminate\Support\Facades\DB;
 
 class AbsensiController extends Controller
 {
@@ -105,7 +103,7 @@ class AbsensiController extends Controller
         $this->absensi->longitude_absen_masuk = '1.111';
         $this->absensi->save();
 
-        return response()->json(['status' => 200, 'message' => 'Berhasil absensi masuk', 'data' => $this->absensi]);
+        return response()->json(['status' => 200, 'message' => 'Berhasil absensi masuk!', 'data' => $this->absensi]);
     }
 
     public function absensiKeluar(AbsensiKeluarRequest $request)
@@ -117,12 +115,12 @@ class AbsensiController extends Controller
         $check_attendance_in = Absensi::where('user_id', '=', Auth::user()->id)->where('tanggal', '=', $this->carbon->now()->format('d F Y'))->get();
 
         if ($check_attendance_in->isEmpty()) {
-            return response()->json(['message' => 'Anda belum absen masuk']);
+            return response()->json(['message' => 'Anda belum absensi masuk!']);
         } else {
             $check_attendance_out = Absensi::where('user_id', '=', Auth::user()->id)->where('tanggal', '=', $this->carbon->now()->format('d F Y'))->where('absensi_keluar', '!=', null)->get();
 
             if (!$check_attendance_out->isEmpty()) {
-                return response()->json(['message' => 'Anda sudah absensi keluar']);
+                return response()->json(['message' => 'Anda sudah absensi keluar!']);
             }
 
             $input = $request->file('foto_absensi_keluar');
@@ -138,7 +136,7 @@ class AbsensiController extends Controller
 
             $data = Absensi::where(['user_id' => Auth::user()->id, 'tanggal' => $this->carbon->now()->format('d F Y')])->first();
 
-            return response()->json(['status' => 200, 'message' => 'Berhasil absensi keluar', 'data' => $data]);
+            return response()->json(['status' => 200, 'message' => 'Berhasil absensi keluar!', 'data' => $data]);
         }
     }
 }
