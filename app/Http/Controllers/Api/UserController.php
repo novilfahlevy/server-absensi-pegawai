@@ -29,7 +29,8 @@ class UserController extends Controller
         return response()->json(['status' => '200', 'message' => 'Sukses', 'user' => $users]);
     }
 
-    public function filter(Request $request) {
+    public function filter(Request $request)
+    {
         $users = User::all();
 
         foreach ($users as $key => $user) {
@@ -37,16 +38,16 @@ class UserController extends Controller
             $users[$key]['role'] = Role::find($user->id)['name'];
         }
 
-        $users = $users->filter(function($data) use ($request) {
-            if ( $request->job !== 'all' && $request->role !== 'all' ) {
+        $users = $users->filter(function ($data) use ($request) {
+            if ($request->job !== 'all' && $request->role !== 'all') {
                 return $data->job === $request->job && $data->role === $request->role;
             }
 
-            if ( $request->job !== 'all' ) {
+            if ($request->job !== 'all') {
                 return $data->job === $request->job;
             }
 
-            if ( $request->role !== 'all' ) {
+            if ($request->role !== 'all') {
                 return $data->role === $request->role;
             }
 
