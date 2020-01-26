@@ -33,10 +33,10 @@ Route::group(['middleware' => ['auth:api']], function () {
         Route::get('/admin/waktuKerja', 'Api\WaktuKerjaController@index');
         Route::post('/admin/waktuKerja', 'Api\WaktuKerjaController@tambahWaktuKerja');
         Route::get('/absensi', 'Api\AbsensiController@index');
-        Route::get('/lembur', 'Api\LemburController@index');
+        Route::get('/lembur/{role}/{id}', 'Api\LemburController@index');
         Route::post('/lembur/{id}', 'Api\LemburController@edit');
         Route::get('/lembur/{id}/detail', 'Api\LemburController@show');
-
+        Route::get('/lembur/filter/{role}/{id}/{month}/{year}', 'Api\LemburController@filter');
         Route::get('/absensi/laporan', 'Api\LaporanController@index');
         Route::get('/absensi/laporan/cari/{month}/{year}', 'Api\LaporanController@cari');
         Route::get('/absensi/{id}/detail', 'Api\AbsensiController@show');

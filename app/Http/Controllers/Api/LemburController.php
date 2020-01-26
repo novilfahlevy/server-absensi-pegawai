@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Auth;
 use App\Lembur;
 use Illuminate\Support\Facades\File;
 use Intervention\Image\Facades\Image;
+use Illuminate\Support\Facades\DB;
+use App\ProjectManager;
 
 class LemburController extends Controller
 {
@@ -20,12 +22,32 @@ class LemburController extends Controller
     {
         $this->imagePath = public_path() . '/storage/lembur/';
     }
-
-    public function index()
+    public function filter($month, $year)
     {
+        $results =  DB::select(DB::raw("SELECT * FROM lemburs WHERE MONTH(tanggal) = " . $month . " AND YEAR(tanggal) = " . $year . " AND status != 'waiting' "));
+        foreach ($results as $key => $result) {
+            $results[$key]->name = User::select('name')->where('id', $result->user_id)->get()->toArray();
+            $results[$key]->name = $results[$key]->name[0]['name'];
+        }
+        return response()->json(['status' => 200, 'message' => 'Berhasil lembur!. Mohon tunggu admin untuk mempersetujuinya.', 'data' => $results]);
+    }
+    public function index($role, $id)
+    {
+        $carbon = new Carbon();
         $lates = Lembur::all();
-        $latesStatusIsWaiting = Lembur::where('status', 'menunggu')->get();
-        $latesStatusIsDeniedRejected = Lembur::where('status', '!=', 'menunggu')->get();
+        $latesStatusIsWaiting = [];
+        $latesStatusIsDeniedRejected = [];
+        if ($role == 'Project Manager') {
+            $users = ProjectManager::where('pm_id', $id)->get();
+            $lemburs = [];
+            foreach ($users as $key => $user) {
+                $lemburs[$key] = Lembur::where('user_id', $user->id)->get();
+            }
+            dd(count($lemburs[0]));
+        } else {
+            $latesStatusIsWaiting = Lembur::where('status', 'menunggu')->where('tanggal', $carbon->now()->toDateString())->get();
+            $latesStatusIsDeniedRejected = Lembur::where('status', '!=', 'menunggu')->get();
+        }
         foreach ($latesStatusIsWaiting as $key => $wait) {
             $latesStatusIsWaiting[$key]['name'] = User::select('name')->where('id', $wait->user_id)->get()->toArray();
             $latesStatusIsWaiting[$key]['name'] = $latesStatusIsWaiting[$key]['name'][0]['name'];
