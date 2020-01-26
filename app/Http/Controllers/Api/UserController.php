@@ -77,7 +77,6 @@ class UserController extends Controller
     public function store(RegisterUserRequest $request)
     {
         $input = $request->all();
-        $input['jobdesc_id'] = 1;
         $input['username'] = strtolower($request->username);
         $input['profile'] = 'default.jpg';
         $input['password'] = bcrypt($input['password']);
