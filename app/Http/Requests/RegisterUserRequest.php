@@ -28,29 +28,38 @@ class RegisterUserRequest extends FormRequest
     {
         return [
             'name' => 'required|max:100',
+            'jobdesc_id' => 'required|numeric',
+            'username' => 'required|unique:users',
             'email' => 'required|email|unique:users,email',
-            'password' => 'required',
+            'nomor_handphone' => 'required|numeric|unique:users',
+            'alamat' => 'required',
             'profile' => 'image|mimes:jpeg,png,svg|max:1024',
+            'password' => 'required',
         ];
     }
     public function messages()
     {
         return [
-            'name.required' => 'Nama tidak boleh kosong',
-            'name.max' => 'karakter sudah melebihi batas maksimal',
-            'email.required' => 'Email tidak boleh kosong',
-            'email.email' => 'Format email yang anda masukan salah',
-            'email.unique' => 'Email ini telah ada sebelumnya',
-            'password.required' => 'Password tidak boleh kosong',
-            'profile.image' => 'File yang harus dimasukkan harus gambar',
-            'profile.mimes' => 'Extensi gambar yang anda masukan tidak dapat digunakan',
+            'name.required' => 'Nama tidak boleh kosong!',
+            'name.max' => 'Karakter sudah melebihi batas maksimal!',
+            'username.required' => 'Username tidak boleh kosong!',
+            'username.unique' => 'Username telah digunakan!',
+            'email.required' => 'Email tidak boleh kosong!',
+            'email.email' => 'Format email yang anda masukan salah!',
+            'email.unique' => 'Email telah digunakan!',
+            'nomor_handphone.required' => 'Nomor handphone tidak boleh kosong!',
+            'nomor_handphone.numeric' => 'Nomor handphone harus angka!',
+            'nomor_handphone.unique' => 'Nomor handphone telah digunakan!',
+            'password.required' => 'Password tidak boleh kosong!',
+            'profile.image' => 'File harus gambar',
+            'profile.mimes' => 'Ekstensi gambar yang anda masukan tidak dapat digunakan!',
         ];
     }
 
     protected function failedValidation(Validator $validator)
     {
         throw new HttpResponseException(
-            response()->json($validator->errors(),422)
+            response()->json($validator->errors(), 422)
         );
     }
 }
