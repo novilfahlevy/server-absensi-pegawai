@@ -8,6 +8,7 @@ use App\Rules\MatchOldPassword;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\RegisterUserRequest;
+use App\Jobdesc;
 use Intervention\Image\Facades\Image;
 use App\User;
 use App\Role;
@@ -18,9 +19,13 @@ class UserController extends Controller
 {
     public function index()
     {
-        $user = User::all();
+        $users = User::all();
 
-        return response()->json(['status' => '200', 'message' => 'Sukses', 'user' => $user]);
+        foreach ($users as $key => $user) {
+            $users[$key]['job'] = Jobdesc::find($user->jobdesc_id);
+        }
+
+        return response()->json(['status' => '200', 'message' => 'Sukses', 'user' => $users]);
     }
 
     public function show($id)

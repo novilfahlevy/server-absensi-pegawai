@@ -15,7 +15,7 @@ class CreateJobdescsTable extends Migration
     {
         Schema::create('jobdescs', function (Blueprint $table) {
             $table->bigIncrements('id')->unsigned();
-            $table->string('nama_jobdesc');
+            $table->string('name');
             $table->timestamps();
         });
     }

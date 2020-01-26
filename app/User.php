@@ -51,4 +51,9 @@ class User extends Authenticatable
     {
         return $this->hasOne('App\Lembur');
     }
+
+    public function job()
+    {
+        return $this->hasOne('App\Jobdesc');
+    }
 }
