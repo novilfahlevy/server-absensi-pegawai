@@ -31,22 +31,10 @@ class UsersTableSeeder extends Seeder
             'alamat' => 'Jl. Semangka',
             'password' => bcrypt('secret'),
             'profile' => 'default.jpg'
-            ]);
-            $admin->assignRole(Role::find(1));
-            
-            $alice = User::create([
-            'name' => 'alice',
-            'jobdesc_id' => 3,
-            'username' => 'alice',
-            'email' => 'alice@gmail.com',
-            'nomor_handphone' => '082138173918',
-            'alamat' => 'Jl. Semangka',
-            'password' => bcrypt('12345678'),
-            'profile' => 'default.jpg'
-            ]);
-            $alice->assignRole(Role::find(1));
-            
-            $user = User::create([
+        ]);
+        $admin->assignRole(Role::find(1));
+
+        $user = User::create([
             'name' => 'User',
             'jobdesc_id' => 2,
             'username' => 'user',
