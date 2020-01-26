@@ -89,7 +89,6 @@ class LemburController extends Controller
     public function edit(Request $request, $id)
     {
         Lembur::where('id', '=', $id)->update(['status' => $request->status]);
-
         return response()->json(['status' => 200, 'message' => 'Berhasil update status lembur!']);
     }
 
@@ -97,8 +96,6 @@ class LemburController extends Controller
     {
         $detail_lembur = Lembur::findOrFail($id);
         $detail_lembur->user->name;
-
-
         return response()->json(['status' => 200, 'data' => [
             'detail_lembur' => $detail_lembur
         ]]);
