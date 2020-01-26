@@ -41,6 +41,10 @@ Route::group(['middleware' => ['auth:api']], function () {
         Route::get('/absensi/{id}/detail', 'Api\AbsensiController@show');
         Route::get('/absensi/{keyword}', 'Api\AbsensiController@cari');
         Route::get('/dashboard', 'Api\DashboardController@index');
+
+        Route::get('/user/pm/{id}', 'Api\ProjectManagerController@index');
+        Route::post('/user/pm', 'Api\ProjectManagerController@store');
+        Route::delete('/user/pm/{pm_id}/{user_id}', 'Api\ProjectManagerController@destroy');
     });
 
     Route::group(['middleware' => ['role:Admin|User|Project Manager']], function () {

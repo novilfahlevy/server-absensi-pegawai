@@ -22,7 +22,7 @@ class UserController extends Controller
         $users = User::all();
 
         foreach ($users as $key => $user) {
-            $users[$key]['job'] = Jobdesc::find($user->jobdesc_id);
+            $users[$key]['job'] = Jobdesc::find($user->jobdesc_id)->name;
         }
 
         return response()->json(['status' => '200', 'message' => 'Sukses', 'user' => $users]);
