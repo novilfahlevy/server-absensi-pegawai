@@ -74,7 +74,7 @@ class AbsensiController extends Controller
 
     public function absensiMasuk(AbsensiMasukRequest $request)
     {
-        $check_duplicate_data = Absensi::where(['user_id' => Auth::user()->id, 'tanggal' => $this->carbon->now()->format('d F Y')])->count();
+        $check_duplicate_data = Absensi::where(['user_id' => Auth::user()->id, 'tanggal' => $this->carbon->toDateString()])->count();
 
         if ($check_duplicate_data > 0) {
             return response()->json(['message' => 'Anda sudah absensi masuk!']);
@@ -94,8 +94,8 @@ class AbsensiController extends Controller
         $canvas->save($this->imagePath . '/' . $hashNameImage);
 
         $this->absensi->user_id = Auth::user()->id;
-        $this->absensi->tanggal = $this->carbon->now()->format('d F Y');
-        $this->absensi->absensi_masuk = $this->carbon->now()->format('H:i');
+        $this->absensi->tanggal = $this->carbon->toDateString();
+        $this->absensi->absensi_masuk = $this->carbon->toTimeString();
         $this->absensi->keterangan = request('keterangan');
         $this->absensi->status = 'tepat waktu';
         $this->absensi->foto_absensi_masuk = $hashNameImage;
@@ -117,7 +117,7 @@ class AbsensiController extends Controller
         if ($check_attendance_in->isEmpty()) {
             return response()->json(['message' => 'Anda belum absensi masuk!']);
         } else {
-            $check_attendance_out = Absensi::where('user_id', '=', Auth::user()->id)->where('tanggal', '=', $this->carbon->now()->format('d F Y'))->where('absensi_keluar', '!=', null)->get();
+            $check_attendance_out = Absensi::where('user_id', '=', Auth::user()->id)->where('tanggal', '=', $this->carbon->toDateString())->where('absensi_keluar', '!=', null)->get();
 
             if (!$check_attendance_out->isEmpty()) {
                 return response()->json(['message' => 'Anda sudah absensi keluar!']);
@@ -132,9 +132,9 @@ class AbsensiController extends Controller
             $canvas->insert($resizeImage, 'center');
             $canvas->save($this->imagePath . '/' . $hashNameImage);
 
-            $this->absensi->where(['user_id' => Auth::user()->id, 'tanggal' => $this->carbon->now()->format('d F Y')])->update(['absensi_keluar' => $this->carbon->now()->format('H:i'), 'foto_absensi_keluar' => $hashNameImage, 'keterangan' => request('keterangan'), 'latitude_absen_keluar' => '1.111', 'longitude_absen_keluar' => '1.111']);
+            $this->absensi->where(['user_id' => Auth::user()->id, 'tanggal' => $this->carbon->toDateString()])->update(['absensi_keluar' => $this->carbon->toTimeString(), 'foto_absensi_keluar' => $hashNameImage, 'keterangan' => request('keterangan'), 'latitude_absen_keluar' => '1.111', 'longitude_absen_keluar' => '1.111']);
 
-            $data = Absensi::where(['user_id' => Auth::user()->id, 'tanggal' => $this->carbon->now()->format('d F Y')])->first();
+            $data = Absensi::where(['user_id' => Auth::user()->id, 'tanggal' => $this->carbon->toDateString()])->first();
 
             return response()->json(['status' => 200, 'message' => 'Berhasil absensi keluar!', 'data' => $data]);
         }
