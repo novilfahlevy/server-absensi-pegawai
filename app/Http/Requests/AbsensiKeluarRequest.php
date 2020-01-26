@@ -31,10 +31,10 @@ class AbsensiKeluarRequest extends FormRequest
     public function messages()
     {
         return [
-            'foto_absensi_keluar.required' => 'Masukkan gambar terlebih dahulu',
-            'foto_absensi_keluar.image' => 'File yang harus dimasukkan harus gambar',
-            'foto_absensi_keluar.mimes' => 'Extensi gambar yang anda masukan tidak dapat digunakan',
-            'foto_absensi_keluar.max' => 'Profile anda sudah melebihi batas ukuran'
+            'foto_absensi_keluar.required' => 'Masukkan gambar terlebih dahulu!',
+            'foto_absensi_keluar.image' => 'File harus gambar!',
+            'foto_absensi_keluar.mimes' => 'Ekstensi gambar yang anda masukan tidak dapat digunakan!',
+            'foto_absensi_keluar.max' => 'Foto melebihi batas ukuran!'
         ];
     }
 }

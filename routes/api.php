@@ -22,10 +22,12 @@ Route::group(['middleware' => ['auth:api']], function () {
 
     Route::group(['middleware' => ['role:Admin']], function () {
         Route::post('/user/destroy/{id}', 'Api\UserController@destroy');
+        Route::post('/user/edit/{id}', 'Api\UserController@editKredensial');
     });
 
     Route::group(['middleware' => ['role:Admin|Project Manager']], function () {
         Route::get('/user', 'Api\UserController@index');
+        Route::get('/user/filter/{job}/{role}', 'Api\UserController@filter');
         Route::get('/user/cari/{name}', 'Api\UserController@cari');
         Route::post('/user/store', 'Api\UserController@store');
         Route::get('/admin/waktuKerja', 'Api\WaktuKerjaController@index');
@@ -40,6 +42,15 @@ Route::group(['middleware' => ['auth:api']], function () {
         Route::get('/absensi/{id}/detail', 'Api\AbsensiController@show');
         Route::get('/absensi/{keyword}', 'Api\AbsensiController@cari');
         Route::get('/dashboard', 'Api\DashboardController@index');
+
+        Route::get('/user/pm', 'Api\ProjectManagerController@showPegawai');
+        Route::get('/user/pm/filter/member/{id}/{job}', 'Api\ProjectManagerController@filterMember');
+        Route::get('/user/pm/filter/pegawai/{job}', 'Api\ProjectManagerController@filterPegawai');
+        Route::get('/user/{id}/pm', 'Api\ProjectManagerController@index');
+        Route::post('/user/pm', 'Api\ProjectManagerController@store');
+        Route::delete('/user/pm/{pm_id}/{user_id}', 'Api\ProjectManagerController@destroy');
+
+        Route::get('/job', 'Api\JobdescController@index');
     });
 
     Route::group(['middleware' => ['role:Admin|User|Project Manager']], function () {

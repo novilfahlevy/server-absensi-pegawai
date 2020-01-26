@@ -5,12 +5,8 @@ namespace App\Http\Controllers\Api;
 use Carbon\Carbon;
 use App\Absensi;
 use App\User;
-use App\Lembur;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
-use App\Exports\LaporanViewExport;
-use Maatwebsite\Excel\Facades\Excel;
 
 class LaporanController extends Controller
 {
