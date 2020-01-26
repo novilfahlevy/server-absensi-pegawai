@@ -86,15 +86,24 @@ class ProjectManagerController extends Controller
 
     public function store(Request $request) {
         foreach ( json_decode($request->users) as $user ) {
-            $pm = new ProjectManager();
+            $checkMemberOfPM = !ProjectManager::where('pm_id', '=', $request->pm)
+                ->where('user_id', '=', $user)
+                ->get()
+                ->count();
 
-            $pm->pm_id = $request->pm;
-            $pm->user_id = $user;
-
-            $pm->save();
+            if ( $checkMemberOfPM ) {
+                $pm = new ProjectManager();
+    
+                $pm->pm_id = $request->pm;
+                $pm->user_id = $user;
+    
+                $pm->save();
+            } 
+            else {
+                return response()->json(['status' => 400, 'message' => 'Gagal menambah anggota']);
+            }
         }
-
-        return response()->json(['status' => 200, 'message' => 'Berhasil menambahkan pegawai']);
+        return response()->json(['status' => 200, 'message' => 'Berhasil menambahkan anggota']);
     }
 
     public function destroy($pm_id, $user_id) {
