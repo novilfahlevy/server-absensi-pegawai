@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Jobdesc;
 use App\ProjectManager;
+use App\Role;
 use App\User;
 
 class ProjectManagerController extends Controller
@@ -25,6 +26,20 @@ class ProjectManagerController extends Controller
             'status' => 200, 
             'data' => $users
         ]);
+    }
+
+    public function showPegawai() {
+        $users = [];
+
+        foreach ( User::all() as $user ) {
+            if ( !ProjectManager::where('user_id', '=', $user->id)->orWhere('pm_id', '=', $user->id)->get()->count() ) {
+                $newUser = User::find($user->id);
+                $newUser['job'] = Jobdesc::find($user->jobdesc_id)->name;
+                $users[] = $newUser;
+            }
+        }
+
+        return response()->json(['status' => 200, 'data' => $users]);
     }
 
     public function store(Request $request) {

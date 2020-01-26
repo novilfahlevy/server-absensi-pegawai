@@ -23,10 +23,7 @@ class UserController extends Controller
 
         foreach ($users as $key => $user) {
             $users[$key]['job'] = Jobdesc::find($user->jobdesc_id)->name;
-        }
-
-        foreach ($users as $key => $user) {
-            $users[$key]['role'] = Role::find($user->id);
+            $users[$key]['role'] = Role::find($user->id)['name'];
         }
 
         return response()->json(['status' => '200', 'message' => 'Sukses', 'user' => $users]);
