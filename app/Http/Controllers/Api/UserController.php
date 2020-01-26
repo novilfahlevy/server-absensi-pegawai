@@ -29,6 +29,33 @@ class UserController extends Controller
         return response()->json(['status' => '200', 'message' => 'Sukses', 'user' => $users]);
     }
 
+    public function filter(Request $request) {
+        $users = User::all();
+
+        foreach ($users as $key => $user) {
+            $users[$key]['job'] = Jobdesc::find($user->jobdesc_id)->name;
+            $users[$key]['role'] = Role::find($user->id)['name'];
+        }
+
+        $users = $users->filter(function($data) use ($request) {
+            if ( $request->job !== 'all' && $request->role !== 'all' ) {
+                return $data->job === $request->job && $data->role === $request->role;
+            }
+
+            if ( $request->job !== 'all' ) {
+                return $data->job === $request->job;
+            }
+
+            if ( $request->role !== 'all' ) {
+                return $data->role === $request->role;
+            }
+
+            return true;
+        });
+
+        return response()->json(['status' => 200, 'data' => $users]);
+    }
+
     public function show($id)
     {
         $user = User::with('roles')->where('id', $id)->first();

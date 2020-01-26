@@ -28,6 +28,48 @@ class ProjectManagerController extends Controller
         ]);
     }
 
+    public function filterMember(Request $request) {
+        $users = [];
+
+        foreach ( ProjectManager::where('pm_id', '=', $request->id)->get() as $user ) {
+            if ( User::find($user->user_id) ) {
+                $newUser = User::find($user->user_id);
+                $newUser['job'] = Jobdesc::find($newUser->jobdesc_id)->name;
+                $users[] = $newUser;
+            }
+        }
+
+        $users = collect($users)->filter(function($data) use ($request) {
+            if ( $request->job !== 'all' ) {
+                return $data->job === $request->job;
+            }
+            return true;
+        });
+
+        return response()->json(['status' => 200, 'data' => $users]);
+    }
+
+    public function filterPegawai(Request $request) {
+        $users = [];
+
+        foreach ( User::all() as $user ) {
+            if ( !ProjectManager::where('user_id', '=', $user->id)->orWhere('pm_id', '=', $user->id)->get()->count() ) {
+                $newUser = User::find($user->id);
+                $newUser['job'] = Jobdesc::find($user->jobdesc_id)->name;
+                $users[] = $newUser;
+            }
+        }
+
+        $users = collect($users)->filter(function($data) use ($request) {
+            if ( $request->job !== 'all' ) {
+                return $data->job === $request->job;
+            }
+            return true;
+        });
+
+        return response()->json(['status' => 200, 'data' => $users]);
+    }
+
     public function showPegawai() {
         $users = [];
 
