@@ -44,7 +44,7 @@ class ProjectManagerController extends Controller
                 return $data->job === $request->job;
             }
             return true;
-        });
+        })->values();
 
         return response()->json(['status' => 200, 'data' => $users]);
     }
@@ -65,7 +65,7 @@ class ProjectManagerController extends Controller
                 return $data->job === $request->job;
             }
             return true;
-        });
+        })->values();
 
         return response()->json(['status' => 200, 'data' => $users]);
     }
@@ -86,8 +86,7 @@ class ProjectManagerController extends Controller
 
     public function store(Request $request) {
         foreach ( json_decode($request->users) as $user ) {
-            $checkMemberOfPM = !ProjectManager::where('pm_id', '=', $request->pm)
-                ->where('user_id', '=', $user)
+            $checkMemberOfPM = !ProjectManager::where('user_id', '=', $user)
                 ->get()
                 ->count();
 

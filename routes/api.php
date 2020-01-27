@@ -51,6 +51,7 @@ Route::group(['middleware' => ['auth:api']], function () {
         Route::delete('/user/pm/{pm_id}/{user_id}', 'Api\ProjectManagerController@destroy');
 
         Route::get('/job', 'Api\JobdescController@index');
+        Route::get('/role', 'Api\RoleController@index');
     });
 
     Route::group(['middleware' => ['role:Admin|User|Project Manager']], function () {
