@@ -35,6 +35,15 @@ class LemburController extends Controller
     {
         $carbon = new Carbon();
         $lates = Lembur::all();
+
+        $lembur = [];
+
+        foreach ($lates as $user) {
+            if (ProjectManager::where('user_id', '=', $user->user_id)->get()->count()) {
+                $lembur[] = $user;
+            }
+        }
+
         $latesStatusIsWaiting = [];
         $latesStatusIsDeniedRejected = [];
         if ($role == 'Project Manager') {
@@ -47,8 +56,13 @@ class LemburController extends Controller
             $users = ProjectManager::where('pm_id', $id)->get()->toArray();
             // dd($users[0]['user_id']);
             // dd($users[1]['user_id']);
-
-            $lembur = Lembur::where('user_id', $users[0]['user_id'])->get();
+            foreach ($users as $key => $user) {
+                // dd($user);
+                $latesStatusIsWaiting = Lembur::where('status', 'menunggu')->where('tanggal', $carbon->now()->toDateString())->where('user_id', $user['user_id'])->get()->toArray();
+                $latesStatusIsDeniedRejected = Lembur::where('status', '!=', 'menunggu')->where('user_id', $user['user_id'])->get();
+            }
+            // dd($latesStatusIsWaiting);
+            // $lembur = Lembur::where('user_id', $users['user_id'])->get();
             // dd($lembur->toArray());
             $latesStatusIsWaiting = Lembur::where('status', 'menunggu')->where('tanggal', $carbon->now()->toDateString())->get();
             $latesStatusIsDeniedRejected = Lembur::where('status', '!=', 'menunggu')->get();
