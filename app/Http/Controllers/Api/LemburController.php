@@ -170,12 +170,12 @@ class LemburController extends Controller
     // {
     //     $lembur = Lembur::all();
     //     dd($lembur);
-    //     // // $lembur = Lembur::where('tanggal', 'LIKE', '%' . $keyword . '%')->get();
+    //     $lembur = Lembur::where('tanggal', 'LIKE', '%' . $keyword . '%')->get();
 
-    //     // if (!$lembur->isEmpty()) {
-    //     //     return response()->json(['code' => 200, 'message' => 'Berhasil mencari data!', 'data' => $lembur]);
-    //     // }
+    //     if (!$lembur->isEmpty()) {
+    //         return response()->json(['code' => 200, 'message' => 'Berhasil mencari data!', 'data' => $lembur]);
+    //     }
 
-    //     // return response()->json(['code' => 400, 'message' => 'Kata yang anda cari tidak ditemukan!']);
+    //     return response()->json(['code' => 400, 'message' => 'Kata yang anda cari tidak ditemukan!']);
     // }
 }
