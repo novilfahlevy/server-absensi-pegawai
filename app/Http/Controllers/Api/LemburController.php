@@ -66,6 +66,14 @@ class LemburController extends Controller
             // dd($lembur->toArray());
             $latesStatusIsWaiting = Lembur::where('status', 'menunggu')->where('tanggal', $carbon->now()->toDateString())->get();
             $latesStatusIsDeniedRejected = Lembur::where('status', '!=', 'menunggu')->get();
+            foreach ($latesStatusIsWaiting as $key => $wait) {
+                $latesStatusIsWaiting[$key]['name'] = User::select('name')->where('id', $wait->user_id)->get()->toArray();
+                $latesStatusIsWaiting[$key]['name'] = $latesStatusIsWaiting[$key]['name'][0]['name'];
+            }
+            foreach ($latesStatusIsDeniedRejected as $key => $denied) {
+                $latesStatusIsDeniedRejected[$key]['name'] = User::select('name')->where('id', $denied->user_id)->get()->toArray();
+                $latesStatusIsDeniedRejected[$key]['name'] = $latesStatusIsDeniedRejected[$key]['name'][0]['name'];
+            }
             return response()->json([
                 'status' => 200, 'message' => 'Sukses', 'data' =>
                 [
@@ -74,8 +82,20 @@ class LemburController extends Controller
                 ]
             ]);
         } else {
-            $data = Lembur::all();
-            return response()->json(['status' => 200, 'message' => 'Sukses', 'data' => $data]);
+            $latesStatusIsWaiting = Lembur::where('status', 'menunggu')->where('tanggal', $carbon->now()->toDateString())->get();
+            $latesStatusIsDeniedRejected = Lembur::where('status', '!=', 'menunggu')->get();
+            foreach ($latesStatusIsWaiting as $key => $wait) {
+                $latesStatusIsWaiting[$key]['name'] = User::select('name')->where('id', $wait->user_id)->get()->toArray();
+                $latesStatusIsWaiting[$key]['name'] = $latesStatusIsWaiting[$key]['name'][0]['name'];
+            }
+            foreach ($latesStatusIsDeniedRejected as $key => $denied) {
+                $latesStatusIsDeniedRejected[$key]['name'] = User::select('name')->where('id', $denied->user_id)->get()->toArray();
+                $latesStatusIsDeniedRejected[$key]['name'] = $latesStatusIsDeniedRejected[$key]['name'][0]['name'];
+            }
+            return response()->json(['status' => 200, 'message' => 'Sukses', 'data' => [
+                'waiting' => $latesStatusIsWaiting,
+                'others' => $latesStatusIsDeniedRejected
+            ]]);
         }
         // foreach ($latesStatusIsWaiting as $key => $wait) {
         //     $latesStatusIsWaiting[$key]['name'] = User::select('name')->where('id', $wait->user_id)->get()->toArray();
