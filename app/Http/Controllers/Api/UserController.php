@@ -52,7 +52,7 @@ class UserController extends Controller
             }
 
             return true;
-        });
+        })->values();
 
         return response()->json(['status' => 200, 'data' => $users]);
     }

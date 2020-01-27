@@ -27,6 +27,7 @@ Route::group(['middleware' => ['auth:api']], function () {
     });
 
     Route::group(['middleware' => ['role:Admin|Project Manager']], function () {
+        Route::get('/lembur/cari/{keyword}', 'Api\LemburController@cari');
         Route::get('/user', 'Api\UserController@index');
         Route::get('/user/filter/{job}/{role}', 'Api\UserController@filter');
         Route::get('/user/cari/{name}', 'Api\UserController@cari');
@@ -35,11 +36,9 @@ Route::group(['middleware' => ['auth:api']], function () {
         Route::post('/admin/waktuKerja', 'Api\WaktuKerjaController@tambahWaktuKerja');
         Route::get('/absensi', 'Api\AbsensiController@index');
         Route::get('/lembur/{role}/{id}', 'Api\LemburController@index');
-        Route::get('/lembur/11111', 'Api\LemburController@cari');
         Route::post('/lembur/{id}', 'Api\LemburController@edit');
         Route::get('/lembur/{id}/detail', 'Api\LemburController@show');
         Route::get('/lembur/filter/{role}/{id}/{month}/{year}', 'Api\LemburController@filter');
-
         Route::get('/absensi/laporan', 'Api\LaporanController@index');
         Route::get('/absensi/laporan/cari/{month}/{year}', 'Api\LaporanController@cari');
         Route::get('/absensi/{id}/detail', 'Api\AbsensiController@show');
@@ -50,10 +49,13 @@ Route::group(['middleware' => ['auth:api']], function () {
         Route::get('/user/pm/filter/member/{id}/{job}', 'Api\ProjectManagerController@filterMember');
         Route::get('/user/pm/filter/pegawai/{job}', 'Api\ProjectManagerController@filterPegawai');
         Route::get('/user/{id}/pm', 'Api\ProjectManagerController@index');
+        Route::get('/user/pm/{pm_id}/search/{keyword}', 'Api\ProjectManagerController@searchMember');
+        Route::get('/user/pm/search/{keyword}', 'Api\ProjectManagerController@searchPegawai');
         Route::post('/user/pm', 'Api\ProjectManagerController@store');
         Route::delete('/user/pm/{pm_id}/{user_id}', 'Api\ProjectManagerController@destroy');
 
         Route::get('/job', 'Api\JobdescController@index');
+        Route::get('/role', 'Api\RoleController@index');
     });
 
     Route::group(['middleware' => ['role:Admin|User|Project Manager']], function () {

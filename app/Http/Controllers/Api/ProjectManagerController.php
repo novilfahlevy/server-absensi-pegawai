@@ -28,6 +28,42 @@ class ProjectManagerController extends Controller
         ]);
     }
 
+    public function searchMember($pm_id, $keyword) {
+        $users = User::where('name', 'LIKE', "%$keyword%")->orWhere('username', 'LIKE', "%$keyword%")
+            ->get()
+            ->pluck('id');
+
+        $members = [];
+
+        foreach ( $users as $user_id ) {
+            if ( ProjectManager::where('user_id', $user_id)->where('pm_id', $pm_id)->get()->count() ) {
+                $newUser = User::find($user_id);
+                $newUser['job'] = Jobdesc::find($newUser->jobdesc_id)->name;
+                $members[] = $newUser;
+            }
+        }
+        
+        return response()->json(['status' => 200, 'data' => $members]);
+    }
+
+    public function searchPegawai($keyword) {
+        $users = User::where('name', 'LIKE', "%$keyword%")->orWhere('username', 'LIKE', "%$keyword%")
+            ->get()
+            ->pluck('id');
+
+        $members = [];
+
+        foreach ( $users as $user_id ) {
+            if ( !ProjectManager::where('user_id', $user_id)->get()->count() && Role::find($user_id)['id'] !== 1 ) {
+                $newUser = User::find($user_id);
+                $newUser['job'] = Jobdesc::find($newUser->jobdesc_id)->name;
+                $members[] = $newUser;
+            }
+        }
+        
+        return response()->json(['status' => 200, 'data' => $members]);
+    }
+
     public function filterMember(Request $request) {
         $users = [];
 
@@ -44,7 +80,7 @@ class ProjectManagerController extends Controller
                 return $data->job === $request->job;
             }
             return true;
-        });
+        })->values();
 
         return response()->json(['status' => 200, 'data' => $users]);
     }
@@ -53,7 +89,7 @@ class ProjectManagerController extends Controller
         $users = [];
 
         foreach ( User::all() as $user ) {
-            if ( !ProjectManager::where('user_id', '=', $user->id)->orWhere('pm_id', '=', $user->id)->get()->count() ) {
+            if ( !ProjectManager::where('user_id', '=', $user->id)->orWhere('pm_id', '=', $user->id)->get()->count() && Role::find($user->id)['id'] !== 1 ) {
                 $newUser = User::find($user->id);
                 $newUser['job'] = Jobdesc::find($user->jobdesc_id)->name;
                 $users[] = $newUser;
@@ -65,7 +101,7 @@ class ProjectManagerController extends Controller
                 return $data->job === $request->job;
             }
             return true;
-        });
+        })->values();
 
         return response()->json(['status' => 200, 'data' => $users]);
     }
@@ -74,10 +110,13 @@ class ProjectManagerController extends Controller
         $users = [];
 
         foreach ( User::all() as $user ) {
-            if ( !ProjectManager::where('user_id', '=', $user->id)->orWhere('pm_id', '=', $user->id)->get()->count() ) {
-                $newUser = User::find($user->id);
-                $newUser['job'] = Jobdesc::find($user->jobdesc_id)->name;
-                $users[] = $newUser;
+            $role = Role::find($user->id)['id'];
+            if ( !ProjectManager::where('user_id', '=', $user->id)->get()->count() ) {
+                if ( $role !== 1 && $role !== 3 ) {
+                    $newUser = User::find($user->id);
+                    $newUser['job'] = Jobdesc::find($user->jobdesc_id)->name;
+                    $users[] = $newUser;
+                }
             }
         }
 
@@ -86,15 +125,23 @@ class ProjectManagerController extends Controller
 
     public function store(Request $request) {
         foreach ( json_decode($request->users) as $user ) {
-            $pm = new ProjectManager();
+            $checkMemberOfPM = !ProjectManager::where('user_id', '=', $user)
+                ->get()
+                ->count();
 
-            $pm->pm_id = $request->pm;
-            $pm->user_id = $user;
-
-            $pm->save();
+            if ( $checkMemberOfPM ) {
+                $pm = new ProjectManager();
+    
+                $pm->pm_id = $request->pm;
+                $pm->user_id = $user;
+    
+                $pm->save();
+            } 
+            else {
+                return response()->json(['status' => 400, 'message' => 'Gagal menambah anggota']);
+            }
         }
-
-        return response()->json(['status' => 200, 'message' => 'Berhasil menambahkan pegawai']);
+        return response()->json(['status' => 200, 'message' => 'Berhasil menambahkan anggota']);
     }
 
     public function destroy($pm_id, $user_id) {
