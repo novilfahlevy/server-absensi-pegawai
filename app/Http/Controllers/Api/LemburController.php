@@ -43,7 +43,6 @@ class LemburController extends Controller
             foreach ($users as $key => $user) {
                 $lemburs[$key] = Lembur::where('user_id', $user->id)->get();
             }
-            dd(count($lemburs[0]));
         } else {
             $latesStatusIsWaiting = Lembur::where('status', 'menunggu')->where('tanggal', $carbon->now()->toDateString())->get();
             $latesStatusIsDeniedRejected = Lembur::where('status', '!=', 'menunggu')->get();
