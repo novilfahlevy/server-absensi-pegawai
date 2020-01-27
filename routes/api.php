@@ -49,6 +49,8 @@ Route::group(['middleware' => ['auth:api']], function () {
         Route::get('/user/pm/filter/member/{id}/{job}', 'Api\ProjectManagerController@filterMember');
         Route::get('/user/pm/filter/pegawai/{job}', 'Api\ProjectManagerController@filterPegawai');
         Route::get('/user/{id}/pm', 'Api\ProjectManagerController@index');
+        Route::get('/user/pm/{pm_id}/search/{keyword}', 'Api\ProjectManagerController@searchMember');
+        Route::get('/user/pm/search/{keyword}', 'Api\ProjectManagerController@searchPegawai');
         Route::post('/user/pm', 'Api\ProjectManagerController@store');
         Route::delete('/user/pm/{pm_id}/{user_id}', 'Api\ProjectManagerController@destroy');
 
