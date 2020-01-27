@@ -33,8 +33,8 @@
     <tr></tr>
     @isset($total_jam_pegawai)
         <tr>
-            <th colspan="2">No.</th>
-            <th colspan="2">Nama Pegawai</th>
+            <th colspan="1">No.</th>
+            <th colspan="3">Nama Pegawai</th>
             <th colspan="2">Total Terlambat</th>
             <th colspan="2">Total Tepat Waktu</th>
             <th colspan="2">Total Lembur</th>
@@ -42,8 +42,8 @@
         </tr>
             @foreach ($total_jam_pegawai as $pegawai)
             <tr>
-                <th colspan="2">{{$loop->iteration}}</th>
-                <th colspan="2">{{$pegawai['name']}}</th>
+                <th colspan="1">{{$loop->iteration}}</th>
+                <th colspan="3">{{$pegawai['name']}}</th>
             <th colspan="2">{{$pegawai['total_terlambat']}}</th>
             <th colspan="2">{{$pegawai['total_tepat_waktu']}}</th>
             <th colspan="2">{{$pegawai['total_lembur']}}</th>
