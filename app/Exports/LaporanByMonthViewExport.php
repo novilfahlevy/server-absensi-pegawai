@@ -1,36 +1,36 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Exports;
 
 use Carbon\Carbon;
 use App\Absensi;
-use App\User;
-use App\Http\Controllers\Controller;
+use Illuminate\Contracts\View\View;
+use Maatwebsite\Excel\Concerns\FromView;
+use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\WithEvents;
+use Maatwebsite\Excel\Events\BeforeExport;
+use Maatwebsite\Excel\Events\AfterSheet;
 use Illuminate\Support\Facades\DB;
-use App\Exports\LaporanViewExport;
-use App\Exports\LaporanByMonthViewExport;
-use Maatwebsite\Excel\Facades\Excel;
+use App\User;
 
-class LaporanController extends Controller
+class LaporanByMonthViewExport implements FromView
 {
     protected $carbon;
     protected $attendance;
     protected $imagePath;
-
-    public function __construct()
+    protected $month;
+    protected $year;
+    public function __construct($month, $year)
     {
+        $this->month = $month;
+        $this->year = $year;
         $this->carbon = new Carbon();
         $this->absensi = new Absensi();
         $this->imagePath = public_path() . '/storage/attendances_photo/';
     }
-    public function export()
-    {
-        return Excel::download(new LaporanViewExport, 'laporan.xlsx');
-    }
-    public function exportSelected($month, $year)
-    {
-        return Excel::download(new LaporanByMonthViewExport($month, $year), 'laporan.xlsx');
-    }
+    /**
+     * @return \Illuminate\Support\Collection
+     */
     private function getWeeklyAbsen($year, $month, $startDate, $endDate, $user_id = null)
     {
         // Get current month
@@ -84,14 +84,14 @@ class LaporanController extends Controller
     {
         return count(DB::select(DB::raw("SELECT * FROM absensis WHERE MONTH(tanggal) = " . $month . " AND YEAR(tanggal) = " . $year . " AND status = " . "'$status'")));
     }
-    public function cari($month, $year)
+    public function view(): View
     {
-        $date = $this->carbon->createFromDate($year, $month);
-        $total_terlambat = $this->getDataByStatus($year, $month, 'terlambat');
-        $total_tepat_waktu = $this->getDataByStatus($year, $month, 'tepat waktu');
-        $total_kecepatan = $this->getDataByStatus($year, $month, 'kecepatan');
+        $date = $this->carbon->createFromDate($this->year, $this->month);
+        $total_terlambat = $this->getDataByStatus($this->year, $this->month, 'terlambat');
+        $total_tepat_waktu = $this->getDataByStatus($this->year, $this->month, 'tepat waktu');
+        $total_kecepatan = $this->getDataByStatus($this->year, $this->month, 'kecepatan');
         $total_jam_kerja = $this->getMonthAbsenHours($date);
-        return response()->json(['status' => 200, 'message' => 'Sukses', 'data' => [
+        return view('laporan', [
             'nama_bulan' => $date->format('F'),
             'total_jam_per_bulan' => $total_jam_kerja,
             'status_pegawai' => [
@@ -99,53 +99,38 @@ class LaporanController extends Controller
                 'tepat_waktu' => $total_tepat_waktu,
                 'overwork' => $total_kecepatan
             ]
-        ]]);
+        ]);
     }
-    public function index()
+    /**
+     * @return array
+     */
+    public function registerEvents(): array
     {
-        // Data Pegawai
-        $first_date = $this->carbon->now()->firstOfMonth()->day;
-        $last_date = $this->carbon->now()->lastOfMonth()->day;
-        $current_month = Carbon::now()->month;
-        $current_year = Carbon::now()->year;
-        $users = User::all();
-        $users_report = [];
-        $i = 0;
-        foreach ($users  as $user) {
-            $total_hours = [];
-            $user_absens = $this->getWeeklyAbsen($current_year, $current_month, $first_date, $last_date, $user->id);
-            foreach ($user_absens as $key => $absen) {
-                $total_hours[$key] = $this->carbon->parse($absen->absensi_keluar)->diffInHours($this->carbon->parse($absen->absensi_masuk));
+        return [
+            AfterSheet::class => function (AfterSheet $event) {
+                // Apply array of styles for header title
+                $event->sheet->getDelegate()->getStyle('A1:L3')->applyFromArray([
+                    'size' => 14,
+                    'alignment' => [
+                        'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                    ]
+                ]);
+                $event->sheet->getDelegate()->getStyle('A5:L5')->applyFromArray([
+                    'alignment' => [
+                        'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                    ]
+                ]);
+                // Apply array of styles for table body
+                $styleArray = [
+                    'borders' => [
+                        'allBorders' => [
+                            'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                            'color' => ['argb' => '00000000'],
+                        ]
+                    ]
+                ];
+                $event->sheet->getDelegate()->getStyle('A5:L100')->applyFromArray($styleArray);
             }
-            $users_report[$i] = [
-                'name' => $user->name,
-                'total_jam_kerja' => array_sum($total_hours) . ' Jam',
-                'total_terlambat' => count(DB::select(DB::raw("SELECT * FROM absensis WHERE MONTH(tanggal) = " . $current_month . " AND YEAR(tanggal) = " . $current_year . " AND status = 'terlambat' AND user_id = " . $user->id))) . ' Kali',
-                'total_tepat_waktu' => count(DB::select(DB::raw("SELECT * FROM absensis WHERE MONTH(tanggal) = " . $current_month . " AND YEAR(tanggal) = " . $current_year . " AND status = 'tepat waktu' AND user_id = " . $user->id))) . ' Kali',
-                'total_lembur' => count(DB::select(DB::raw("SELECT * FROM lemburs WHERE MONTH(tanggal) = " . $current_month . " AND YEAR(tanggal) = " . $current_year . " AND user_id = " . $user->id))) . ' Kali',
-            ];
-            $i++;
-        }
-
-        // Total jam dalam satu bulan dihitung per minggu
-        // Get the fourth week start date
-
-        // Data for responses
-        $total_jam_per_bulan = $this->getMonthAbsenHours($this->carbon->now());
-        // Status Pegawai
-        $total_terlambat = $this->getDataByStatus($current_year, $current_month, 'terlambat');
-        $total_tepat_waktu = $this->getDataByStatus($current_year, $current_month, 'tepat waktu');
-        $total_kecepatan = $this->getDataByStatus($current_year, $current_month, 'kecepatan');
-
-        return response()->json(['status' => 200, 'message' => 'Sukses', 'data' => [
-            'nama_bulan' => Carbon::now()->month,
-            'total_jam_pegawai' => $users_report,
-            'total_jam_per_bulan' => $total_jam_per_bulan,
-            'status_pegawai' => [
-                'terlambat' => $total_terlambat,
-                'tepat_waktu' => $total_tepat_waktu,
-                'overwork' => $total_kecepatan
-            ]
-        ]]);
+        ];
     }
 }
