@@ -7,6 +7,9 @@ use App\Absensi;
 use App\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
+use App\Exports\LaporanViewExport;
+use App\Exports\LaporanByMonthViewExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class LaporanController extends Controller
 {
@@ -22,7 +25,11 @@ class LaporanController extends Controller
     }
     public function export()
     {
-        return "something";
+        return Excel::download(new LaporanViewExport, 'laporan.xlsx');
+    }
+    public function exportSelected($month, $year)
+    {
+        return Excel::download(new LaporanByMonthViewExport($month, $year), 'laporan.xlsx');
     }
     private function getWeeklyAbsen($year, $month, $startDate, $endDate, $user_id = null)
     {

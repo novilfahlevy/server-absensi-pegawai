@@ -13,14 +13,17 @@ use Maatwebsite\Excel\Events\AfterSheet;
 use Illuminate\Support\Facades\DB;
 use App\User;
 
-class LaporanViewExport implements FromView
+class LaporanByMonthViewExport implements FromView
 {
     protected $carbon;
     protected $attendance;
     protected $imagePath;
-
-    public function __construct()
+    protected $month;
+    protected $year;
+    public function __construct($month, $year)
     {
+        $this->month = $month;
+        $this->year = $year;
         $this->carbon = new Carbon();
         $this->absensi = new Absensi();
         $this->imagePath = public_path() . '/storage/attendances_photo/';
@@ -83,38 +86,14 @@ class LaporanViewExport implements FromView
     }
     public function view(): View
     {
-        // Data Pegawai
-        $first_date = $this->carbon->now()->firstOfMonth()->day;
-        $last_date = $this->carbon->now()->lastOfMonth()->day;
-        $current_month = Carbon::now()->month;
-        $current_year = Carbon::now()->year;
-        $users = User::all();
-        $users_report = [];
-        $i = 0;
-        foreach ($users  as $user) {
-            $total_hours = [];
-            $user_absens = $this->getWeeklyAbsen($current_year, $current_month, $first_date, $last_date, $user->id);
-            foreach ($user_absens as $key => $absen) {
-                $total_hours[$key] = $this->carbon->parse($absen->absensi_keluar)->diffInHours($this->carbon->parse($absen->absensi_masuk));
-            }
-            $users_report[$i] = [
-                'name' => $user->name,
-                'total_jam_kerja' => array_sum($total_hours) . ' Jam',
-                'total_terlambat' => count(DB::select(DB::raw("SELECT * FROM absensis WHERE MONTH(tanggal) = " . $current_month . " AND YEAR(tanggal) = " . $current_year . " AND status = 'terlambat' AND user_id = " . $user->id))) . ' Kali',
-                'total_tepat_waktu' => count(DB::select(DB::raw("SELECT * FROM absensis WHERE MONTH(tanggal) = " . $current_month . " AND YEAR(tanggal) = " . $current_year . " AND status = 'tepat waktu' AND user_id = " . $user->id))) . ' Kali',
-                'total_lembur' => count(DB::select(DB::raw("SELECT * FROM lemburs WHERE MONTH(tanggal) = " . $current_month . " AND YEAR(tanggal) = " . $current_year . " AND user_id = " . $user->id))) . ' Kali',
-            ];
-            $i++;
-        }
-        $total_jam_per_bulan = $this->getMonthAbsenHours($this->carbon->now());
-        // Status Pegawai
-        $total_terlambat = $this->getDataByStatus($current_year, $current_month, 'terlambat');
-        $total_tepat_waktu = $this->getDataByStatus($current_year, $current_month, 'tepat waktu');
-        $total_kecepatan = $this->getDataByStatus($current_year, $current_month, 'kecepatan');
+        $date = $this->carbon->createFromDate($this->year, $this->month);
+        $total_terlambat = $this->getDataByStatus($this->year, $this->month, 'terlambat');
+        $total_tepat_waktu = $this->getDataByStatus($this->year, $this->month, 'tepat waktu');
+        $total_kecepatan = $this->getDataByStatus($this->year, $this->month, 'kecepatan');
+        $total_jam_kerja = $this->getMonthAbsenHours($date);
         return view('laporan', [
-            'nama_bulan' => Carbon::now()->format('F'),
-            'total_jam_pegawai' => $users_report,
-            'total_jam_per_bulan' => $total_jam_per_bulan,
+            'nama_bulan' => $date->format('F'),
+            'total_jam_per_bulan' => $total_jam_kerja,
             'status_pegawai' => [
                 'terlambat' => $total_terlambat,
                 'tepat_waktu' => $total_tepat_waktu,

@@ -199,6 +199,7 @@ class UserController extends Controller
     public function editKredensial(Request $request, $id)
     {
         $user = User::find($id);
+        $user->syncRoles([Role::findById($request->role_id)]);
         $user->fill($request->all())->save();
 
         return response()->json(['status' => 200, 'message' => 'Berhasil edit kredensial!', 'data' => $user]);
