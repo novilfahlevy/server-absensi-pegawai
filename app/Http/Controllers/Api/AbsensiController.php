@@ -112,7 +112,7 @@ class AbsensiController extends Controller
             File::makeDirectory($this->imagePath);
         }
 
-        $check_attendance_in = Absensi::where('user_id', '=', Auth::user()->id)->where('tanggal', '=', $this->carbon->now()->format('d F Y'))->get();
+        $check_attendance_in = Absensi::where('user_id', '=', Auth::user()->id)->where('tanggal', '=', $this->carbon->toDateString())->get();
 
         if ($check_attendance_in->isEmpty()) {
             return response()->json(['message' => 'Anda belum absensi masuk!']);
