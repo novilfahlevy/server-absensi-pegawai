@@ -17,6 +17,7 @@ use App\Helpers\ApiResponse;
 Route::post('auth/login', 'Api\UserController@login')->name('login');
 Route::get('unauthorized', 'Api\UserController@unauthorized')->name('unauthorized');
 Route::get('/absensi/laporan/export', 'Api\LaporanController@export');
+Route::get('/absensi/laporan/export/{month}/{year}', 'Api\LaporanController@exportSelected');
 Route::group(['middleware' => ['auth:api']], function () {
     Route::post('auth/logout', 'Api\UserController@logout');
 
