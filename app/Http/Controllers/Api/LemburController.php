@@ -50,23 +50,7 @@ class LemburController extends Controller
         }
         return response()->json(['status' => 200, 'message' => 'Berhasil lembur!. Mohon tunggu admin untuk mempersetujuinya.', 'data' => $results]);
     }
-    public function cari($keyword)
-    {
-        $users = User::where('name', 'LIKE', '%' . $keyword . '%')->get()->pluck('id')->toArray();
-        dd($users);
-        $lembur = [];
-        foreach ($users as $user_id) {
-            $lembur[] = Lembur::where('user_id', '=', $user_id)->get();
-        }
-        if (isset($lembur[0])) {
-            $lembur = $lembur[0];
-            foreach ($lembur as $key => $lembur) {
-                $lembur[$key]['name'] = User::find($lembur->user_id)->name;
-            }
-            return response()->json(['status' => 200, 'lembur' => $lembur]);
-        }
-        return response()->json(['status' => 404, 'lembur' => []]);
-    }
+
     public function index($role, $id)
     {
         $carbon = new Carbon();
