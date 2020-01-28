@@ -50,23 +50,7 @@ class LemburController extends Controller
         }
         return response()->json(['status' => 200, 'message' => 'Berhasil lembur!. Mohon tunggu admin untuk mempersetujuinya.', 'data' => $results]);
     }
-    public function cari($keyword)
-    {
-        $users = User::where('name', 'LIKE', '%' . $keyword . '%')->get()->pluck('id')->toArray();
-        dd($users);
-        $lembur = [];
-        foreach ($users as $user_id) {
-            $lembur[] = Lembur::where('user_id', '=', $user_id)->get();
-        }
-        if (isset($lembur[0])) {
-            $lembur = $lembur[0];
-            foreach ($lembur as $key => $lembur) {
-                $lembur[$key]['name'] = User::find($lembur->user_id)->name;
-            }
-            return response()->json(['status' => 200, 'lembur' => $lembur]);
-        }
-        return response()->json(['status' => 404, 'lembur' => []]);
-    }
+
     public function index($role, $id)
     {
         $carbon = new Carbon();
@@ -171,15 +155,21 @@ class LemburController extends Controller
 
     public function cari($keyword)
     {
-        $lembur = Lembur::all();
-        // dd($lembur);
-        $lembur = Lembur::where('tanggal', 'LIKE', '%' . $keyword . '%')->get();
+        $users = User::where('name', 'LIKE', '%' . $keyword . '%')->get()->pluck('id')->toArray();
+        $lembur = [];
+        foreach ($users as $user_id) {
+            $lembur[] = Lembur::where('user_id', '=', $user_id)->get();
+        }
+        if (isset($lembur[0])) {
+            $lembur = $lembur[0];
+            foreach ($lembur as $key => $absen) {
+                $lembur[$key]['name'] = User::find($absen->user_id)->name;
+            }
 
-        if (!$lembur->isEmpty()) {
-            return response()->json(['code' => 200, 'message' => 'Berhasil mencari data!', 'data' => $lembur]);
+            return response()->json(['status' => 200, 'message' => 'Sukses', 'data' => $lembur]);
         }
 
-        return response()->json(['code' => 400, 'message' => 'Kata yang anda cari tidak ditemukan!']);
+        return response()->json(['status' => 400, 'data' => 'Kata yang anda cari tidak ditemukan!']);
     }
 
     public function checkLembur($id) {

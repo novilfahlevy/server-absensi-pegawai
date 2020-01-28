@@ -31,7 +31,7 @@ class AbsensiSeeder extends Seeder
         ]);
 
         Absensi::create([
-            'user_id' => 2,
+            'user_id' => 3,
             'tanggal' => $carbon->now()->subDays(2)->toDateString(),
             'absensi_masuk' => $carbon->now()->subHour(4)->toTimeString(),
             'absensi_keluar' => $carbon->now()->subHour(2)->toTimeString(),
@@ -46,7 +46,7 @@ class AbsensiSeeder extends Seeder
         ]);
 
         Absensi::create([
-            'user_id' => 2,
+            'user_id' => 3,
             'tanggal' => $carbon->now()->subDays(3)->toDateString(),
             'absensi_masuk' => $carbon->now()->subHour(5)->toTimeString(),
             'absensi_keluar' => $carbon->now()->subHour(3)->toTimeString(),
@@ -61,7 +61,7 @@ class AbsensiSeeder extends Seeder
         ]);
 
         Absensi::create([
-            'user_id' => 2,
+            'user_id' => 3,
             'tanggal' => $carbon->now()->subDays(4)->toDateString(),
             'absensi_masuk' => $carbon->now()->subHour(6)->toTimeString(),
             'absensi_keluar' => $carbon->now()->subHour(4)->toTimeString(),
@@ -76,7 +76,7 @@ class AbsensiSeeder extends Seeder
         ]);
 
         Absensi::create([
-            'user_id' => 2,
+            'user_id' => 3,
             'tanggal' => $carbon->now()->subDays(5)->toDateString(),
             'absensi_masuk' => $carbon->now()->subHour(7)->toTimeString(),
             'absensi_keluar' => $carbon->now()->subHour(5)->toTimeString(),
@@ -106,7 +106,7 @@ class AbsensiSeeder extends Seeder
         ]);
 
         Absensi::create([
-            'user_id' => 2,
+            'user_id' => 3,
             'tanggal' => $carbon->now()->subDays(7)->toDateString(),
             'absensi_masuk' => $carbon->now()->subHour(9)->toTimeString(),
             'absensi_keluar' => $carbon->now()->subHour(7)->toTimeString(),
@@ -136,7 +136,7 @@ class AbsensiSeeder extends Seeder
         ]);
 
         Absensi::create([
-            'user_id' => 2,
+            'user_id' => 3,
             'tanggal' => $carbon->now()->subDays(9)->toDateString(),
             'absensi_masuk' => $carbon->now()->subHour(11)->toTimeString(),
             'absensi_keluar' => $carbon->now()->subHour(9)->toTimeString(),
@@ -223,6 +223,51 @@ class AbsensiSeeder extends Seeder
             'longitude_absen_masuk' => 150.644,
             'latitude_absen_keluar' => -34.397,
             'longitude_absen_keluar' => 150.644,
+        ]);
+
+        Absensi::create([
+            'user_id' => 4,
+            'tanggal' => $carbon->now()->subDays(15)->toDateString(),
+            'absensi_masuk' => $carbon->now()->subHour(16)->toTimeString(),
+            'absensi_keluar' => $carbon->now()->subHour(13)->toTimeString(),
+            'keterangan' => 'Absensi',
+            'status' => 'tepat waktu',
+            'foto_absensi_masuk' => 'masuk.jpg',
+            'foto_absensi_keluar' => 'keluar.jpg',
+            'latitude_absen_masuk' => '1.111',
+            'longitude_absen_masuk' => '1.111',
+            'latitude_absen_keluar' => '1.111',
+            'longitude_absen_keluar' => '1.111',
+        ]);
+
+        Absensi::create([
+            'user_id' => 4,
+            'tanggal' => $carbon->now()->subDays(16)->toDateString(),
+            'absensi_masuk' => $carbon->now()->subHour(16)->toTimeString(),
+            'absensi_keluar' => $carbon->now()->subHour(13)->toTimeString(),
+            'keterangan' => 'Absensi',
+            'status' => 'tepat waktu',
+            'foto_absensi_masuk' => 'masuk.jpg',
+            'foto_absensi_keluar' => 'keluar.jpg',
+            'latitude_absen_masuk' => '1.111',
+            'longitude_absen_masuk' => '1.111',
+            'latitude_absen_keluar' => '1.111',
+            'longitude_absen_keluar' => '1.111',
+        ]);
+
+        Absensi::create([
+            'user_id' => 4,
+            'tanggal' => $carbon->now()->subDays(17)->toDateString(),
+            'absensi_masuk' => $carbon->now()->subHour(17)->toTimeString(),
+            'absensi_keluar' => $carbon->now()->subHour(13)->toTimeString(),
+            'keterangan' => 'Absensi',
+            'status' => 'tepat waktu',
+            'foto_absensi_masuk' => 'masuk.jpg',
+            'foto_absensi_keluar' => 'keluar.jpg',
+            'latitude_absen_masuk' => '1.111',
+            'longitude_absen_masuk' => '1.111',
+            'latitude_absen_keluar' => '1.111',
+            'longitude_absen_keluar' => '1.111',
         ]);
     }
 }
