@@ -90,7 +90,7 @@ class LemburSeeder extends Seeder
         Lembur::create([
             'user_id' => 2,
             'absensi_id' => 13,
-            'tanggal' => $carbon->now()->subDays(1)->toDateString(),
+            'tanggal' => $carbon->now()->subDays(7)->toDateString(),
             'lembur_awal' => $carbon->now()->subHour(13)->toTimeString(),
             'lembur_akhir' => $carbon->now()->subHour(8)->toTimeString(),
             'keterangan' => 'Lembur',
@@ -100,11 +100,11 @@ class LemburSeeder extends Seeder
         ]);
 
         Lembur::create([
-            'user_id' => 2,
-            'absensi_id' => 10,
-            'tanggal' => $carbon->now()->subDays(1)->toDateString(),
-            'lembur_awal' => $carbon->now()->subHour(13)->toTimeString(),
-            'lembur_akhir' => $carbon->now()->subHour(8)->toTimeString(),
+            'user_id' => 4,
+            'absensi_id' => 15,
+            'tanggal' => $carbon->now()->subDays(8)->toDateString(),
+            'lembur_awal' => $carbon->now()->subHour(14)->toTimeString(),
+            'lembur_akhir' => $carbon->now()->subHour(9)->toTimeString(),
             'keterangan' => 'Lembur',
             'konsumsi' => 100000,
             'foto' => 'lembur.jpg',

@@ -224,5 +224,50 @@ class AbsensiSeeder extends Seeder
             'latitude_absen_keluar' => '1.111',
             'longitude_absen_keluar' => '1.111',
         ]);
+
+        Absensi::create([
+            'user_id' => 4,
+            'tanggal' => $carbon->now()->subDays(15)->toDateString(),
+            'absensi_masuk' => $carbon->now()->subHour(16)->toTimeString(),
+            'absensi_keluar' => $carbon->now()->subHour(13)->toTimeString(),
+            'keterangan' => 'Absensi',
+            'status' => 'tepat waktu',
+            'foto_absensi_masuk' => 'masuk.jpg',
+            'foto_absensi_keluar' => 'keluar.jpg',
+            'latitude_absen_masuk' => '1.111',
+            'longitude_absen_masuk' => '1.111',
+            'latitude_absen_keluar' => '1.111',
+            'longitude_absen_keluar' => '1.111',
+        ]);
+
+        Absensi::create([
+            'user_id' => 4,
+            'tanggal' => $carbon->now()->subDays(16)->toDateString(),
+            'absensi_masuk' => $carbon->now()->subHour(16)->toTimeString(),
+            'absensi_keluar' => $carbon->now()->subHour(13)->toTimeString(),
+            'keterangan' => 'Absensi',
+            'status' => 'tepat waktu',
+            'foto_absensi_masuk' => 'masuk.jpg',
+            'foto_absensi_keluar' => 'keluar.jpg',
+            'latitude_absen_masuk' => '1.111',
+            'longitude_absen_masuk' => '1.111',
+            'latitude_absen_keluar' => '1.111',
+            'longitude_absen_keluar' => '1.111',
+        ]);
+
+        Absensi::create([
+            'user_id' => 4,
+            'tanggal' => $carbon->now()->subDays(17)->toDateString(),
+            'absensi_masuk' => $carbon->now()->subHour(17)->toTimeString(),
+            'absensi_keluar' => $carbon->now()->subHour(13)->toTimeString(),
+            'keterangan' => 'Absensi',
+            'status' => 'tepat waktu',
+            'foto_absensi_masuk' => 'masuk.jpg',
+            'foto_absensi_keluar' => 'keluar.jpg',
+            'latitude_absen_masuk' => '1.111',
+            'longitude_absen_masuk' => '1.111',
+            'latitude_absen_keluar' => '1.111',
+            'longitude_absen_keluar' => '1.111',
+        ]);
     }
 }

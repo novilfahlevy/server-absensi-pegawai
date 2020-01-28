@@ -58,6 +58,18 @@ class UsersTableSeeder extends Seeder
         ]);
         $bambang->assignRole(Role::find(2));
 
+        $kinay = User::create([
+            'name' => 'Kinay',
+            'jobdesc_id' => 3,
+            'username' => 'kinay',
+            'email' => 'kinay@kinay.com',
+            'nomor_handphone' => '086756457806',
+            'alamat' => 'Jl. Merdeka',
+            'password' => bcrypt('secret'),
+            'profile' => 'default.jpg'
+        ]);
+        $kinay->assignRole(Role::find(2));
+
         $project_manager = User::create([
             'name' => 'Project Manager',
             'jobdesc_id' => 1,
