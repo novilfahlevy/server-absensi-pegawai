@@ -28,6 +28,7 @@ Route::group(['middleware' => ['auth:api']], function () {
 
     Route::group(['middleware' => ['role:Admin|Project Manager']], function () {
         Route::get('/lembur/cari/{keyword}', 'Api\LemburController@cari');
+        Route::get('/lembur/{id}/detail', 'Api\LemburController@show');
         Route::get('/user', 'Api\UserController@index');
         Route::get('/user/filter/{job}/{role}', 'Api\UserController@filter');
         Route::get('/user/cari/{name}', 'Api\UserController@cari');
@@ -37,7 +38,7 @@ Route::group(['middleware' => ['auth:api']], function () {
         Route::get('/absensi', 'Api\AbsensiController@index');
         Route::get('/lembur/{role}/{id}', 'Api\LemburController@index');
         Route::post('/lembur/{id}', 'Api\LemburController@edit');
-        Route::get('/lembur/{id}/detail', 'Api\LemburController@show');
+
         Route::get('/lembur/filter/{role}/{id}/{month}/{year}', 'Api\LemburController@filter');
         Route::get('/absensi/laporan', 'Api\LaporanController@index');
         Route::get('/absensi/laporan/cari/{month}/{year}', 'Api\LaporanController@cari');

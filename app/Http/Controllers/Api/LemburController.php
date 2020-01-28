@@ -156,15 +156,12 @@ class LemburController extends Controller
     public function cari($keyword)
     {
         $users = User::where('name', 'LIKE', '%' . $keyword . '%')->get()->pluck('id')->toArray();
-
         $lembur = [];
         foreach ($users as $user_id) {
             $lembur[] = Lembur::where('user_id', '=', $user_id)->get();
         }
-
         if (isset($lembur[0])) {
             $lembur = $lembur[0];
-
             foreach ($lembur as $key => $absen) {
                 $lembur[$key]['name'] = User::find($absen->user_id)->name;
             }

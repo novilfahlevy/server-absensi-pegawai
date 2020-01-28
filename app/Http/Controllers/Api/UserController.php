@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Rules\MatchOldPassword;
 use Illuminate\Support\Facades\Hash;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\RegisterUserRequest;
 use App\Jobdesc;
@@ -14,9 +15,14 @@ use App\User;
 use App\Role;
 use Illuminate\Support\Facades\Storage;
 use Laravel\Passport\Passport;
+use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
+    public function __construct()
+    {
+        $this->carbon = new Carbon();
+    }
     public function index()
     {
         $users = User::all();
@@ -28,7 +34,59 @@ class UserController extends Controller
 
         return response()->json(['status' => '200', 'message' => 'Sukses', 'user' => $users]);
     }
+    private function getWeeklyAbsen($year, $month, $startDate, $endDate, $user_id = null)
+    {
+        // Get current month
+        if ($user_id == null) {
+            return DB::select(DB::raw("SELECT * FROM absensis WHERE MONTH(tanggal) = " . $month . " AND YEAR(tanggal) = " . $year . " AND DAY(tanggal) BETWEEN " . $startDate . " AND " . $endDate));
+        }
+        return DB::select(DB::raw("SELECT * FROM absensis WHERE MONTH(tanggal) = " . $month . " AND YEAR(tanggal) = " . $year . " AND user_id = " . $user_id . " AND DAY(tanggal) BETWEEN " . $startDate . " AND " . $endDate));
+    }
+    private function getMonthAbsenHours($date, $id)
+    {
+        // Get the last date of the current month
 
+        $first_date = $date->firstOfMonth()->day;
+        $last_date = $date->lastOfMonth()->day;
+        $fourth_week_start = $date->firstOfMonth()->addDays(21)->day;
+        $third_week_start = $date->firstOfMonth()->addDays(14)->day;
+        $second_week_start = $date->firstOfMonth()->addDays(7)->day;
+        // Array of all hours
+        $first_week_hours = [];
+        $second_week_hours = [];
+        $third_week_hours = [];
+        $fourth_week_hours = [];
+        // Absens of all weeks
+        $year = $date->year;
+        $month = $date->month;
+        $first_week_absen = $this->getWeeklyAbsen($year, $month, $first_date, $second_week_start, $id);
+        $second_week_absen = $this->getWeeklyAbsen($year, $month, $second_week_start, $third_week_start, $id);
+        $third_week_absen = $this->getWeeklyAbsen($year, $month, $third_week_start, $fourth_week_start, $id);
+        $fourth_week_absen = $this->getWeeklyAbsen($year, $month, $fourth_week_start, $last_date, $id);
+        // foreach and input it to array above
+        foreach ($first_week_absen as $key => $absen) {
+            $first_week_hours[$key] = $this->carbon->parse($absen->absensi_keluar)->diffInHours($this->carbon->parse($absen->absensi_masuk));
+        }
+        foreach ($second_week_absen as $key => $absen) {
+            $second_week_hours[$key] = $this->carbon->parse($absen->absensi_keluar)->diffInHours($this->carbon->parse($absen->absensi_masuk));
+        }
+        foreach ($third_week_absen as $key => $absen) {
+            $third_week_hours[$key] = $this->carbon->parse($absen->absensi_keluar)->diffInHours($this->carbon->parse($absen->absensi_masuk));
+        }
+        foreach ($fourth_week_absen as $key => $absen) {
+            $fourth_week_hours[$key] = $this->carbon->parse($absen->absensi_keluar)->diffInHours($this->carbon->parse($absen->absensi_masuk));
+        }
+        // Final output in hour
+        $first_week_hours_total = array_sum($first_week_hours);
+        $second_week_hours_total = array_sum($second_week_hours);
+        $third_week_hours_total = array_sum($third_week_hours);
+        $fourth_week_hours_total = array_sum($fourth_week_hours);
+        return  [$first_week_hours_total, $second_week_hours_total, $third_week_hours_total, $fourth_week_hours_total];
+    }
+    private function getDataByStatus($year, $month, $status)
+    {
+        return count(DB::select(DB::raw("SELECT * FROM absensis WHERE MONTH(tanggal) = " . $month . " AND YEAR(tanggal) = " . $year . " AND status = " . "'$status'")));
+    }
     public function filter(Request $request)
     {
         $users = User::all();
@@ -60,15 +118,18 @@ class UserController extends Controller
     public function show($id)
     {
         $user = User::with('roles')->where('id', $id)->first();
+        $total_jam_per_bulan = $this->getMonthAbsenHours(Carbon::now(), $id);
+        $current_month = Carbon::now()->month;
+        $current_year = Carbon::now()->year;
         $user['jam_kerja'] = [
-            'minggu1' => 130,
-            'minggu2' => 140,
-            'minggu3' => 150,
-            'minggu4' => 160,
+            'minggu1' => $total_jam_per_bulan[0],
+            'minggu2' => $total_jam_per_bulan[1],
+            'minggu3' => $total_jam_per_bulan[2],
+            'minggu4' => $total_jam_per_bulan[3],
             'performance' => [
-                'total_jam_per_minggu' => 130 + 140 + 150 + 160,
-                'terlambat' => 2,
-                'total_lembur' => 7
+                'total_jam_per_minggu' => array_sum($total_jam_per_bulan),
+                'terlambat' => count(DB::select(DB::raw("SELECT * FROM absensis WHERE MONTH(tanggal) = " . $current_month . " AND YEAR(tanggal) = " . $current_year . " AND status = 'terlambat' AND user_id = " . $id))),
+                'total_lembur' => count(DB::select(DB::raw("SELECT * FROM lemburs WHERE MONTH(tanggal) = " . $current_month . " AND YEAR(tanggal) = " . $current_year . " AND user_id = " . $id)))
             ]
         ];
         return response()->json(['status' => '200', 'message' => 'Sukses', 'user' => $user]);
