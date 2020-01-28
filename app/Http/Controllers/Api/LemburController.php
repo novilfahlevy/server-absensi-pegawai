@@ -168,14 +168,23 @@ class LemburController extends Controller
 
     public function cari($keyword)
     {
-        $lembur = Lembur::all();
-        // dd($lembur);
-        $lembur = Lembur::where('tanggal', 'LIKE', '%' . $keyword . '%')->get();
+        $users = User::where('name', 'LIKE', '%' . $keyword . '%')->get()->pluck('id')->toArray();
 
-        if (!$lembur->isEmpty()) {
-            return response()->json(['code' => 200, 'message' => 'Berhasil mencari data!', 'data' => $lembur]);
+        $lembur = [];
+        foreach ($users as $user_id) {
+            $lembur[] = Lembur::where('user_id', '=', $user_id)->get();
         }
 
-        return response()->json(['code' => 400, 'message' => 'Kata yang anda cari tidak ditemukan!']);
+        if (isset($lembur[0])) {
+            $lembur = $lembur[0];
+
+            foreach ($lembur as $key => $absen) {
+                $lembur[$key]['name'] = User::find($absen->user_id)->name;
+            }
+
+            return response()->json(['status' => 200, 'message' => 'Sukses', 'data' => $lembur]);
+        }
+
+        return response()->json(['status' => 400, 'data' => 'Kata yang anda cari tidak ditemukan!']);
     }
 }
