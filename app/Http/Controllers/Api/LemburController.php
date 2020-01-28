@@ -22,89 +22,92 @@ class LemburController extends Controller
     {
         $this->imagePath = public_path() . '/storage/lembur/';
     }
-    public function filter($month, $year)
+    public function filter($role, $id, $month, $year)
     {
-        $results =  DB::select(DB::raw("SELECT * FROM lemburs WHERE MONTH(tanggal) = " . $month . " AND YEAR(tanggal) = " . $year . " AND status != 'waiting' "));
+        $results = [];
+        $users = User::all();
+        if ($role == 'Project Manager') {
+            $users_under_pm = [];
+            $pm_results = [];
+            foreach ($users as $key => $user) {
+                if (ProjectManager::where('pm_id', '=', $id)->where('user_id', $user->id)->get()->count()) {
+                    $users_under_pm[] = $user;
+                }
+            }
+            foreach ($users_under_pm as $key => $under_pm) {
+                $pm_results[] =  DB::select(DB::raw("SELECT * FROM lemburs WHERE MONTH(tanggal) = " . $month . " AND YEAR(tanggal) = " . $year . " AND user_id = " . $under_pm->id . " AND status != 'menunggu' "));
+            }
+            foreach ($pm_results as $res) {
+                foreach ($res as $key => $r) {
+                    $results[] = $r;
+                }
+            }
+        } else {
+            $results =  DB::select(DB::raw("SELECT * FROM lemburs WHERE MONTH(tanggal) = " . $month . " AND YEAR(tanggal) = " . $year . " AND status != 'menunggu' "));
+        }
         foreach ($results as $key => $result) {
-            $results[$key]->name = User::select('name')->where('id', $result->user_id)->get()->toArray();
-            $results[$key]->name = $results[$key]->name[0]['name'];
+            $results[$key]->name = User::find($result->user_id)->name;
         }
         return response()->json(['status' => 200, 'message' => 'Berhasil lembur!. Mohon tunggu admin untuk mempersetujuinya.', 'data' => $results]);
+    }
+    public function cari($keyword)
+    {
+        $users = User::where('name', 'LIKE', '%' . $keyword . '%')->get()->pluck('id')->toArray();
+        dd($users);
+        $lembur = [];
+        foreach ($users as $user_id) {
+            $lembur[] = Lembur::where('user_id', '=', $user_id)->get();
+        }
+        if (isset($lembur[0])) {
+            $lembur = $lembur[0];
+            foreach ($lembur as $key => $lembur) {
+                $lembur[$key]['name'] = User::find($lembur->user_id)->name;
+            }
+            return response()->json(['status' => 200, 'lembur' => $lembur]);
+        }
+        return response()->json(['status' => 404, 'lembur' => []]);
     }
     public function index($role, $id)
     {
         $carbon = new Carbon();
         $lates = Lembur::all();
-
-        $lembur = [];
-
-        foreach ($lates as $user) {
-            if (ProjectManager::where('user_id', '=', $user->user_id)->get()->count()) {
-                $lembur[] = $user;
-            }
-        }
-
         $latesStatusIsWaiting = [];
         $latesStatusIsDeniedRejected = [];
+
         if ($role == 'Project Manager') {
-            // $users = ProjectManager::where('pm_id', $id)->get();
-            // $lemburs = [];
-            // foreach ($users as $key => $user) {
-            //     $lemburs[$key] = Lembur::where('user_id', $user->id)->get();
-            // }
-            // dd(count($lemburs[0]));
-            $users = ProjectManager::where('pm_id', $id)->get()->toArray();
-            // dd($users[0]['user_id']);
-            // dd($users[1]['user_id']);
-            foreach ($users as $key => $user) {
-                // dd($user);
-                $latesStatusIsWaiting = Lembur::where('status', 'menunggu')->where('tanggal', $carbon->now()->toDateString())->where('user_id', $user['user_id'])->get()->toArray();
-                $latesStatusIsDeniedRejected = Lembur::where('status', '!=', 'menunggu')->where('user_id', $user['user_id'])->get();
+            $lembur = [];
+            foreach ($lates as $user) {
+                if (ProjectManager::where('pm_id', '=', $id)->where('user_id', $user->user_id)->get()->count()) {
+                    $lembur[] = $user;
+                }
             }
-            // dd($latesStatusIsWaiting);
-            // $lembur = Lembur::where('user_id', $users['user_id'])->get();
-            // dd($lembur->toArray());
-            $latesStatusIsWaiting = Lembur::where('status', 'menunggu')->where('tanggal', $carbon->now()->toDateString())->get();
-            $latesStatusIsDeniedRejected = Lembur::where('status', '!=', 'menunggu')->get();
-            foreach ($latesStatusIsWaiting as $key => $wait) {
-                $latesStatusIsWaiting[$key]['name'] = User::select('name')->where('id', $wait->user_id)->get()->toArray();
-                $latesStatusIsWaiting[$key]['name'] = $latesStatusIsWaiting[$key]['name'][0]['name'];
+            foreach ($lembur as $key => $l) {
+                $lembur[$key]['name'] = User::find($l->user_id)->name;
             }
-            foreach ($latesStatusIsDeniedRejected as $key => $denied) {
-                $latesStatusIsDeniedRejected[$key]['name'] = User::select('name')->where('id', $denied->user_id)->get()->toArray();
-                $latesStatusIsDeniedRejected[$key]['name'] = $latesStatusIsDeniedRejected[$key]['name'][0]['name'];
+            foreach ($lembur as $l) {
+                if ($l->status == 'menunggu') {
+                    $latesStatusIsWaiting[] = $l;
+                } else {
+                    $latesStatusIsDeniedRejected[] = $l;
+                }
             }
-            return response()->json([
-                'status' => 200, 'message' => 'Sukses', 'data' =>
-                [
-                    'waiting' => $latesStatusIsWaiting,
-                    'others' => $latesStatusIsDeniedRejected
-                ]
-            ]);
         } else {
             $latesStatusIsWaiting = Lembur::where('status', 'menunggu')->where('tanggal', $carbon->now()->toDateString())->get();
             $latesStatusIsDeniedRejected = Lembur::where('status', '!=', 'menunggu')->get();
             foreach ($latesStatusIsWaiting as $key => $wait) {
-                $latesStatusIsWaiting[$key]['name'] = User::select('name')->where('id', $wait->user_id)->get()->toArray();
-                $latesStatusIsWaiting[$key]['name'] = $latesStatusIsWaiting[$key]['name'][0]['name'];
+                $latesStatusIsWaiting[$key]['name'] = User::find($wait->user_id)->name;
             }
             foreach ($latesStatusIsDeniedRejected as $key => $denied) {
-                $latesStatusIsDeniedRejected[$key]['name'] = User::select('name')->where('id', $denied->user_id)->get()->toArray();
-                $latesStatusIsDeniedRejected[$key]['name'] = $latesStatusIsDeniedRejected[$key]['name'][0]['name'];
+                $latesStatusIsDeniedRejected[$key]['name'] = User::find($denied->user_id)->name;
             }
-            return response()->json(['status' => 200, 'message' => 'Sukses', 'data' => [
+        }
+        return response()->json([
+            'status' => 200, 'message' => 'Sukses', 'data' =>
+            [
                 'waiting' => $latesStatusIsWaiting,
                 'others' => $latesStatusIsDeniedRejected
-            ]]);
-        }
-        // foreach ($latesStatusIsWaiting as $key => $wait) {
-        //     $latesStatusIsWaiting[$key]['name'] = User::select('name')->where('id', $wait->user_id)->get()->toArray();
-        //     $latesStatusIsWaiting[$key]['name'] = $latesStatusIsWaiting[$key]['name'][0]['name'];
-        // }
-        // foreach ($latesStatusIsDeniedRejected as $key => $denied) {
-        //     $latesStatusIsDeniedRejected[$key]['name'] = User::select('name')->where('id', $denied->user_id)->get()->toArray();
-        //     $latesStatusIsDeniedRejected[$key]['name'] = $latesStatusIsDeniedRejected[$key]['name'][0]['name'];
-        // }
+            ]
+        ]);
     }
 
 

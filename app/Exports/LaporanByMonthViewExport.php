@@ -13,7 +13,7 @@ use Maatwebsite\Excel\Events\AfterSheet;
 use Illuminate\Support\Facades\DB;
 use App\User;
 
-class LaporanByMonthViewExport implements FromView
+class LaporanByMonthViewExport implements FromView, WithEvents
 {
     protected $carbon;
     protected $attendance;
@@ -109,8 +109,13 @@ class LaporanByMonthViewExport implements FromView
         return [
             AfterSheet::class => function (AfterSheet $event) {
                 // Apply array of styles for header title
-                $event->sheet->getDelegate()->getStyle('A1:L3')->applyFromArray([
-                    'size' => 14,
+                $event->sheet->getDelegate()->getStyle('A1:L100')->applyFromArray([
+                    'size' => 20,
+                    'alignment' => [
+                        'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                    ]
+                ]);
+                $event->sheet->getDelegate()->getStyle('A5:L5')->applyFromArray([
                     'alignment' => [
                         'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
                     ]
@@ -129,7 +134,8 @@ class LaporanByMonthViewExport implements FromView
                         ]
                     ]
                 ];
-                $event->sheet->getDelegate()->getStyle('A5:L100')->applyFromArray($styleArray);
+                $event->sheet->getDelegate()->getStyle('A3:L5')->applyFromArray($styleArray);
+                $event->sheet->getDelegate()->getStyle('A8:L10')->applyFromArray($styleArray);
             }
         ];
     }

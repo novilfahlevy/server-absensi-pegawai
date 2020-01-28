@@ -13,14 +13,15 @@ use Maatwebsite\Excel\Events\AfterSheet;
 use Illuminate\Support\Facades\DB;
 use App\User;
 
-class LaporanViewExport implements FromView
+class LaporanViewExport implements FromView, WithEvents
 {
     protected $carbon;
     protected $attendance;
     protected $imagePath;
-
+    protected $totalRows;
     public function __construct()
     {
+        $this->totalRows = count(User::all()) + 13;
         $this->carbon = new Carbon();
         $this->absensi = new Absensi();
         $this->imagePath = public_path() . '/storage/attendances_photo/';
@@ -130,8 +131,13 @@ class LaporanViewExport implements FromView
         return [
             AfterSheet::class => function (AfterSheet $event) {
                 // Apply array of styles for header title
-                $event->sheet->getDelegate()->getStyle('A1:L3')->applyFromArray([
-                    'size' => 14,
+                $event->sheet->getDelegate()->getStyle('A1:L100')->applyFromArray([
+                    'size' => 20,
+                    'alignment' => [
+                        'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                    ]
+                ]);
+                $event->sheet->getDelegate()->getStyle('A5:L5')->applyFromArray([
                     'alignment' => [
                         'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
                     ]
@@ -150,7 +156,9 @@ class LaporanViewExport implements FromView
                         ]
                     ]
                 ];
-                $event->sheet->getDelegate()->getStyle('A5:L100')->applyFromArray($styleArray);
+                $event->sheet->getDelegate()->getStyle('A3:L5')->applyFromArray($styleArray);
+                $event->sheet->getDelegate()->getStyle('A8:L10')->applyFromArray($styleArray);
+                $event->sheet->getDelegate()->getStyle('A13:L' . $this->totalRows)->applyFromArray($styleArray);
             }
         ];
     }
