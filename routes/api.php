@@ -28,6 +28,7 @@ Route::group(['middleware' => ['auth:api']], function () {
 
     Route::group(['middleware' => ['role:Admin|Project Manager']], function () {
         Route::get('/lembur/cari/{keyword}', 'Api\LemburController@cari');
+        Route::get('/lembur/{id}/cek', 'Api\LemburController@checkLembur');
         Route::get('/lembur/{id}/detail', 'Api\LemburController@show');
         Route::get('/user', 'Api\UserController@index');
         Route::get('/user/filter/{job}/{role}', 'Api\UserController@filter');

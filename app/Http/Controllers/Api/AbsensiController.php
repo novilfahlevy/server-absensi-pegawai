@@ -99,8 +99,8 @@ class AbsensiController extends Controller
         $this->absensi->keterangan = request('keterangan');
         $this->absensi->status = 'tepat waktu';
         $this->absensi->foto_absensi_masuk = $hashNameImage;
-        $this->absensi->latitude_absen_masuk = '1.111';
-        $this->absensi->longitude_absen_masuk = '1.111';
+        $this->absensi->latitude_absen_masuk = (Float) -34.397;
+        $this->absensi->longitude_absen_masuk = (Float) 150.644;
         $this->absensi->save();
 
         return response()->json(['status' => 200, 'message' => 'Berhasil absensi masuk!', 'data' => $this->absensi]);
@@ -132,7 +132,7 @@ class AbsensiController extends Controller
             $canvas->insert($resizeImage, 'center');
             $canvas->save($this->imagePath . '/' . $hashNameImage);
 
-            $this->absensi->where(['user_id' => Auth::user()->id, 'tanggal' => $this->carbon->toDateString()])->update(['absensi_keluar' => $this->carbon->toTimeString(), 'foto_absensi_keluar' => $hashNameImage, 'keterangan' => request('keterangan'), 'latitude_absen_keluar' => '1.111', 'longitude_absen_keluar' => '1.111']);
+            $this->absensi->where(['user_id' => Auth::user()->id, 'tanggal' => $this->carbon->toDateString()])->update(['absensi_keluar' => $this->carbon->toTimeString(), 'foto_absensi_keluar' => $hashNameImage, 'keterangan' => request('keterangan'), 'latitude_absen_keluar' => (Float) -34.397, 'longitude_absen_keluar' => (Float) 150.644]);
 
             $data = Absensi::where(['user_id' => Auth::user()->id, 'tanggal' => $this->carbon->toDateString()])->first();
 

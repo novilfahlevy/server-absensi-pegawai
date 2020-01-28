@@ -24,10 +24,10 @@ class AbsensiSeeder extends Seeder
             'status' => 'tepat waktu',
             'foto_absensi_masuk' => 'masuk.jpg',
             'foto_absensi_keluar' => 'keluar.jpg',
-            'latitude_absen_masuk' => '1.111',
-            'longitude_absen_masuk' => '1.111',
-            'latitude_absen_keluar' => '1.111',
-            'longitude_absen_keluar' => '1.111',
+            'latitude_absen_masuk' => -34.397,
+            'longitude_absen_masuk' => 150.644,
+            'latitude_absen_keluar' => -34.397,
+            'longitude_absen_keluar' => 150.644,
         ]);
 
         Absensi::create([
@@ -39,10 +39,10 @@ class AbsensiSeeder extends Seeder
             'status' => 'tepat waktu',
             'foto_absensi_masuk' => 'masuk.jpg',
             'foto_absensi_keluar' => 'keluar.jpg',
-            'latitude_absen_masuk' => '1.111',
-            'longitude_absen_masuk' => '1.111',
-            'latitude_absen_keluar' => '1.111',
-            'longitude_absen_keluar' => '1.111',
+            'latitude_absen_masuk' => -34.397,
+            'longitude_absen_masuk' => 150.644,
+            'latitude_absen_keluar' => -34.397,
+            'longitude_absen_keluar' => 150.644,
         ]);
 
         Absensi::create([
@@ -54,10 +54,10 @@ class AbsensiSeeder extends Seeder
             'status' => 'tepat waktu',
             'foto_absensi_masuk' => 'masuk.jpg',
             'foto_absensi_keluar' => 'keluar.jpg',
-            'latitude_absen_masuk' => '1.111',
-            'longitude_absen_masuk' => '1.111',
-            'latitude_absen_keluar' => '1.111',
-            'longitude_absen_keluar' => '1.111',
+            'latitude_absen_masuk' => -34.397,
+            'longitude_absen_masuk' => 150.644,
+            'latitude_absen_keluar' => -34.397,
+            'longitude_absen_keluar' => 150.644,
         ]);
 
         Absensi::create([
@@ -69,10 +69,10 @@ class AbsensiSeeder extends Seeder
             'status' => 'tepat waktu',
             'foto_absensi_masuk' => 'masuk.jpg',
             'foto_absensi_keluar' => 'keluar.jpg',
-            'latitude_absen_masuk' => '1.111',
-            'longitude_absen_masuk' => '1.111',
-            'latitude_absen_keluar' => '1.111',
-            'longitude_absen_keluar' => '1.111',
+            'latitude_absen_masuk' => -34.397,
+            'longitude_absen_masuk' => 150.644,
+            'latitude_absen_keluar' => -34.397,
+            'longitude_absen_keluar' => 150.644,
         ]);
 
         Absensi::create([
@@ -84,10 +84,10 @@ class AbsensiSeeder extends Seeder
             'status' => 'tepat waktu',
             'foto_absensi_masuk' => 'masuk.jpg',
             'foto_absensi_keluar' => 'keluar.jpg',
-            'latitude_absen_masuk' => '1.111',
-            'longitude_absen_masuk' => '1.111',
-            'latitude_absen_keluar' => '1.111',
-            'longitude_absen_keluar' => '1.111',
+            'latitude_absen_masuk' => -34.397,
+            'longitude_absen_masuk' => 150.644,
+            'latitude_absen_keluar' => -34.397,
+            'longitude_absen_keluar' => 150.644,
         ]);
 
         Absensi::create([
@@ -99,10 +99,10 @@ class AbsensiSeeder extends Seeder
             'status' => 'tepat waktu',
             'foto_absensi_masuk' => 'masuk.jpg',
             'foto_absensi_keluar' => 'keluar.jpg',
-            'latitude_absen_masuk' => '1.111',
-            'longitude_absen_masuk' => '1.111',
-            'latitude_absen_keluar' => '1.111',
-            'longitude_absen_keluar' => '1.111',
+            'latitude_absen_masuk' => -34.397,
+            'longitude_absen_masuk' => 150.644,
+            'latitude_absen_keluar' => -34.397,
+            'longitude_absen_keluar' => 150.644,
         ]);
 
         Absensi::create([
@@ -114,10 +114,10 @@ class AbsensiSeeder extends Seeder
             'status' => 'tepat waktu',
             'foto_absensi_masuk' => 'masuk.jpg',
             'foto_absensi_keluar' => 'keluar.jpg',
-            'latitude_absen_masuk' => '1.111',
-            'longitude_absen_masuk' => '1.111',
-            'latitude_absen_keluar' => '1.111',
-            'longitude_absen_keluar' => '1.111',
+            'latitude_absen_masuk' => -34.397,
+            'longitude_absen_masuk' => 150.644,
+            'latitude_absen_keluar' => -34.397,
+            'longitude_absen_keluar' => 150.644,
         ]);
 
         Absensi::create([
@@ -129,10 +129,10 @@ class AbsensiSeeder extends Seeder
             'status' => 'tepat waktu',
             'foto_absensi_masuk' => 'masuk.jpg',
             'foto_absensi_keluar' => 'keluar.jpg',
-            'latitude_absen_masuk' => '1.111',
-            'longitude_absen_masuk' => '1.111',
-            'latitude_absen_keluar' => '1.111',
-            'longitude_absen_keluar' => '1.111',
+            'latitude_absen_masuk' => -34.397,
+            'longitude_absen_masuk' => 150.644,
+            'latitude_absen_keluar' => -34.397,
+            'longitude_absen_keluar' => 150.644,
         ]);
 
         Absensi::create([
@@ -144,10 +144,10 @@ class AbsensiSeeder extends Seeder
             'status' => 'tepat waktu',
             'foto_absensi_masuk' => 'masuk.jpg',
             'foto_absensi_keluar' => 'keluar.jpg',
-            'latitude_absen_masuk' => '1.111',
-            'longitude_absen_masuk' => '1.111',
-            'latitude_absen_keluar' => '1.111',
-            'longitude_absen_keluar' => '1.111',
+            'latitude_absen_masuk' => -34.397,
+            'longitude_absen_masuk' => 150.644,
+            'latitude_absen_keluar' => -34.397,
+            'longitude_absen_keluar' => 150.644,
         ]);
 
         Absensi::create([
@@ -159,10 +159,10 @@ class AbsensiSeeder extends Seeder
             'status' => 'tepat waktu',
             'foto_absensi_masuk' => 'masuk.jpg',
             'foto_absensi_keluar' => 'keluar.jpg',
-            'latitude_absen_masuk' => '1.111',
-            'longitude_absen_masuk' => '1.111',
-            'latitude_absen_keluar' => '1.111',
-            'longitude_absen_keluar' => '1.111',
+            'latitude_absen_masuk' => -34.397,
+            'longitude_absen_masuk' => 150.644,
+            'latitude_absen_keluar' => -34.397,
+            'longitude_absen_keluar' => 150.644,
         ]);
 
         Absensi::create([
@@ -174,10 +174,10 @@ class AbsensiSeeder extends Seeder
             'status' => 'terlambat',
             'foto_absensi_masuk' => 'masuk.jpg',
             'foto_absensi_keluar' => 'keluar.jpg',
-            'latitude_absen_masuk' => '1.111',
-            'longitude_absen_masuk' => '1.111',
-            'latitude_absen_keluar' => '1.111',
-            'longitude_absen_keluar' => '1.111',
+            'latitude_absen_masuk' => -34.397,
+            'longitude_absen_masuk' => 150.644,
+            'latitude_absen_keluar' => -34.397,
+            'longitude_absen_keluar' => 150.644,
         ]);
 
         Absensi::create([
@@ -189,10 +189,10 @@ class AbsensiSeeder extends Seeder
             'status' => 'tepat waktu',
             'foto_absensi_masuk' => 'masuk.jpg',
             'foto_absensi_keluar' => 'keluar.jpg',
-            'latitude_absen_masuk' => '1.111',
-            'longitude_absen_masuk' => '1.111',
-            'latitude_absen_keluar' => '1.111',
-            'longitude_absen_keluar' => '1.111',
+            'latitude_absen_masuk' => -34.397,
+            'longitude_absen_masuk' => 150.644,
+            'latitude_absen_keluar' => -34.397,
+            'longitude_absen_keluar' => 150.644,
         ]);
 
         Absensi::create([
@@ -204,10 +204,10 @@ class AbsensiSeeder extends Seeder
             'status' => 'tepat waktu',
             'foto_absensi_masuk' => 'masuk.jpg',
             'foto_absensi_keluar' => 'keluar.jpg',
-            'latitude_absen_masuk' => '1.111',
-            'longitude_absen_masuk' => '1.111',
-            'latitude_absen_keluar' => '1.111',
-            'longitude_absen_keluar' => '1.111',
+            'latitude_absen_masuk' => -34.397,
+            'longitude_absen_masuk' => 150.644,
+            'latitude_absen_keluar' => -34.397,
+            'longitude_absen_keluar' => 150.644,
         ]);
 
         Absensi::create([
@@ -219,10 +219,10 @@ class AbsensiSeeder extends Seeder
             'status' => 'tepat waktu',
             'foto_absensi_masuk' => 'masuk.jpg',
             'foto_absensi_keluar' => 'keluar.jpg',
-            'latitude_absen_masuk' => '1.111',
-            'longitude_absen_masuk' => '1.111',
-            'latitude_absen_keluar' => '1.111',
-            'longitude_absen_keluar' => '1.111',
+            'latitude_absen_masuk' => -34.397,
+            'longitude_absen_masuk' => 150.644,
+            'latitude_absen_keluar' => -34.397,
+            'longitude_absen_keluar' => 150.644,
         ]);
 
         Absensi::create([
