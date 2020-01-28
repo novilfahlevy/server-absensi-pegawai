@@ -28,6 +28,11 @@ class ProjectManagerController extends Controller
         ]);
     }
 
+    private function checkPegawaiRole($user_id) {
+        $role = Role::find($user_id)['id'];
+        return $role !== 1 && $role !== 3;
+    }
+
     public function searchMember($pm_id, $keyword) {
         $users = User::where('name', 'LIKE', "%$keyword%")->orWhere('username', 'LIKE', "%$keyword%")
             ->get()
@@ -54,10 +59,12 @@ class ProjectManagerController extends Controller
         $members = [];
 
         foreach ( $users as $user_id ) {
-            if ( !ProjectManager::where('user_id', $user_id)->get()->count() && Role::find($user_id)['id'] !== 1 ) {
-                $newUser = User::find($user_id);
-                $newUser['job'] = Jobdesc::find($newUser->jobdesc_id)->name;
-                $members[] = $newUser;
+            if ( $this->checkPegawaiRole($user_id) ) {
+                if ( !ProjectManager::where('user_id', $user_id)->get()->count() ) {
+                    $newUser = User::find($user_id);
+                    $newUser['job'] = Jobdesc::find($newUser->jobdesc_id)->name;
+                    $members[] = $newUser;
+                }
             }
         }
         
@@ -89,10 +96,12 @@ class ProjectManagerController extends Controller
         $users = [];
 
         foreach ( User::all() as $user ) {
-            if ( !ProjectManager::where('user_id', '=', $user->id)->orWhere('pm_id', '=', $user->id)->get()->count() && Role::find($user->id)['id'] !== 1 ) {
-                $newUser = User::find($user->id);
-                $newUser['job'] = Jobdesc::find($user->jobdesc_id)->name;
-                $users[] = $newUser;
+            if ( $this->checkPegawaiRole($user->id) ) {
+                if ( !ProjectManager::where('user_id', '=', $user->id)->get()->count() ) {
+                    $newUser = User::find($user->id);
+                    $newUser['job'] = Jobdesc::find($user->jobdesc_id)->name;
+                    $users[] = $newUser;
+                }
             }
         }
 
@@ -110,9 +119,8 @@ class ProjectManagerController extends Controller
         $users = [];
 
         foreach ( User::all() as $user ) {
-            $role = Role::find($user->id)['id'];
             if ( !ProjectManager::where('user_id', '=', $user->id)->get()->count() ) {
-                if ( $role !== 1 && $role !== 3 ) {
+                if ( $this->checkPegawaiRole($user->id) ) {
                     $newUser = User::find($user->id);
                     $newUser['job'] = Jobdesc::find($user->jobdesc_id)->name;
                     $users[] = $newUser;

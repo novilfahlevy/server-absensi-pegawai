@@ -105,8 +105,9 @@ class UserController extends Controller
         $input['username'] = strtolower($request->username);
         $input['profile'] = 'default.jpg';
         $input['password'] = bcrypt($input['password']);
+        $input['jobdesc_id'] = (Int) $input['jobdesc_id'];
         $user = User::create($input);
-        $role = Role::find(2);
+        $role = Role::find($request->role);
         $user->assignRole($role);
 
         return response()->json(['status' => '200', 'message' => 'Sukses', 'user' => $user]);

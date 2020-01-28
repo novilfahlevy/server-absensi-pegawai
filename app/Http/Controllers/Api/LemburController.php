@@ -181,4 +181,16 @@ class LemburController extends Controller
 
         return response()->json(['code' => 400, 'message' => 'Kata yang anda cari tidak ditemukan!']);
     }
+
+    public function checkLembur($id) {
+        $carbon = new Carbon();
+
+        if ( Lembur::where('user_id', $id)->where('tanggal', $carbon->toDateString())->get()->count() ) {
+            if ( Lembur::where('user_id', $id)->where('tanggal', $carbon->toDateString())->get()[0]['status'] === 'diterima' ) {
+                return response()->json(['status' => 200, 'data' => 1]);
+            }
+        }
+
+        return response()->json(['status' => 200, 'data' => 0]);
+    }
 }
