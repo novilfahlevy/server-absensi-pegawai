@@ -10,9 +10,12 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\RegisterUserRequest;
 use App\Jobdesc;
+use App\ProjectManager;
 use Intervention\Image\Facades\Image;
 use App\User;
 use App\Role;
+use App\Absensi;
+use App\Lembur;
 use Illuminate\Support\Facades\Storage;
 use Laravel\Passport\Passport;
 use Illuminate\Support\Facades\DB;
@@ -267,10 +270,16 @@ class UserController extends Controller
 
     public function destroy($id)
     {
-        $user = User::findOrFail($id);
-        $user->delete();
+        if ( User::where('id', $id)->get()->count() ) {
+            User::findOrFail($id)->delete();
+            Absensi::where('user_id', $id)->delete();
+            Lembur::where('user_id', $id)->delete();
+            ProjectManager::where('user_id', $id)->delete();
 
-        return response()->json(['status' => 200, 'message' => 'Berhasil menghapus user!']);
+            return response()->json(['status' => 200, 'message' => 'Berhasil menghapus user!']);
+        }
+
+        return response()->json(['status' => 400, 'message' => 'Gagal menghapus user!']);
     }
 
     public function unauthorized()
