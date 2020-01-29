@@ -125,6 +125,7 @@ class UserController extends Controller
     public function show($id)
     {
         $user = User::with('roles')->where('id', $id)->first();
+        $user['job'] = Jobdesc::find($user->jobdesc_id)->name;
         $total_jam_per_bulan = $this->getMonthAbsenHours(Carbon::now(), $id);
         $current_month = Carbon::now()->month;
         $current_year = Carbon::now()->year;
