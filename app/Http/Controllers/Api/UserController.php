@@ -16,20 +16,23 @@ use App\Role;
 use Illuminate\Support\Facades\Storage;
 use Laravel\Passport\Passport;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 
 class UserController extends Controller
 {
     public function __construct()
     {
         $this->carbon = new Carbon();
+        $this->imagePath = public_path() . '/storage/profiles/';
     }
     public function index()
     {
         $users = User::all();
 
         foreach ($users as $key => $user) {
+            $role = $user->roles()->pluck('name');
             $users[$key]['job'] = Jobdesc::find($user->jobdesc_id)->name;
-            $users[$key]['role'] = Role::find($user->id)['name'];
+            $users[$key]['role'] = $role;
         }
 
         return response()->json(['status' => '200', 'message' => 'Sukses', 'user' => $users]);
@@ -166,9 +169,9 @@ class UserController extends Controller
         $input['username'] = strtolower($request->username);
         $input['profile'] = 'default.jpg';
         $input['password'] = bcrypt($input['password']);
-        $input['jobdesc_id'] = (Int) $input['jobdesc_id'];
+        $input['jobdesc_id'] = (int) $input['jobdesc_id'];
         $user = User::create($input);
-        $role = Role::find($request->role);
+        $role = Role::find($request->role_id);
         $user->assignRole($role);
 
         return response()->json(['status' => '200', 'message' => 'Sukses', 'user' => $user]);
@@ -214,48 +217,24 @@ class UserController extends Controller
             ]
         );
 
-        if ($request->hasFile('profile')) {
-            $fileNameWithExtention = $request->file('profile')->getClientOriginalName();
-            $fileName = pathinfo($fileNameWithExtention, PATHINFO_FILENAME);
-            $extention = $request->file('profile')->getClientOriginalExtension();
-            $filenameToStore = $fileName . '_' . time() . '.' . $extention;
-            $user = User::find($request->user_id);
-
-            if ($user->profile !== 'default.jpg') {
-                Storage::delete('public/profiles/' . $user->profile);
-            }
-
-            $profileimagepath = public_path() . '/storage/profiles/';
-            $profileimageUrl = '/storage/profiles/' . $filenameToStore;
-            $profileimage = Image::make($request->file('profile'));
-            $canvas = Image::canvas(300, 300);
-
-            $profileimage->resize(300, 300, function ($constrait) {
-                $constrait->aspectRatio();
-            });
-
-            $canvas->insert($profileimage, 'center');
-            $canvas->save($profileimagepath . $filenameToStore);
-            $user->profile = $filenameToStore;
-            $user->save();
-
-            return response()->json(['status' => 200, 'message' => 'Profil anda berhasil diupdate!', 'data' => url($profileimageUrl)]);
+        if (!File::isDirectory($this->imagePath)) {
+            File::makeDirectory($this->imagePath);
         }
 
-        $profileimagepath = public_path() . '/storage/profiles/';
-        $profileimage = Image::make($request->file('profile'));
-        $canvas = Image::canvas(300, 300);
+        $user = new User();
 
-        $profileimage->resize(300, 300, function ($constrait) {
-            $constrait->aspectRatio();
+        $input = $request->file('profile');
+        $hashNameImage = time() . '_' . $input->getClientOriginalName();
+        $canvas = Image::canvas(500, 500);
+        $resizeImage = Image::make($input)->resize(500, 500, function ($constraint) {
+            $constraint->aspectRatio();
         });
+        $canvas->insert($resizeImage, 'center');
+        $canvas->save($this->imagePath . '/' . $hashNameImage);
+        $user->profile = $hashNameImage;
+        $user->where('email', '=', Auth::user()->email)->update(['profile' => $hashNameImage]);
 
-        $canvas->insert($profileimage, 'center');
-        $canvas->save($profileimagepath . $filenameToStore);
-        $user->profile = $filenameToStore;
-        $user->save();
-
-        return response()->json(['status' => 200, 'message' => 'Profil anda berhasil diupdate!', 'data' => url($profileimagepath)]);
+        return response()->json(['status' => 200, 'message' => 'Profil anda berhasil diupdate!', 'data' => url('/storage/profiles/' . $hashNameImage)]);
     }
 
     public function editKredensial(Request $request, $id)
