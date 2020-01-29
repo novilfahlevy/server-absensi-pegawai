@@ -120,7 +120,7 @@ class ProjectManagerController extends Controller
             if (!ProjectManager::where('user_id', '=', $user->id)->get()->count()) {
                 if ($role !== 1 && $role !== 3) {
                     $newUser = User::find($user->id);
-                    $newUser['role'] = Role::find($user->id);
+                    $newUser['job'] = Jobdesc::find($user->jobdesc_id)->name;
                     $users[] = $newUser;
                 }
             }
