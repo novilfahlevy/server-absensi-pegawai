@@ -27,7 +27,7 @@ class AbsensiController extends Controller
 
     public function index()
     {
-        $absensi = Absensi::all();
+        $absensi = Absensi::where('tanggal', Carbon::now())->get();
         foreach ($absensi as $key => $absen) {
             $absensi[$key]['name'] = $absen->user->name;
         }
