@@ -94,16 +94,19 @@ class ProjectManagerController extends Controller
         $users = [];
 
         foreach (User::all() as $user) {
-            if (!ProjectManager::where('user_id', '=', $user->id)->orWhere('pm_id', '=', $user->id)->get()->count() && Role::find($user->id)['id'] !== 1) {
-                $newUser = User::find($user->id);
-                $newUser['job'] = Jobdesc::find($user->jobdesc_id)->name;
-                $users[] = $newUser;
+            $role = Role::find($user->id)['id'];
+            if (!ProjectManager::where('user_id', '=', $user->id)->orWhere('pm_id', '=', $user->id)->get()->count()) {
+                if ( $role !== 1 && $role !== 3 ) {
+                    $newUser = User::find($user->id);
+                    $newUser['job'] = Jobdesc::find($user->jobdesc_id)->name;
+                    $users[] = $newUser;
+                }
             }
         }
 
         $users = collect($users)->filter(function ($data) use ($request) {
             if ($request->job !== 'all') {
-                return $data->job === $request->job;
+                return $data->jobdesc_id === Jobdesc::find($request->job)->id;
             }
             return true;
         })->values();
