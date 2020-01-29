@@ -250,10 +250,16 @@ class UserController extends Controller
     public function cari($name)
     {
 
-        $user = User::where('name', 'LIKE', '%' . $name . '%')->get();
+        $users = User::where('name', 'LIKE', '%' . $name . '%')->get();
 
-        if (!$user->isEmpty()) {
-            return response()->json(['code' => 200, 'message' => 'Berhasil mencari data!', 'data' => $user]);
+        foreach ($users as $key => $user) {
+            $role = $user->roles()->pluck('name');
+            $users[$key]['job'] = Jobdesc::find($user->jobdesc_id)->name;
+            $users[$key]['role'] = $role;
+        }
+
+        if (!$users->isEmpty()) {
+            return response()->json(['code' => 200, 'message' => 'Berhasil mencari data!', 'data' => $users]);
         }
 
         return response()->json(['code' => 400, 'message' => 'Kata yang anda cari tidak ditemukan!']);
