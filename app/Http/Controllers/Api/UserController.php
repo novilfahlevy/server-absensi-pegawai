@@ -95,13 +95,14 @@ class UserController extends Controller
         $users = User::all();
 
         foreach ($users as $key => $user) {
+            $role = $user->roles()->pluck('name');
             $users[$key]['job'] = Jobdesc::find($user->jobdesc_id)->name;
-            $users[$key]['role'] = Role::find($user->id)['name'];
+            $users[$key]['role'] = $role;
         }
 
         $users = $users->filter(function ($data) use ($request) {
             if ($request->job !== 'all' && $request->role !== 'all') {
-                return $data->job === $request->job && $data->role === $request->role;
+                return $data->job === $request->job && $data->role[0] === $request->role;
             }
 
             if ($request->job !== 'all') {
@@ -109,7 +110,7 @@ class UserController extends Controller
             }
 
             if ($request->role !== 'all') {
-                return $data->role === $request->role;
+                return $data->role[0] === $request->role;
             }
 
             return true;

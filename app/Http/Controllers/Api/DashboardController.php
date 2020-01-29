@@ -6,16 +6,18 @@ use App\Http\Controllers\Controller;
 
 use App\User;
 use App\Absensi;
+use Carbon\Carbon;
+use App\Lembur;
 
 class DashboardController extends Controller
 {
     public function index()
     {
         $total_pegawai = User::get()->count();
-        $total_pegawai_absen = Absensi::get()->count();
+        $total_pegawai_absen = Absensi::where('tanggal', Carbon::now()->toDateString())->get()->sortBy('absensi_masuk')->take(5)->count();
 
         $sudah_absensi = [];
-        foreach (Absensi::all()->sortBy('absensi_masuk')->take(5) as $absen) {
+        foreach (Absensi::where('tanggal', Carbon::now()->toDateString())->get()->sortBy('absensi_masuk')->take(5) as $absen) {
             $sudah_absensi[] = [
                 'name' => $absen->user->name,
                 'absensi_masuk' => $absen->absensi_masuk,
@@ -37,7 +39,7 @@ class DashboardController extends Controller
                 'total_pegawai' => $total_pegawai,
                 'total_pegawai_absen' => $total_pegawai_absen,
                 'total_pegawai_belum_absen' => $total_pegawai - $total_pegawai_absen,
-                'total_pegawai_lembur' => 'Belum dibuat model lembur nya',
+                'total_pegawai_lembur' => Lembur::where('tanggal', Carbon::now()->toDateString())->count(),
                 'pegawai_sudah_absen' => $sudah_absensi,
                 'pegawai_belum_absen' => collect($belum_absensi)->take(5)
             ]
