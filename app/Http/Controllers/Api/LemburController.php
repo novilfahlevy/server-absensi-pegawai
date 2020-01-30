@@ -22,6 +22,7 @@ class LemburController extends Controller
     {
         $this->imagePath = public_path() . '/storage/lembur/';
     }
+
     public function filter($role, $id, $month, $year)
     {
         $results = [];
@@ -45,9 +46,11 @@ class LemburController extends Controller
         } else {
             $results =  DB::select(DB::raw("SELECT * FROM lemburs WHERE MONTH(tanggal) = " . $month . " AND YEAR(tanggal) = " . $year . " AND status != 'menunggu' "));
         }
+
         foreach ($results as $key => $result) {
             $results[$key]->name = User::find($result->user_id)->name;
         }
+
         return response()->json(['status' => 200, 'message' => 'Berhasil lembur!. Mohon tunggu admin untuk mempersetujuinya.', 'data' => $results]);
     }
 
@@ -65,9 +68,11 @@ class LemburController extends Controller
                     $lembur[] = $user;
                 }
             }
+
             foreach ($lembur as $key => $l) {
                 $lembur[$key]['name'] = User::find($l->user_id)->name;
             }
+
             foreach ($lembur as $l) {
                 if ($l->status == 'menunggu') {
                     $latesStatusIsWaiting[] = $l;
@@ -85,6 +90,7 @@ class LemburController extends Controller
                 $latesStatusIsDeniedRejected[$key]['name'] = User::find($denied->user_id)->name;
             }
         }
+
         return response()->json([
             'status' => 200, 'message' => 'Sukses', 'data' =>
             [
@@ -93,7 +99,6 @@ class LemburController extends Controller
             ]
         ]);
     }
-
 
     public function create(Request $request)
     {
@@ -148,6 +153,7 @@ class LemburController extends Controller
     {
         $detail_lembur = Lembur::findOrFail($id);
         $detail_lembur->user->name;
+
         return response()->json(['status' => 200, 'data' => [
             'detail_lembur' => $detail_lembur
         ]]);
@@ -157,26 +163,28 @@ class LemburController extends Controller
     {
         $users = User::where('name', 'LIKE', '%' . $keyword . '%')->get()->pluck('id')->toArray();
         $lembur = [];
+
         foreach ($users as $user_id) {
             $lembur[] = Lembur::where('user_id', '=', $user_id)->get();
         }
+
         if (isset($lembur[0])) {
             $lembur = $lembur[0];
             foreach ($lembur as $key => $absen) {
                 $lembur[$key]['name'] = User::find($absen->user_id)->name;
             }
-
             return response()->json(['status' => 200, 'message' => 'Sukses', 'data' => $lembur]);
         }
 
         return response()->json(['status' => 400, 'data' => 'Kata yang anda cari tidak ditemukan!']);
     }
 
-    public function checkLembur($id) {
+    public function checkLembur($id)
+    {
         $carbon = new Carbon();
 
-        if ( Lembur::where('user_id', $id)->where('tanggal', $carbon->toDateString())->get()->count() ) {
-            if ( Lembur::where('user_id', $id)->where('tanggal', $carbon->toDateString())->get()[0]['status'] === 'diterima' ) {
+        if (Lembur::where('user_id', $id)->where('tanggal', $carbon->toDateString())->get()->count()) {
+            if (Lembur::where('user_id', $id)->where('tanggal', $carbon->toDateString())->get()[0]['status'] === 'diterima') {
                 return response()->json(['status' => 200, 'data' => 1]);
             }
         }

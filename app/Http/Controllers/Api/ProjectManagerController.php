@@ -96,7 +96,7 @@ class ProjectManagerController extends Controller
         foreach (User::all() as $user) {
             if (!ProjectManager::where('user_id', '=', $user->id)->get()->count()) {
                 $role = $user->getRoleNames()[0];
-                if ( $role !== 'Admin' && $role !== 'Project Manager' ) {
+                if ($role !== 'Admin' && $role !== 'Project Manager') {
                     $newUser = User::find($user->id);
                     $newUser['job'] = Jobdesc::find($user->jobdesc_id)->name;
                     $users[] = $newUser;
@@ -150,6 +150,7 @@ class ProjectManagerController extends Controller
                 return response()->json(['status' => 400, 'message' => 'Gagal menambah anggota']);
             }
         }
+
         return response()->json(['status' => 200, 'message' => 'Berhasil menambahkan anggota']);
     }
 
@@ -161,6 +162,7 @@ class ProjectManagerController extends Controller
                 return response()->json(['status' => 200, 'message' => 'Pegawai berhasil dihapus']);
             }
         }
+
         return response()->json(['status' => 400, 'message' => 'Gagal menghapus pegawai']);
     }
 }

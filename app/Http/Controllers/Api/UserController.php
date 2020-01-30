@@ -17,7 +17,6 @@ use App\Role;
 use App\Absensi;
 use App\Lembur;
 use App\UserHasMadeBy;
-use Illuminate\Support\Facades\Storage;
 use Laravel\Passport\Passport;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
@@ -29,6 +28,7 @@ class UserController extends Controller
         $this->carbon = new Carbon();
         $this->imagePath = public_path() . '/storage/profiles/';
     }
+
     public function index()
     {
         $users = User::all();
@@ -41,6 +41,7 @@ class UserController extends Controller
 
         return response()->json(['status' => '200', 'message' => 'Sukses', 'user' => $users]);
     }
+
     private function getWeeklyAbsen($year, $month, $startDate, $endDate, $user_id = null)
     {
         // Get current month
@@ -49,6 +50,7 @@ class UserController extends Controller
         }
         return DB::select(DB::raw("SELECT * FROM absensis WHERE MONTH(tanggal) = " . $month . " AND YEAR(tanggal) = " . $year . " AND user_id = " . $user_id . " AND DAY(tanggal) BETWEEN " . $startDate . " AND " . $endDate));
     }
+
     private function getMonthAbsenHours($date, $id)
     {
         // Get the last date of the current month
@@ -70,30 +72,38 @@ class UserController extends Controller
         $second_week_absen = $this->getWeeklyAbsen($year, $month, $second_week_start, $third_week_start, $id);
         $third_week_absen = $this->getWeeklyAbsen($year, $month, $third_week_start, $fourth_week_start, $id);
         $fourth_week_absen = $this->getWeeklyAbsen($year, $month, $fourth_week_start, $last_date, $id);
+
         // foreach and input it to array above
         foreach ($first_week_absen as $key => $absen) {
             $first_week_hours[$key] = $this->carbon->parse($absen->absensi_keluar)->diffInHours($this->carbon->parse($absen->absensi_masuk));
         }
+
         foreach ($second_week_absen as $key => $absen) {
             $second_week_hours[$key] = $this->carbon->parse($absen->absensi_keluar)->diffInHours($this->carbon->parse($absen->absensi_masuk));
         }
+
         foreach ($third_week_absen as $key => $absen) {
             $third_week_hours[$key] = $this->carbon->parse($absen->absensi_keluar)->diffInHours($this->carbon->parse($absen->absensi_masuk));
         }
+
         foreach ($fourth_week_absen as $key => $absen) {
             $fourth_week_hours[$key] = $this->carbon->parse($absen->absensi_keluar)->diffInHours($this->carbon->parse($absen->absensi_masuk));
         }
+
         // Final output in hour
         $first_week_hours_total = array_sum($first_week_hours);
         $second_week_hours_total = array_sum($second_week_hours);
         $third_week_hours_total = array_sum($third_week_hours);
         $fourth_week_hours_total = array_sum($fourth_week_hours);
+
         return  [$first_week_hours_total, $second_week_hours_total, $third_week_hours_total, $fourth_week_hours_total];
     }
+
     private function getDataByStatus($year, $month, $status)
     {
         return count(DB::select(DB::raw("SELECT * FROM absensis WHERE MONTH(tanggal) = " . $month . " AND YEAR(tanggal) = " . $year . " AND status = " . "'$status'")));
     }
+
     public function filter(Request $request)
     {
         $users = User::all();
@@ -128,7 +138,7 @@ class UserController extends Controller
         $user = User::with('roles')->where('id', $id)->first();
         $user['job'] = Jobdesc::find($user->jobdesc_id)->name;
         $user['has_made_by'] = UserHasMadeBy::where('user_id', $user['id'])->first() ?: null;
-        if ( $user['has_made_by'] ) {
+        if ($user['has_made_by']) {
             $user['has_made_by']['name'] = User::find($user['has_made_by']->admin_id)->name;
         }
         $total_jam_per_bulan = $this->getMonthAbsenHours(Carbon::now(), $id);
@@ -145,6 +155,7 @@ class UserController extends Controller
                 'total_lembur' => count(DB::select(DB::raw("SELECT * FROM lemburs WHERE MONTH(tanggal) = " . $current_month . " AND YEAR(tanggal) = " . $current_year . " AND user_id = " . $id)))
             ]
         ];
+
         return response()->json(['status' => '200', 'message' => 'Sukses', 'user' => $user]);
     }
 
@@ -158,6 +169,7 @@ class UserController extends Controller
             $success['role'] = $roles->roles[0]['name'];
             $success['token'] = $user->createToken('Passport Token')->accessToken;
             Passport::personalAccessTokensExpireIn(now()->addHours(12));
+
             return response()->json(['status' => 200, 'message' => $success]);
         } else {
             return response()->json(['status' => 401, 'message' => 'Email atau password salah!']);

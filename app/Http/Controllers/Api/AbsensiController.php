@@ -53,7 +53,6 @@ class AbsensiController extends Controller
     {
         $users = User::where('name', 'LIKE', '%' . $keyword . '%')->get()->pluck('id')->toArray();
 
-
         $absensi = [];
         foreach ($users as $user_id) {
             $absensi[] = Absensi::where('user_id', '=', $user_id)->get();
@@ -65,10 +64,8 @@ class AbsensiController extends Controller
             foreach ($absensi as $key => $absen) {
                 $absensi[$key]['name'] = User::find($absen->user_id)->name;
             }
-
             return response()->json(['status' => 200, 'absensi' => $absensi]);
         }
-
         return response()->json(['status' => 404, 'absensi' => []]);
     }
 

@@ -7,10 +7,9 @@ use Spatie\Permission\Models\Role as RoleSpatie;
 
 class Role extends RoleSpatie
 {
-    //
     protected $table = 'roles';
 
-    protected $fillable =[
+    protected $fillable = [
         'name',
         'guard_web'
     ];
