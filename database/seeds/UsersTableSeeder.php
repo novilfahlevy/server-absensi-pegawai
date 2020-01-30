@@ -22,23 +22,23 @@ class UsersTableSeeder extends Seeder
 
         Role::insert($role_data);
 
-        foreach ( Role::all() as $role ) {
-            foreach ( factory(User::class, 20)->create() as $user ) {
+        foreach (Role::all() as $role) {
+            foreach (factory(User::class, 20)->create() as $user) {
                 $user->assignRole($role);
             }
         }
 
-        // $admin = User::create([
-        //     'name' => 'Admin',
-        //     'jobdesc_id' => 1,
-        //     'username' => 'admin',
-        //     'email' => 'admin@admin.com',
-        //     'nomor_handphone' => '081234567890',
-        //     'alamat' => 'Jl. Semangka',
-        //     'password' => bcrypt('secret'),
-        //     'profile' => 'default.jpg'
-        // ]);
-        // $admin->assignRole(Role::find(1));
+        $admin = User::create([
+            'name' => 'Admin',
+            'jobdesc_id' => 1,
+            'username' => 'admin',
+            'email' => 'admin@admin.com',
+            'nomor_handphone' => '081234567890',
+            'alamat' => 'Jl. Semangka',
+            'password' => bcrypt('secret'),
+            'profile' => 'default.jpg'
+        ]);
+        $admin->assignRole(Role::find(1));
 
         // $user = User::create([
         //     'name' => 'User',
