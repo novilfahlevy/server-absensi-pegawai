@@ -15,7 +15,7 @@ class JobdescController extends Controller
      */
     public function index()
     {
-        return response()->json(['status' => 200, 'data' => Jobdesc::all()]);
+        return response()->json(['status' => 200, 'message' => 'Sukses mendapatkan semua data!', 'data' => Jobdesc::all()]);
     }
 
     /**
