@@ -60,7 +60,7 @@ Route::group(['middleware' => ['auth:api']], function () {
         Route::post('/user/pm', 'Api\ProjectManagerController@store');
         Route::delete('/user/pm/{pm_id}/{user_id}', 'Api\ProjectManagerController@destroy');
 
-        Route::get('/job', 'Api\JobdescController@index');
+        Route::get('/jobdesc', 'Api\JobdescController@index');
         Route::get('/role', 'Api\RoleController@index');
     });
 
