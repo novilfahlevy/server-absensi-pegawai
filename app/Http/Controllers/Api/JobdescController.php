@@ -50,7 +50,7 @@ class JobdescController extends Controller
      */
     public function show($id)
     {
-        return response()->json(['status' => 200, 'message' => 'Berhasil mendapatkan data!', 'data' => Jobdesc::find($id)->first()->only('name')]);
+        return response()->json(['status' => 200, 'message' => 'Berhasil mendapatkan data!', 'data' => Jobdesc::find($id)->only('name')]);
     }
 
     /**
@@ -86,6 +86,8 @@ class JobdescController extends Controller
      */
     public function destroy($id)
     {
-        //
+        Jobdesc::find($id)->delete();
+
+        return response()->json(['status' => 200, 'message' => 'Berhasil menghapus data!']);
     }
 }
