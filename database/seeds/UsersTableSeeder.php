@@ -3,6 +3,7 @@
 use Illuminate\Database\Seeder;
 use App\Role;
 use App\User;
+use App\UserHasMadeBy;
 
 class UsersTableSeeder extends Seeder
 {
@@ -24,6 +25,9 @@ class UsersTableSeeder extends Seeder
 
         foreach ( Role::all() as $role ) {
             foreach ( factory(User::class, 20)->create() as $user ) {
+                if ( $user->id > 20 ) {
+                    UserHasMadeBy::create(['admin_id' => 1, 'user_id' => $user->id]);
+                }
                 $user->assignRole($role);
             }
         }

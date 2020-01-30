@@ -27,7 +27,7 @@ Route::group(['middleware' => ['auth:api']], function () {
         Route::post('/jobdesc/store', 'Api\JobdescController@store');
         Route::get('/jobdesc/{id}/show', 'Api\JobdescController@show');
         Route::post('/jobdesc/{id}/edit', 'Api\JobdescController@update');
-        Route::post('/jobdesc/{id}/destroy', 'Api\JobdescController@destroy');
+        Route::delete('/jobdesc/{id}/destroy', 'Api\JobdescController@destroy');
     });
 
     Route::group(['middleware' => ['role:Admin|Project Manager']], function () {

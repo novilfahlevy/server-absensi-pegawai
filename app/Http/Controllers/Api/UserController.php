@@ -16,6 +16,7 @@ use App\User;
 use App\Role;
 use App\Absensi;
 use App\Lembur;
+use App\UserHasMadeBy;
 use Illuminate\Support\Facades\Storage;
 use Laravel\Passport\Passport;
 use Illuminate\Support\Facades\DB;
@@ -126,6 +127,10 @@ class UserController extends Controller
     {
         $user = User::with('roles')->where('id', $id)->first();
         $user['job'] = Jobdesc::find($user->jobdesc_id)->name;
+        $user['has_made_by'] = UserHasMadeBy::where('user_id', $user['id'])->first() ?: null;
+        if ( $user['has_made_by'] ) {
+            $user['has_made_by']['name'] = User::find($user['has_made_by']->admin_id)->name;
+        }
         $total_jam_per_bulan = $this->getMonthAbsenHours(Carbon::now(), $id);
         $current_month = Carbon::now()->month;
         $current_year = Carbon::now()->year;
@@ -176,6 +181,7 @@ class UserController extends Controller
         $input['password'] = bcrypt($input['password']);
         $input['jobdesc_id'] = (int) $input['jobdesc_id'];
         $user = User::create($input);
+        UserHasMadeBy::create(['admin_id' => $request->admin_id, 'user_id' => $user->id]);
         $role = Role::find($request->role_id);
         $user->assignRole($role);
 
