@@ -24,6 +24,10 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::group(['middleware' => ['role:Admin']], function () {
         Route::post('/user/destroy/{id}', 'Api\UserController@destroy');
         Route::post('/user/edit/{id}', 'Api\UserController@editKredensial');
+        Route::post('/jobdesc/store', 'Api\JobdescController@store');
+        Route::get('/jobdesc/{id}/show', 'Api\JobdescController@show');
+        Route::post('/jobdesc/{id}/edit', 'Api\JobdescController@update');
+        Route::post('/jobdesc/{id}/destroy', 'Api\JobdescController@destroy');
     });
 
     Route::group(['middleware' => ['role:Admin|Project Manager']], function () {
@@ -56,7 +60,7 @@ Route::group(['middleware' => ['auth:api']], function () {
         Route::post('/user/pm', 'Api\ProjectManagerController@store');
         Route::delete('/user/pm/{pm_id}/{user_id}', 'Api\ProjectManagerController@destroy');
 
-        Route::get('/job', 'Api\JobdescController@index');
+        Route::get('/jobdesc', 'Api\JobdescController@index');
         Route::get('/role', 'Api\RoleController@index');
     });
 
