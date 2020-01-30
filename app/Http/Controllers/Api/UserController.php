@@ -270,7 +270,7 @@ class UserController extends Controller
 
     public function destroy($id)
     {
-        if ( User::where('id', $id)->get()->count() ) {
+        if (User::where('id', $id)->get()->count()) {
             User::findOrFail($id)->delete();
             Absensi::where('user_id', $id)->delete();
             Lembur::where('user_id', $id)->delete();
