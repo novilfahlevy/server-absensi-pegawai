@@ -32,17 +32,17 @@ class UsersTableSeeder extends Seeder
             }
         }
 
-        // $admin = User::create([
-        //     'name' => 'Admin',
-        //     'jobdesc_id' => 1,
-        //     'username' => 'admin',
-        //     'email' => 'admin@admin.com',
-        //     'nomor_handphone' => '081234567890',
-        //     'alamat' => 'Jl. Semangka',
-        //     'password' => bcrypt('secret'),
-        //     'profile' => 'default.jpg'
-        // ]);
-        // $admin->assignRole(Role::find(1));
+        $admin = User::create([
+            'name' => 'Admin',
+            'jobdesc_id' => 1,
+            'username' => 'admin',
+            'email' => 'admin@admin.com',
+            'nomor_handphone' => '081234567890',
+            'alamat' => 'Jl. Semangka',
+            'password' => bcrypt('secret'),
+            'profile' => 'default.jpg'
+        ]);
+        $admin->assignRole(Role::find(1));
 
         // $user = User::create([
         //     'name' => 'User',
