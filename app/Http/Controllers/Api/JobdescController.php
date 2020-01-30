@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Jobdesc;
 
 class JobdescController extends Controller
 {
@@ -35,7 +36,10 @@ class JobdescController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $input = $request->all();
+        $jobdesc = Jobdesc::create($input);
+
+        return response()->json(['status' => 200, 'message' => "Berhasil menambah jobdesc $jobdesc->name"]);
     }
 
     /**
