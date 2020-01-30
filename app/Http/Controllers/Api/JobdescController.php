@@ -50,7 +50,7 @@ class JobdescController extends Controller
      */
     public function show($id)
     {
-        //
+        return response()->json(['status' => 200, 'message' => 'Berhasil mendapatkan data!', 'data' => Jobdesc::find($id)->first()->only('name')]);
     }
 
     /**
