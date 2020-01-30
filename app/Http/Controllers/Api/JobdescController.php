@@ -36,7 +36,11 @@ class JobdescController extends Controller
      */
     public function store(Request $request)
     {
-        return response()->json(['status' => 200, 'message' => 'Berhasil menambah data!', 'data' => Jobdesc::create($request->all())->only('name')]);
+        if (!Jobdesc::where('name', $request->name)->first()) {
+            return response()->json(['status' => 200, 'message' => 'Berhasil menambah data!', 'data' => Jobdesc::create($request->all())->only('name')]);
+        }
+
+        return response()->json(['status' => 400, 'message' => 'Data sudah ada!']);
     }
 
     /**
