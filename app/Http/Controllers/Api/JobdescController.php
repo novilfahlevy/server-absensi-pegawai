@@ -39,7 +39,7 @@ class JobdescController extends Controller
         $input = $request->all();
         $jobdesc = Jobdesc::create($input);
 
-        return response()->json(['status' => 200, 'message' => "Berhasil menambah jobdesc $jobdesc->name"]);
+        return response()->json(['status' => 200, 'message' => 'Berhasil menambah jobdesc!', 'data' => $jobdesc]);
     }
 
     /**
@@ -73,7 +73,9 @@ class JobdescController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        Jobdesc::find($id)->fill($request->all())->save();
+
+        return response()->json(['status' => 200, 'message' => 'Berhasil update data!', 'data' => Jobdesc::find($id)->only('name')]);
     }
 
     /**

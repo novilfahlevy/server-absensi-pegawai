@@ -26,6 +26,7 @@ Route::group(['middleware' => ['auth:api']], function () {
         Route::post('/user/edit/{id}', 'Api\UserController@editKredensial');
         Route::post('/jobdesc/store', 'Api\JobdescController@store');
         Route::get('/jobdesc/show/{id}', 'Api\JobdescController@show');
+        Route::post('/jobdesc/edit/{id}', 'Api\JobdescController@update');
     });
 
     Route::group(['middleware' => ['role:Admin|Project Manager']], function () {
