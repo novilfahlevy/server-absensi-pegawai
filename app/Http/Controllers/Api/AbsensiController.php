@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\File;
 use Intervention\Image\Facades\Image;
 use App\Http\Requests\AbsensiMasukRequest;
 use App\User;
+use Illuminate\Support\Facades\DB;
 
 class AbsensiController extends Controller
 {
@@ -27,7 +28,8 @@ class AbsensiController extends Controller
 
     public function index()
     {
-        $absensi = Absensi::where('tanggal', Carbon::now())->get();
+        $absensi = Absensi::where('tanggal', Carbon::now()->toDateString())->get();
+        // $absensi = Absensi::all();
         foreach ($absensi as $key => $absen) {
             $absensi[$key]['name'] = $absen->user->name;
         }
@@ -135,5 +137,53 @@ class AbsensiController extends Controller
 
             return response()->json(['status' => 200, 'message' => 'Berhasil absensi keluar!', 'data' => $data]);
         }
+    }
+
+    public function history() {
+        return Absensi::where('tanggal', '!=', Carbon::now()->toDateString());
+    }
+
+    public function absensiHistory() {
+        return response()->json(['status' => 200, 'data' => $this->history()->get()]);
+    }
+
+    public function searchHistory($name) {
+        $users = User::where('name', 'LIKE', "%$name%")->get();
+
+        $absensi = [];
+        foreach ( $users as $user ) {
+            $history = $this->history()->where('user_id', $user->id);
+            if ( $history->count() ) {
+                $absen = $history->first();
+                $absen['name'] = $user->name;
+                $absensi[] = $absen;
+            }
+        }
+
+        return response()->json([
+            'status' => 200, 
+            'data' => $absensi
+        ]);
+    }
+
+    public function filterHistory($year, $month) {
+        $query = "SELECT * FROM absensis WHERE MONTH(tanggal) = $month AND YEAR(tanggal) = $year";
+
+        if ( $year === 'all' ) {
+            $query = "SELECT * FROM absensis WHERE MONTH(tanggal) = $month";
+        }
+
+        if ( $month === 'all' ) {
+            $query = "SELECT * FROM absensis WHERE YEAR(tanggal) = $year";
+        }
+
+        if ( $month === 'all' && $year === 'all' ) {
+            $query = "SELECT * FROM absensis";
+        }
+
+        return response()->json([
+            'status' => 200, 
+            'data' => DB::select(DB::raw($query))
+        ]);
     }
 }

@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Jobdesc;
+use App\Absensi;
+use App\Lembur;
 use App\User;
 
 class JobdescController extends Controller
@@ -88,7 +90,13 @@ class JobdescController extends Controller
     public function destroy($id)
     {
         if ( Jobdesc::all()->count() > 1 ) {
-            Jobdesc::find($id)->delete();
+            if ( Jobdesc::find($id)->delete() ) {
+                $users = User::where('jobdesc_id', $id)->get()->pluck('id');
+                foreach ( $users as $user ) {
+                    Absensi::where('user_id', $user)->delete();
+                    Lembur::where('user_id', $user)->delete();
+                }
+            }
         }
 
         return response()->json(['status' => 200, 'message' => 'Berhasil menghapus data!']);
