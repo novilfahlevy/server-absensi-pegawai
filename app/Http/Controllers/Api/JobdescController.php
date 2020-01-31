@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Jobdesc;
+use App\User;
 
 class JobdescController extends Controller
 {
@@ -37,10 +38,9 @@ class JobdescController extends Controller
     public function store(Request $request)
     {
         if (!Jobdesc::where('name', $request->name)->first()) {
-            return response()->json(['status' => 200, 'message' => 'Berhasil menambah data!', 'data' => Jobdesc::create($request->all())->only('name')]);
-        }
-
-        return response()->json(['status' => 400, 'message' => 'Data sudah ada!']);
+            return response()->json(['status' => 200, 'message' => "Job $request->name berhasil ditambahkan", 'data' => Jobdesc::create($request->all())->only('name')]);
+        } 
+        return response()->json(['status' => 400, 'message' => 'Job sudah tersedia']);
     }
 
     /**
@@ -87,8 +87,20 @@ class JobdescController extends Controller
      */
     public function destroy($id)
     {
-        Jobdesc::find($id)->delete();
+        if ( Jobdesc::all()->count() > 1 ) {
+            Jobdesc::find($id)->delete();
+        }
 
         return response()->json(['status' => 200, 'message' => 'Berhasil menghapus data!']);
+    }
+
+    public function replaceAllWith($replaced_job_id, $new_job_id) {
+        if ( User::where('jobdesc_id', $replaced_job_id)->count() ) {
+            if ( Jobdesc::where('id', $new_job_id)->count() ) {
+                User::where('jobdesc_id', $replaced_job_id)->update(['jobdesc_id' => $new_job_id]);
+                return response(['status' => 200]);
+            }
+        }
+        return response(['status' => 400]);
     }
 }
