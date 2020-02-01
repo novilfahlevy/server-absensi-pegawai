@@ -144,25 +144,44 @@ class AbsensiController extends Controller
     }
 
     public function absensiHistory() {
-        return response()->json(['status' => 200, 'data' => $this->history()->get()]);
+        $history = $this->history()->get();
+
+        foreach ( $history as $i => $h ) {
+            $history[$i]['name'] = User::find($h->user_id)->name;
+        }
+
+        return response()->json(['status' => 200, 'data' => $history]);
     }
 
     public function searchHistory($name) {
         $users = User::where('name', 'LIKE', "%$name%")->get();
 
         $absensi = [];
-        foreach ( $users as $user ) {
-            $history = $this->history()->where('user_id', $user->id);
+        $history = $this->history();
+        foreach ( $history->get() as $absen ) {
             if ( $history->count() ) {
-                $absen = $history->first();
-                $absen['name'] = $user->name;
-                $absensi[] = $absen;
+                foreach ( $users as $user ) {
+                    if ( $user->id === $absen->user_id ) {
+                        $userAbsen = $absen;
+                        $userAbsen['name'] = User::find($absen->user_id)->name;
+                        $absensi[] = $userAbsen;
+                    }
+                }
             }
         }
 
         return response()->json([
             'status' => 200, 
             'data' => $absensi
+        ]);
+    }
+
+    public function getAvailableAbsenYears() {
+        return response()->json([
+            'status' => 200, 
+            'data' => collect(DB::select(
+                DB::raw("SELECT DISTINCT YEAR(tanggal) AS tahun FROM absensis ORDER BY tahun DESC")
+            ))->map(function ($year) { return $year->tahun; })
         ]);
     }
 
@@ -181,9 +200,16 @@ class AbsensiController extends Controller
             $query = "SELECT * FROM absensis";
         }
 
+        $absensi = [];
+        foreach ( DB::select(DB::raw($query)) as $absen ) {
+            $userAbsen = $absen;
+            $userAbsen->name = User::find($absen->user_id)->name;
+            $absensi[] = $userAbsen;
+        }
+
         return response()->json([
             'status' => 200, 
-            'data' => DB::select(DB::raw($query))
+            'data' => $absensi
         ]);
     }
 }

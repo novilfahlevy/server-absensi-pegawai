@@ -50,6 +50,7 @@ Route::group(['middleware' => ['auth:api']], function () {
         Route::get('/absensi/laporan/cari/{month}/{year}', 'Api\LaporanController@cari');
         Route::get('/absensi/{id}/detail', 'Api\AbsensiController@show');
         Route::get('/absensi/riwayat', 'Api\AbsensiController@absensiHistory');
+        Route::get('/absensi/riwayat/years', 'Api\AbsensiController@getAvailableAbsenYears');
         Route::get('/absensi/riwayat/filter/{year}/{month}', 'Api\AbsensiController@filterHistory');
         Route::get('/absensi/riwayat/search/{name}', 'Api\AbsensiController@searchHistory');
         Route::get('/absensi/{keyword}', 'Api\AbsensiController@cari');
