@@ -144,7 +144,7 @@ class AbsensiController extends Controller
     }
 
     public function absensiHistory() {
-        $history = $this->history()->get();
+        $history = $this->history()->get()->sortByDesc('tanggal');
 
         foreach ( $history as $i => $h ) {
             $history[$i]['name'] = User::find($h->user_id)->name;
