@@ -47,7 +47,7 @@ class AbsensiSeeder extends Seeder
 
         Absensi::create([
             'user_id' => 3,
-            'tanggal' => $carbon->now()->subDays(3)->toDateString(),
+            'tanggal' => $carbon->now()->toDateString(),
             'absensi_masuk' => $carbon->now()->subHour(5)->toTimeString(),
             'absensi_keluar' => $carbon->now()->subHour(3)->toTimeString(),
             'keterangan' => 'Absensi',
@@ -92,7 +92,7 @@ class AbsensiSeeder extends Seeder
 
         Absensi::create([
             'user_id' => 2,
-            'tanggal' => $carbon->now()->subDays(6)->toDateString(),
+            'tanggal' => $carbon->now()->toDateString(),
             'absensi_masuk' => $carbon->now()->subHour(8)->toTimeString(),
             'absensi_keluar' => $carbon->now()->subHour(6)->toTimeString(),
             'keterangan' => 'Absensi',

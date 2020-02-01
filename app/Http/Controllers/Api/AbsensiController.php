@@ -57,7 +57,7 @@ class AbsensiController extends Controller
 
         $absensi = [];
         foreach ($users as $user_id) {
-            $absensi[] = Absensi::where('user_id', '=', $user_id)->get();
+            $absensi[] = Absensi::where('user_id', '=', $user_id)->where('tanggal', Carbon::now()->toDateString())->get();
         }
 
         if (isset($absensi[0])) {

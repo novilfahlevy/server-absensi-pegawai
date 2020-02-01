@@ -36,7 +36,7 @@ class LemburSeeder extends Seeder
             'keterangan' => 'Lembur',
             'konsumsi' => 100000,
             'foto' => 'lembur.jpg',
-            'status' => 'menunggu'
+            'status' => 'diterima'
         ]);
 
         Lembur::create([
