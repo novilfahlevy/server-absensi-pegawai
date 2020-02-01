@@ -191,7 +191,7 @@ class UserController extends Controller
         $input['username'] = strtolower($request->username);
         $input['profile'] = 'default.jpg';
         $input['password'] = bcrypt($input['password']);
-        $input['jobdesc_id'] = (int) $input['jobdesc_id'];
+        $input['jobdesc_id'] = (Int) $input['jobdesc_id'];
         $user = User::create($input);
         UserHasMadeBy::create(['admin_id' => $request->admin_id, 'user_id' => $user->id]);
         $role = Role::find($request->role_id);

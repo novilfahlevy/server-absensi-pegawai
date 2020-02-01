@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\File;
 use Intervention\Image\Facades\Image;
 use App\Http\Requests\AbsensiMasukRequest;
 use App\User;
+use Illuminate\Support\Facades\DB;
 
 class AbsensiController extends Controller
 {
@@ -27,7 +28,8 @@ class AbsensiController extends Controller
 
     public function index()
     {
-        $absensi = Absensi::where('tanggal', Carbon::now())->get();
+        $absensi = Absensi::where('tanggal', Carbon::now()->toDateString())->get();
+        // $absensi = Absensi::all();
         foreach ($absensi as $key => $absen) {
             $absensi[$key]['name'] = $absen->user->name;
         }
@@ -135,5 +137,79 @@ class AbsensiController extends Controller
 
             return response()->json(['status' => 200, 'message' => 'Berhasil absensi keluar!', 'data' => $data]);
         }
+    }
+
+    public function history() {
+        return Absensi::where('tanggal', '!=', Carbon::now()->toDateString());
+    }
+
+    public function absensiHistory() {
+        $history = $this->history()->get();
+
+        foreach ( $history as $i => $h ) {
+            $history[$i]['name'] = User::find($h->user_id)->name;
+        }
+
+        return response()->json(['status' => 200, 'data' => $history]);
+    }
+
+    public function searchHistory($name) {
+        $users = User::where('name', 'LIKE', "%$name%")->get();
+
+        $absensi = [];
+        $history = $this->history();
+        foreach ( $history->get() as $absen ) {
+            if ( $history->count() ) {
+                foreach ( $users as $user ) {
+                    if ( $user->id === $absen->user_id ) {
+                        $userAbsen = $absen;
+                        $userAbsen['name'] = User::find($absen->user_id)->name;
+                        $absensi[] = $userAbsen;
+                    }
+                }
+            }
+        }
+
+        return response()->json([
+            'status' => 200, 
+            'data' => $absensi
+        ]);
+    }
+
+    public function getAvailableAbsenYears() {
+        return response()->json([
+            'status' => 200, 
+            'data' => collect(DB::select(
+                DB::raw("SELECT DISTINCT YEAR(tanggal) AS tahun FROM absensis ORDER BY tahun DESC")
+            ))->map(function ($year) { return $year->tahun; })
+        ]);
+    }
+
+    public function filterHistory($year, $month) {
+        $query = "SELECT * FROM absensis WHERE MONTH(tanggal) = $month AND YEAR(tanggal) = $year";
+
+        if ( $year === 'all' ) {
+            $query = "SELECT * FROM absensis WHERE MONTH(tanggal) = $month";
+        }
+
+        if ( $month === 'all' ) {
+            $query = "SELECT * FROM absensis WHERE YEAR(tanggal) = $year";
+        }
+
+        if ( $month === 'all' && $year === 'all' ) {
+            $query = "SELECT * FROM absensis";
+        }
+
+        $absensi = [];
+        foreach ( DB::select(DB::raw($query)) as $absen ) {
+            $userAbsen = $absen;
+            $userAbsen->name = User::find($absen->user_id)->name;
+            $absensi[] = $userAbsen;
+        }
+
+        return response()->json([
+            'status' => 200, 
+            'data' => $absensi
+        ]);
     }
 }
