@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use App\Absensi;
+use App\Lembur;
 use App\Http\Requests\AbsensiKeluarRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
@@ -38,11 +39,12 @@ class AbsensiController extends Controller
 
     public function show($id)
     {
-        if (Absensi::find($id)) {
+        if ($absensi = Absensi::find($id)) {
+            $lembur = Lembur::where('absensi_id', $absensi->id)->first();
+            $absensi->lembur = $lembur ? $lembur->id : null;
             return response()->json([
                 'status' => 200,
-                'absensi' => Absensi::find($id),
-                'lembur' => 'Model lembur belum dibuat.'
+                'absensi' => $absensi
             ]);
         }
         return response()->json([
