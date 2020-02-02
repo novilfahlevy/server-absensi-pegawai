@@ -47,13 +47,13 @@ class UsersTableSeeder extends Seeder
         ]);
         $admin->assignRole(Role::find(3));
 
-        foreach ( Role::all() as $role ) {
-            foreach ( factory(User::class, 20)->create() as $user ) {
-                if ( $user->id > 20 ) {
-                    UserHasMadeBy::create(['admin_id' => 1, 'user_id' => $user->id]);
-                }
-                $user->assignRole($role);
-            }
-        }
+        // foreach ( Role::all() as $role ) {
+        //     foreach ( factory(User::class, 20)->create() as $user ) {
+        //         if ( $user->id > 20 ) {
+        //             UserHasMadeBy::create(['admin_id' => 1, 'user_id' => $user->id]);
+        //         }
+        //         $user->assignRole($role);
+        //     }
+        // }
     }
 }
