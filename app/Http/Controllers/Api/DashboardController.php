@@ -22,7 +22,7 @@ class DashboardController extends Controller
                 'name' => $absen->user->name,
                 'absensi_masuk' => $absen->absensi_masuk,
                 'absensi_keluar' => $absen->absensi_keluar,
-                'id' => $absen->user->id
+                'id' => $absen->id
             ];
         }
 
