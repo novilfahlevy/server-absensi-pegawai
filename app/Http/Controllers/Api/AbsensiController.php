@@ -40,7 +40,7 @@ class AbsensiController extends Controller
     public function show($id)
     {
         if ($absensi = Absensi::find($id)) {
-            $lembur = Lembur::where('absensi_id', $absensi->id)->first();
+            $lembur = Lembur::where('absensi_id', $absensi->id)->where('status', 'diterima')->first();
             $absensi->lembur = $lembur ? $lembur->id : null;
             return response()->json([
                 'status' => 200,
