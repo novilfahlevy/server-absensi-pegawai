@@ -41,8 +41,8 @@ class JobdescController extends Controller
     {
         if (!Jobdesc::where('name', $request->name)->first()) {
             return response()->json(['status' => 200, 'message' => "Job $request->name berhasil ditambahkan", 'data' => Jobdesc::create($request->all())->only('name')]);
-        } 
-        return response()->json(['status' => 400, 'message' => 'Job sudah tersedia']);
+        }
+        return response()->json(['status' => 400, 'message' => 'Job sudah tersedia'], 400);
     }
 
     /**
@@ -89,10 +89,10 @@ class JobdescController extends Controller
      */
     public function destroy($id)
     {
-        if ( Jobdesc::all()->count() > 1 ) {
-            if ( Jobdesc::find($id)->delete() ) {
+        if (Jobdesc::all()->count() > 1) {
+            if (Jobdesc::find($id)->delete()) {
                 $users = User::where('jobdesc_id', $id)->get()->pluck('id');
-                foreach ( $users as $user ) {
+                foreach ($users as $user) {
                     Absensi::where('user_id', $user)->delete();
                     Lembur::where('user_id', $user)->delete();
                 }
@@ -102,13 +102,14 @@ class JobdescController extends Controller
         return response()->json(['status' => 200, 'message' => 'Berhasil menghapus data!']);
     }
 
-    public function replaceAllWith($replaced_job_id, $new_job_id) {
-        if ( User::where('jobdesc_id', $replaced_job_id)->count() ) {
-            if ( Jobdesc::where('id', $new_job_id)->count() ) {
+    public function replaceAllWith($replaced_job_id, $new_job_id)
+    {
+        if (User::where('jobdesc_id', $replaced_job_id)->count()) {
+            if (Jobdesc::where('id', $new_job_id)->count()) {
                 User::where('jobdesc_id', $replaced_job_id)->update(['jobdesc_id' => $new_job_id]);
                 return response(['status' => 200]);
             }
         }
-        return response(['status' => 400]);
+        return response(['status' => 400], 400);
     }
 }

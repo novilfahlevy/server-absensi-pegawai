@@ -147,7 +147,7 @@ class ProjectManagerController extends Controller
 
                 $pm->save();
             } else {
-                return response()->json(['status' => 400, 'message' => 'Gagal menambah anggota']);
+                return response()->json(['status' => 400, 'message' => 'Gagal menambah anggota'], 400);
             }
         }
 
@@ -163,6 +163,6 @@ class ProjectManagerController extends Controller
             }
         }
 
-        return response()->json(['status' => 400, 'message' => 'Gagal menghapus pegawai']);
+        return response()->json(['status' => 400, 'message' => 'Gagal menghapus pegawai'], 400);
     }
 }

@@ -39,7 +39,7 @@ class UserController extends Controller
             $users[$key]['role'] = $role;
         }
 
-        return response()->json(['status' => '200', 'message' => 'Sukses', 'user' => $users]);
+        return response()->json(['status' => 200, 'message' => 'Sukses', 'user' => $users]);
     }
 
     private function getWeeklyAbsen($year, $month, $startDate, $endDate, $user_id = null)
@@ -156,7 +156,7 @@ class UserController extends Controller
             ]
         ];
 
-        return response()->json(['status' => '200', 'message' => 'Sukses', 'user' => $user]);
+        return response()->json(['status' => 200, 'message' => 'Sukses', 'user' => $user]);
     }
 
     public function login()
@@ -170,9 +170,9 @@ class UserController extends Controller
             $success['token'] = $user->createToken('Passport Token')->accessToken;
             Passport::personalAccessTokensExpireIn(now()->addHours(12));
 
-            return response()->json(['status' => 200, 'message' => $success]);
+            return response()->json(['status' => 200, 'message' => 'Login Berhasil!', 'data' => $success]);
         } else {
-            return response()->json(['status' => 401, 'message' => 'Email atau password salah!']);
+            return response()->json(['status' => 401, 'message' => 'Email atau password salah!'], 401);
         }
 
         return response()->json(['message' => 'Unauthorized'], 401);
@@ -182,7 +182,7 @@ class UserController extends Controller
     {
         $request->user()->token()->revoke();
 
-        return response()->json(['message' => 'Logout berhasil!']);
+        return response()->json(['status' => 200, 'message' => 'Logout berhasil!']);
     }
 
     public function store(RegisterUserRequest $request)
@@ -191,13 +191,13 @@ class UserController extends Controller
         $input['username'] = strtolower($request->username);
         $input['profile'] = 'default.jpg';
         $input['password'] = bcrypt($input['password']);
-        $input['jobdesc_id'] = (Int) $input['jobdesc_id'];
+        $input['jobdesc_id'] = (int) $input['jobdesc_id'];
         $user = User::create($input);
         UserHasMadeBy::create(['admin_id' => $request->admin_id, 'user_id' => $user->id]);
         $role = Role::find($request->role_id);
         $user->assignRole($role);
 
-        return response()->json(['status' => '200', 'message' => 'Sukses', 'user' => $user]);
+        return response()->json(['status' => 200, 'message' => 'Sukses', 'user' => $user]);
     }
 
     public function editPassword(Request $request)
@@ -223,7 +223,7 @@ class UserController extends Controller
             return response()->json(['code' => 200, 'message' => 'Berhasil mengganti password!', 'data' => $user]);
         }
 
-        return response()->json(['code' => 400, 'message' => 'Password sekarang anda salah!']);
+        return response()->json(['code' => 400, 'message' => 'Password sekarang anda salah!'], 400);
     }
 
     public function editProfile(Request $request)
@@ -284,7 +284,7 @@ class UserController extends Controller
             return response()->json(['code' => 200, 'message' => 'Berhasil mencari data!', 'data' => $users]);
         }
 
-        return response()->json(['code' => 400, 'message' => 'Kata yang anda cari tidak ditemukan!']);
+        return response()->json(['code' => 400, 'message' => 'Kata yang anda cari tidak ditemukan!'], 400);
     }
 
     public function destroy($id)
@@ -298,7 +298,7 @@ class UserController extends Controller
             return response()->json(['status' => 200, 'message' => 'Berhasil menghapus user!']);
         }
 
-        return response()->json(['status' => 400, 'message' => 'Gagal menghapus user!']);
+        return response()->json(['status' => 400, 'message' => 'Gagal menghapus user!'], 400);
     }
 
     public function unauthorized()

@@ -176,6 +176,6 @@ class LemburController extends Controller
             return response()->json(['status' => 200, 'message' => 'Sukses', 'data' => $lembur]);
         }
 
-        return response()->json(['status' => 400, 'data' => 'Kata yang anda cari tidak ditemukan!']);
+        return response()->json(['status' => 400, 'data' => 'Kata yang anda cari tidak ditemukan!'], 400);
     }
 }

@@ -91,6 +91,7 @@ class LaporanController extends Controller
 
         return  [$first_week_hours_total, $second_week_hours_total, $third_week_hours_total, $fourth_week_hours_total];
     }
+
     private function getDataByStatus($year, $month, $status)
     {
         return count(DB::select(DB::raw("SELECT * FROM absensis WHERE MONTH(tanggal) = " . $month . " AND YEAR(tanggal) = " . $year . " AND status = " . "'$status'")));
