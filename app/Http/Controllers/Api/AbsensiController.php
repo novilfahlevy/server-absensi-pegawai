@@ -229,4 +229,11 @@ class AbsensiController extends Controller
             'data' => $absensi
         ]);
     }
+
+    public function myAbsensi()
+    {
+        $myAbsensi = Absensi::where('user_id', '=', Auth::user()->id)->get();
+
+        return response()->json(['status' => 200, 'data' => $myAbsensi]);
+    }
 }
