@@ -69,9 +69,9 @@ Route::group(['middleware' => ['auth:api']], function () {
     });
 
     Route::group(['middleware' => ['role:Admin|User|Project Manager']], function () {
-        Route::get('/user/absensi', 'Api\AbsensiController@myAbsensi');
         Route::post('user/password', 'Api\UserController@editPassword');
         Route::post('user/edit', 'Api\UserController@editProfile');
+        Route::get('/user/absensi', 'Api\AbsensiController@myAbsensi');
         Route::get('/user/{id}', 'Api\UserController@show');
     });
 
