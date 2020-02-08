@@ -85,13 +85,13 @@ class AbsensiController extends Controller
             File::makeDirectory($this->imagePath);
         }
 
-        if ($this->carbon->now()->format('H') === 8) {
-            $status = 'tepat waktu';
-        } else if ($this->carbon->now()->format('H') < 8) {
-            $status = 'kecepatan';
-        } else {
-            $status = 'terlambat';
-        }
+        // if ($this->carbon->now()->format('H') === 8) {
+        //     $status = 'tepat waktu';
+        // } else if ($this->carbon->now()->format('H') < 8) {
+        //     $status = 'kecepatan';
+        // } else {
+        //     $status = 'terlambat';
+        // }
 
         $input = $request->file('foto_absensi_masuk');
         $hashNameImage = time() . '_' . $input->getClientOriginalName();
@@ -106,7 +106,7 @@ class AbsensiController extends Controller
         $this->absensi->tanggal = $this->carbon->toDateString();
         $this->absensi->absensi_masuk = $this->carbon->toTimeString();
         $this->absensi->keterangan = request('keterangan');
-        $this->absensi->status = $status;
+        $this->absensi->status = 'tepat waktu';
         $this->absensi->foto_absensi_masuk = $hashNameImage;
         $this->absensi->latitude_absen_masuk = request('latitude_absensi_masuk');
         $this->absensi->longitude_absen_masuk = request('longitude_absensi_masuk');
