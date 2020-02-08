@@ -12,14 +12,11 @@ class ProjectManagerSeeder extends Seeder
      */
     public function run()
     {
-        // ProjectManager::create([
-        //     'pm_id' => 4,
-        //     'user_id' => 2
-        // ]);
-
-        // ProjectManager::create([
-        //     'pm_id' => 4,
-        //     'user_id' => 3
-        // ]);
+        for ($i = 1; $i <= 49; $i++) {
+            ProjectManager::create([
+                'pm_id' => 2,
+                'user_id' => rand(4, 49)
+            ]);
+        }
     }
 }

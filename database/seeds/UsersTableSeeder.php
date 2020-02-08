@@ -4,6 +4,7 @@ use Illuminate\Database\Seeder;
 use App\Role;
 use App\User;
 use App\UserHasMadeBy;
+use Faker\Factory as Faker;
 
 class UsersTableSeeder extends Seeder
 {
@@ -35,7 +36,19 @@ class UsersTableSeeder extends Seeder
         ]);
         $admin->assignRole(Role::find(1));
 
-        $admin = User::create([
+        $normal_user = User::create([
+            'name' => 'Normal User',
+            'jobdesc_id' => 1,
+            'username' => 'user',
+            'email' => 'user@user.com',
+            'nomor_handphone' => '089283748128',
+            'alamat' => 'Jl. Marmut',
+            'password' => bcrypt('secret'),
+            'profile' => 'default.jpg'
+        ]);
+        $normal_user->assignRole(Role::find(2));
+
+        $project_manager = User::create([
             'name' => 'Project Manager',
             'jobdesc_id' => 1,
             'username' => 'pm',
@@ -45,15 +58,22 @@ class UsersTableSeeder extends Seeder
             'password' => bcrypt('secret'),
             'profile' => 'default.jpg'
         ]);
-        $admin->assignRole(Role::find(3));
+        $project_manager->assignRole(Role::find(3));
 
-        // foreach ( Role::all() as $role ) {
-        //     foreach ( factory(User::class, 20)->create() as $user ) {
-        //         if ( $user->id > 20 ) {
-        //             UserHasMadeBy::create(['admin_id' => 1, 'user_id' => $user->id]);
-        //         }
-        //         $user->assignRole($role);
-        //     }
-        // }
+        $faker = Faker::create('id_ID');
+
+        for ($i = 1; $i <= 50; $i++) {
+            $user = User::create([
+                'name' => $faker->name,
+                'jobdesc_id' => rand(1, 3),
+                'username' => $faker->userName,
+                'email' => $faker->freeEmail,
+                'nomor_handphone' => $faker->phoneNumber,
+                'alamat' => $faker->address,
+                'password' => $faker->password,
+                'profile' => 'default.jpg'
+            ]);
+            $user->assignRole(Role::find(2));
+        }
     }
 }

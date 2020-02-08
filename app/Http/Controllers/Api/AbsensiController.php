@@ -85,6 +85,14 @@ class AbsensiController extends Controller
             File::makeDirectory($this->imagePath);
         }
 
+        if ($this->carbon->now()->format('H') === 8) {
+            $status = 'tepat waktu';
+        } else if ($this->carbon->now()->format('H') < 8) {
+            $status = 'kecepatan';
+        } else {
+            $status = 'terlambat';
+        }
+
         $input = $request->file('foto_absensi_masuk');
         $hashNameImage = time() . '_' . $input->getClientOriginalName();
         $canvas = Image::canvas(500, 500);
@@ -98,10 +106,10 @@ class AbsensiController extends Controller
         $this->absensi->tanggal = $this->carbon->toDateString();
         $this->absensi->absensi_masuk = $this->carbon->toTimeString();
         $this->absensi->keterangan = request('keterangan');
-        $this->absensi->status = 'tepat waktu';
+        $this->absensi->status = $status;
         $this->absensi->foto_absensi_masuk = $hashNameImage;
-        $this->absensi->latitude_absen_masuk = (float) -34.397;
-        $this->absensi->longitude_absen_masuk = (float) 150.644;
+        $this->absensi->latitude_absen_masuk = request('latitude_absensi_masuk');
+        $this->absensi->longitude_absen_masuk = request('longitude_absensi_masuk');
         $this->absensi->save();
 
         return response()->json(['status' => 200, 'message' => 'Berhasil absensi masuk!', 'data' => $this->absensi]);
@@ -133,7 +141,7 @@ class AbsensiController extends Controller
             $canvas->insert($resizeImage, 'center');
             $canvas->save($this->imagePath . '/' . $hashNameImage);
 
-            $this->absensi->where(['user_id' => Auth::user()->id, 'tanggal' => $this->carbon->toDateString()])->update(['absensi_keluar' => $this->carbon->toTimeString(), 'foto_absensi_keluar' => $hashNameImage, 'keterangan' => request('keterangan'), 'latitude_absen_keluar' => (float) -34.397, 'longitude_absen_keluar' => (float) 150.644]);
+            $this->absensi->where(['user_id' => Auth::user()->id, 'tanggal' => $this->carbon->toDateString()])->update(['absensi_keluar' => $this->carbon->toTimeString(), 'foto_absensi_keluar' => $hashNameImage, 'keterangan' => request('keterangan'), 'latitude_absen_keluar' => request('latitude_absensi_keluar'), 'longitude_absen_keluar' => request('longitude_absensi_keluar')]);
 
             $data = Absensi::where(['user_id' => Auth::user()->id, 'tanggal' => $this->carbon->toDateString()])->first();
 
