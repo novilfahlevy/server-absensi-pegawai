@@ -78,7 +78,7 @@ class AbsensiController extends Controller
         $check_duplicate_data = Absensi::where(['user_id' => Auth::user()->id, 'tanggal' => $this->carbon->toDateString()])->count();
 
         if ($check_duplicate_data > 0) {
-            return response()->json(['status' => 400, 'message' => 'Anda sudah absensi masuk!'], 400);
+            return response()->json(['status' => 400, 'message' => 'Absensi masuk hanya boleh 1 kali!'], 400);
         }
 
         if (!File::isDirectory($this->imagePath)) {
@@ -129,7 +129,7 @@ class AbsensiController extends Controller
             $check_attendance_out = Absensi::where('user_id', '=', Auth::user()->id)->where('tanggal', '=', $this->carbon->toDateString())->where('absensi_keluar', '!=', null)->get();
 
             if (!$check_attendance_out->isEmpty()) {
-                return response()->json(['status' => 400, 'message' => 'Anda sudah absensi keluar!']);
+                return response()->json(['status' => 400, 'message' => 'Absensi masuk hanya boleh 1 kali!'], 400);
             }
 
             $input = $request->file('foto_absensi_keluar');
@@ -234,6 +234,6 @@ class AbsensiController extends Controller
     {
         $myAbsensi = Absensi::where('user_id', '=', Auth::user()->id)->get();
 
-        return response()->json(['status' => 200, 'data' => $myAbsensi]);
+        return response()->json(['status' => 200, 'message' => 'Data telah diambil!', 'data' => $myAbsensi]);
     }
 }
