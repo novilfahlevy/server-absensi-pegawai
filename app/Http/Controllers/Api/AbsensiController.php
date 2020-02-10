@@ -112,7 +112,9 @@ class AbsensiController extends Controller
         $this->absensi->longitude_absen_masuk = request('longitude_absensi_masuk');
         $this->absensi->save();
 
-        return response()->json(['status' => 200, 'message' => 'Berhasil absensi masuk!', 'data' => $this->absensi]);
+        $path = '/storage/attendances_photo/' . $hashNameImage;
+
+        return response()->json(['status' => 200, 'message' => 'Berhasil absensi masuk!', 'data' => $this->absensi, 'path' => url($path)]);
     }
 
     public function absensiKeluar(AbsensiKeluarRequest $request)
