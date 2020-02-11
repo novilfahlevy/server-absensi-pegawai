@@ -19,6 +19,7 @@ Route::get('unauthorized', 'Api\UserController@unauthorized')->name('unauthorize
 Route::get('/absensi/laporan/export', 'Api\LaporanController@export');
 Route::get('/absensi/laporan/export/{month}/{year}', 'Api\LaporanController@exportSelected');
 Route::group(['middleware' => ['auth:api']], function () {
+    Route::get('/file/{name}', 'AbsensiController@file');
     Route::post('auth/logout', 'Api\UserController@logout');
 
     Route::group(['middleware' => ['role:Admin']], function () {
@@ -72,6 +73,7 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::group(['middleware' => ['role:Admin|User|Project Manager']], function () {
         Route::post('user/password', 'Api\UserController@editPassword');
         Route::post('user/edit', 'Api\UserController@editProfile');
+        Route::get('/user/absensi', 'Api\AbsensiController@myAbsensi');
         Route::get('/user/{id}', 'Api\UserController@show');
     });
 
