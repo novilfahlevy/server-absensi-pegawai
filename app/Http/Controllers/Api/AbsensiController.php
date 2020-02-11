@@ -196,6 +196,8 @@ class AbsensiController extends Controller
 
         foreach ($history as $i => $h) {
             $history[$i]['name'] = User::find($h->user_id)->name;
+            $history[$i]['url_absensi_masuk'] = url('/storage/attendances_photo/' . $h->foto_absensi_masuk);
+            $history[$i]['url_absensi_keluar'] = url('/storage/attendances_photo/' . $h->foto_absensi_keluar);
         }
 
         return response()->json(['status' => 200, 'data' => $history]);
