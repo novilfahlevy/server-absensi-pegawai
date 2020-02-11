@@ -141,6 +141,7 @@ class UserController extends Controller
         if ($user['has_made_by']) {
             $user['has_made_by']['name'] = User::find($user['has_made_by']->admin_id)->name;
         }
+        $user["url_profile"] = url('/storage/profiles/' . $user['profile']);
         $total_jam_per_bulan = $this->getMonthAbsenHours(Carbon::now(), $id);
         $current_month = Carbon::now()->month;
         $current_year = Carbon::now()->year;
