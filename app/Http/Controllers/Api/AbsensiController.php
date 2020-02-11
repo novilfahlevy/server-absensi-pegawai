@@ -102,6 +102,7 @@ class AbsensiController extends Controller
         });
         $canvas->insert($resizeImage, 'center');
         $canvas->save($this->imagePath . '/' . $hashNameImage);
+        $path = '/storage/attendances_photo/' . $hashNameImage;
 
         $this->absensi->user_id = Auth::user()->id;
         $this->absensi->tanggal = $this->carbon->toDateString();
@@ -112,10 +113,11 @@ class AbsensiController extends Controller
         $this->absensi->latitude_absen_masuk = request('latitude_absensi_masuk');
         $this->absensi->longitude_absen_masuk = request('longitude_absensi_masuk');
         $this->absensi->save();
+        $this->absensi->url_absensi_keluar = url($path);
 
-        $path = '/storage/attendances_photo/' . $hashNameImage;
 
-        return response()->json(['status' => 200, 'message' => 'Berhasil absensi masuk!', 'data' => $this->absensi, 'path' => url($path)]);
+
+        return response()->json(['status' => 200, 'message' => 'Berhasil absensi masuk!', 'data' => $this->absensi]);
     }
 
     public function absensiKeluar(AbsensiKeluarRequest $request)
@@ -143,12 +145,32 @@ class AbsensiController extends Controller
             });
             $canvas->insert($resizeImage, 'center');
             $canvas->save($this->imagePath . '/' . $hashNameImage);
+            $path = $this->imagePath . '/' . $hashNameImage;
 
             $this->absensi->where(['user_id' => Auth::user()->id, 'tanggal' => $this->carbon->toDateString()])->update(['absensi_keluar' => $this->carbon->toTimeString(), 'foto_absensi_keluar' => $hashNameImage, 'keterangan' => request('keterangan'), 'latitude_absen_keluar' => request('latitude_absensi_keluar'), 'longitude_absen_keluar' => request('longitude_absensi_keluar')]);
 
             $data = Absensi::where(['user_id' => Auth::user()->id, 'tanggal' => $this->carbon->toDateString()])->first();
+            $res = [
+                'id' => $data->id,
+                'user_id' => $data->user_id,
+                'tanggal' => $data->tanggal,
+                'absensi_masuk' => $data->absensi_masuk,
+                'absensi_keluar' => $data->absensi_keluar,
+                'keterangan' => $data->keterangan,
+                'status' => $data->status,
+                'foto_absensi_masuk' => $data->foto_absensi_masuk,
+                'url_absensi_masuk' => url('/storage/attendances_photo/' . $data->foto_absensi_masuk),
+                'foto_absensi_keluar' => $data->foto_absensi_keluar,
+                'url_absensi_keluar' => url('/storage/attendances_photo/' . $hashNameImage),
+                'latitude_absen_masuk' => $data->latitude_absen_masuk,
+                'longitude_absen_masuk' => $data->longitude_absen_masuk,
+                'latitude_absen_keluar' => $data->latitude_absen_keluar,
+                'longitude_absen_keluar' => $data->longitude_absen_keluar,
+                'created_at' => $data->created_at,
+                'updated_at' => $data->updated_at,
+            ];
 
-            return response()->json(['status' => 200, 'message' => 'Berhasil absensi keluar!', 'data' => $data]);
+            return response()->json(['status' => 200, 'message' => 'Berhasil absensi keluar!', 'data' => $res]);
         }
     }
 
