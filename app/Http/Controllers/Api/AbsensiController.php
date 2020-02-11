@@ -165,6 +165,17 @@ class AbsensiController extends Controller
         return response()->json(['status' => 200, 'data' => $history]);
     }
 
+    public function absensiHistoryByUserId($user_id)
+    {
+        $history = $this->history()->where('user_id', $user_id)->get();
+
+        foreach ($history as $i => $h) {
+            $history[$i]['name'] = User::find($h->user_id)->name;
+        }
+
+        return response()->json(['status' => 200, 'data' => $history]);
+    }
+
     public function searchHistory($name)
     {
         $users = User::where('name', 'LIKE', "%$name%")->get();
