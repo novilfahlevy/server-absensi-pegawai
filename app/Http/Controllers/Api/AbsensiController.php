@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
 use App\Absensi;
 use App\Lembur;
@@ -237,5 +238,13 @@ class AbsensiController extends Controller
         $myAbsensi = Absensi::where('user_id', '=', Auth::user()->id)->get();
 
         return response()->json(['status' => 200, 'message' => 'Data telah diambil!', 'data' => $myAbsensi]);
+    }
+
+    public function file($name)
+    {
+        $file = Storage::get($name);
+        $mime = Storage::getMimeType($name);
+
+        return response($file, 200)->header('Content-Type', $mime);
     }
 }
