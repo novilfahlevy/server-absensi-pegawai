@@ -53,7 +53,6 @@ Route::group(['middleware' => ['auth:api']], function () {
         Route::get('/absensi/riwayat/years', 'Api\AbsensiController@getAvailableAbsenYears');
         Route::get('/absensi/riwayat/filter/{year}/{month}', 'Api\AbsensiController@filterHistory');
         Route::get('/absensi/riwayat/search/{name}', 'Api\AbsensiController@searchHistory');
-        Route::get('/absensi/user/{id}', 'Api\AbsensiController@absensiHistoryByUserId');
         Route::get('/absensi/{keyword}', 'Api\AbsensiController@cari');
         Route::get('/dashboard', 'Api\DashboardController@index');
 
@@ -75,6 +74,7 @@ Route::group(['middleware' => ['auth:api']], function () {
         Route::post('user/edit', 'Api\UserController@editProfile');
         Route::get('/user/absensi', 'Api\AbsensiController@myAbsensi');
         Route::get('/user/{id}', 'Api\UserController@show');
+        Route::get('/absensi/user/{id}', 'Api\AbsensiController@absensiHistoryByUserId');
     });
 
     Route::group(['middleware' => ['role:User|Project Manager']], function () {
