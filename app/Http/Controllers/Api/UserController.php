@@ -221,10 +221,10 @@ class UserController extends Controller
         ]);
 
         if ($user) {
-            return response()->json(['code' => 200, 'message' => 'Berhasil mengganti password!', 'data' => $user]);
+            return response()->json(['status' => 200, 'message' => 'Berhasil mengganti password!', 'data' => $user]);
         }
 
-        return response()->json(['code' => 400, 'message' => 'Password sekarang anda salah!'], 400);
+        return response()->json(['status' => 400, 'message' => 'Password sekarang anda salah!'], 400);
     }
 
     public function editProfile(Request $request)
