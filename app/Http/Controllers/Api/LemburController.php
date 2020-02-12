@@ -144,9 +144,9 @@ class LemburController extends Controller
             'status' => 200, 
             'message' => 'Berhasil lembur!. Mohon tunggu admin untuk mempersetujuinya.',
             'data' => [
-                'tanggal' => $request->tanggal,
-                'jam_mulai' => $request->lembur_awal,
-                'jam_selesai' => $request->lembur_akhir,
+                'tanggal' => $lembur->tanggal,
+                'jam_mulai' => $lembur->lembur_awal,
+                'jam_selesai' => $lembur->lembur_akhir,
                 'url_foto_lembur' => url('/storage/lembur/' . $hashNameImage),
                 'konsumsi_lembur' => 50000,
                 'keterangan' => $request->keterangan ?: null
