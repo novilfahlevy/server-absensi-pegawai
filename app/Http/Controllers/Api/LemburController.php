@@ -131,11 +131,11 @@ class LemburController extends Controller
 
         $lembur->user_id = Auth::user()->id;
         $lembur->absensi_id = $check_absensi_today['id'];
-        $lembur->tanggal = $carbon->toDateString();
-        $lembur->lembur_awal = $carbon->toTimeString();
-        $lembur->lembur_akhir = $carbon->toTimeString();
+        $lembur->tanggal = $request->tanggal;
+        $lembur->lembur_awal = $request->lembur_awal;
+        $lembur->lembur_akhir = $request->lembur_akhir;
         $lembur->konsumsi = 50000;
-        $lembur->keterangan = $request->keterangan ?: '-';
+        $lembur->keterangan = $request->keterangan ?: null;
         $lembur->foto = $hashNameImage;
         $lembur->status = 'Menunggu';
         $lembur->save();
@@ -144,12 +144,12 @@ class LemburController extends Controller
             'status' => 200, 
             'message' => 'Berhasil lembur!. Mohon tunggu admin untuk mempersetujuinya.',
             'data' => [
-                'tanggal' => Carbon::parse($carbon->toDateString())->translatedFormat('d F Y'),
-                'jam_mulai' => Carbon::parse($carbon->toTimeString())->translatedFormat('d F Y'),
-                'jam_selesai' => Carbon::parse($carbon->toTimeString())->translatedFormat('d F Y'),
+                'tanggal' => $request->tanggal,
+                'jam_mulai' => $request->lembur_awal,
+                'jam_selesai' => $request->lembur_akhir,
                 'url_foto_lembur' => url('/storage/lembur/' . $hashNameImage),
                 'konsumsi_lembur' => 50000,
-                'keterangan' => $request->keterangan ?: '-'
+                'keterangan' => $request->keterangan ?: null
             ]
         ]);
     }
