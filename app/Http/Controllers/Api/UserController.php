@@ -221,7 +221,11 @@ class UserController extends Controller
         ]);
 
         if ($user) {
-            return response()->json(['status' => 200, 'message' => 'Berhasil mengganti password!', 'data' => $user]);
+            return response()->json(['status' => 200, 'message' => 'Berhasil mengganti password!', 'data' => [
+                'user_id' => $id,
+                'current_password' => $request->current_password,
+                'new_password' => $request->new_password
+            ]]);
         }
 
         return response()->json(['status' => 400, 'message' => 'Password sekarang anda salah!'], 400);
