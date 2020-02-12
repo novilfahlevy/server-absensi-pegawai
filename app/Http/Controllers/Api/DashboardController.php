@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 
 use App\User;
+use App\Role;
 use App\Absensi;
 use Carbon\Carbon;
 use App\Lembur;
@@ -13,7 +14,9 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $total_pegawai = User::get()->count();
+        $total_pegawai = User::get()->filter(function ($user) {
+            return $user->roles()->first()['id'] !== 1;
+        })->values()->count();
         $total_pegawai_absen = Absensi::where('tanggal', Carbon::now()->toDateString())->get()->sortBy('absensi_masuk')->take(5)->count();
 
         $sudah_absensi = [];
@@ -28,8 +31,10 @@ class DashboardController extends Controller
 
         $belum_absensi = [];
         foreach (User::all() as $user) {
-            if (!Absensi::find($user->id)) {
-                $belum_absensi[] = ['name' => User::find($user->id)->name, 'id' => $user->id];
+            if ( $user->roles()->first()['id'] !== 1 ) {
+                if (!Absensi::find($user->id)) {
+                    $belum_absensi[] = ['name' => User::find($user->id)->name, 'id' => $user->id];
+                }
             }
         }
 
