@@ -134,7 +134,7 @@ class LemburController extends Controller
         $lembur->tanggal = Carbon::now()->toDateString();
         $lembur->lembur_awal = $request->lembur_awal;
         $lembur->lembur_akhir = $request->lembur_akhir;
-        $lembur->konsumsi = 50000;
+        $lembur->konsumsi = $request->konsumsi_lembur;
         $lembur->keterangan = $request->keterangan ?: null;
         $lembur->foto = $hashNameImage;
         $lembur->status = 'Menunggu';
@@ -148,7 +148,7 @@ class LemburController extends Controller
                 'jam_mulai' => $lembur->lembur_awal,
                 'jam_selesai' => $lembur->lembur_akhir,
                 'url_foto_lembur' => url('/storage/lembur/' . $hashNameImage),
-                'konsumsi_lembur' => 50000,
+                'konsumsi_lembur' => $lembur->konsumsi,
                 'keterangan' => $request->keterangan ?: null
             ]
         ]);
