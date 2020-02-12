@@ -21,7 +21,7 @@ class CreateLembursTable extends Migration
             $table->time('lembur_awal');
             $table->time('lembur_akhir')->nullable();
             $table->string('keterangan')->nullable();
-            $table->integer('konsumsi')->nullable();
+            $table->string('konsumsi')->nullable();
             $table->string('foto');
             $table->string('status');
             $table->timestamps();
