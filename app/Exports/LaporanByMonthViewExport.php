@@ -22,6 +22,7 @@ class LaporanByMonthViewExport implements FromView, WithEvents
     protected $year;
     public function __construct($month, $year)
     {
+        $this->totalRows = count(User::all()) + 5;
         $this->month = $month;
         $this->year = $year;
         $this->carbon = new Carbon();
@@ -39,66 +40,45 @@ class LaporanByMonthViewExport implements FromView, WithEvents
         }
         return DB::select(DB::raw("SELECT * FROM absensis WHERE MONTH(tanggal) = " . $month . " AND YEAR(tanggal) = " . $year . " AND user_id = " . $user_id . " AND DAY(tanggal) BETWEEN " . $startDate . " AND " . $endDate));
     }
-    private function getMonthAbsenHours($date)
+    private function getMonthlyLemburHours($year, $month, $user_id)
     {
-        // Get the last date of the current month
+        $lembur_hours = [];
+        $total_lemburs = DB::select(DB::raw("SELECT * FROM absensis WHERE MONTH(tanggal) = " . $month . " AND YEAR(tanggal) = " . $year . " AND user_id = " . $user_id));
+        foreach ($total_lemburs as $key => $lembur) {
+            $lembur_hours[$key] = $this->carbon->parse($lembur->lembur_akhir)->diffInHours($this->carbon->parse($lembur->lembur_awal));
+        }
+        return array_sum($lembur_hours);
+    }
 
-        $first_date = $date->firstOfMonth()->day;
-        $last_date = $date->lastOfMonth()->day;
-        $fourth_week_start = $date->firstOfMonth()->addDays(21)->day;
-        $third_week_start = $date->firstOfMonth()->addDays(14)->day;
-        $second_week_start = $date->firstOfMonth()->addDays(7)->day;
-        // Array of all hours
-        $first_week_hours = [];
-        $second_week_hours = [];
-        $third_week_hours = [];
-        $fourth_week_hours = [];
-        // Absens of all weeks
-        $year = $date->year;
-        $month = $date->month;
-        $first_week_absen = $this->getWeeklyAbsen($year, $month, $first_date, $second_week_start);
-        $second_week_absen = $this->getWeeklyAbsen($year, $month, $second_week_start, $third_week_start);
-        $third_week_absen = $this->getWeeklyAbsen($year, $month, $third_week_start, $fourth_week_start);
-        $fourth_week_absen = $this->getWeeklyAbsen($year, $month, $fourth_week_start, $last_date);
-        // foreach and input it to array above
-        foreach ($first_week_absen as $key => $absen) {
-            $first_week_hours[$key] = $this->carbon->parse($absen->absensi_keluar)->diffInHours($this->carbon->parse($absen->absensi_masuk));
-        }
-        foreach ($second_week_absen as $key => $absen) {
-            $second_week_hours[$key] = $this->carbon->parse($absen->absensi_keluar)->diffInHours($this->carbon->parse($absen->absensi_masuk));
-        }
-        foreach ($third_week_absen as $key => $absen) {
-            $third_week_hours[$key] = $this->carbon->parse($absen->absensi_keluar)->diffInHours($this->carbon->parse($absen->absensi_masuk));
-        }
-        foreach ($fourth_week_absen as $key => $absen) {
-            $fourth_week_hours[$key] = $this->carbon->parse($absen->absensi_keluar)->diffInHours($this->carbon->parse($absen->absensi_masuk));
-        }
-        // Final output in hour
-        $first_week_hours_total = array_sum($first_week_hours);
-        $second_week_hours_total = array_sum($second_week_hours);
-        $third_week_hours_total = array_sum($third_week_hours);
-        $fourth_week_hours_total = array_sum($fourth_week_hours);
-        return  [$first_week_hours_total, $second_week_hours_total, $third_week_hours_total, $fourth_week_hours_total];
-    }
-    private function getDataByStatus($year, $month, $status)
-    {
-        return count(DB::select(DB::raw("SELECT * FROM absensis WHERE MONTH(tanggal) = " . $month . " AND YEAR(tanggal) = " . $year . " AND status = " . "'$status'")));
-    }
     public function view(): View
     {
         $date = $this->carbon->createFromDate($this->year, $this->month);
-        $total_terlambat = $this->getDataByStatus($this->year, $this->month, 'terlambat');
-        $total_tepat_waktu = $this->getDataByStatus($this->year, $this->month, 'tepat waktu');
-        $total_kecepatan = $this->getDataByStatus($this->year, $this->month, 'kecepatan');
-        $total_jam_kerja = $this->getMonthAbsenHours($date);
+        $first_date = $date->firstOfMonth()->day;
+        $last_date = $date->lastOfMonth()->day;
+        $total_days = $date->daysInMonth;
+        $users = User::all();
+        $users_report = [];
+        $i = 0;
+        foreach ($users  as $user) {
+            $total_hours = [];
+            $user_absens = $this->getWeeklyAbsen($this->year, $this->month, $first_date, $last_date, $user->id);
+            foreach ($user_absens as $key => $absen) {
+                $total_hours[$key] = $this->carbon->parse($absen->absensi_keluar)->diffInHours($this->carbon->parse($absen->absensi_masuk));
+            }
+            $users_report[$i] = [
+                'name' => $user->name,
+                'total_terlambat' => count(DB::select(DB::raw("SELECT * FROM absensis WHERE MONTH(tanggal) = " . $this->month . " AND YEAR(tanggal) = " . $this->year . " AND status = 'terlambat' AND user_id = " . $user->id))) . ' Kali',
+                'total_tepat_waktu' => count(DB::select(DB::raw("SELECT * FROM absensis WHERE MONTH(tanggal) = " . $this->month . " AND YEAR(tanggal) = " . $this->year . " AND status = 'tepat waktu' AND user_id = " . $user->id))) . ' Kali',
+                'total_lembur' => count(DB::select(DB::raw("SELECT * FROM lemburs WHERE MONTH(tanggal) = " . $this->month . " AND YEAR(tanggal) = " . $this->year . " AND user_id = " . $user->id))) . ' Kali',
+                'total_tidak_hadir' => ($total_days - count(DB::select(DB::raw("SELECT * FROM absensis WHERE MONTH(tanggal) = " . $this->month . " AND YEAR(tanggal) = " . $this->year . " AND user_id = " . $user->id)))) . ' Kali',
+                'total_jam_lembur' => $this->getMonthlyLemburHours($this->month, $this->year, $user->id) . ' Jam',
+                'total_jam_kerja' => array_sum($total_hours) . ' Jam',
+            ];
+            $i++;
+        }
         return view('laporan', [
             'nama_bulan' => $date->format('F'),
-            'total_jam_per_bulan' => $total_jam_kerja,
-            'status_pegawai' => [
-                'terlambat' => $total_terlambat,
-                'tepat_waktu' => $total_tepat_waktu,
-                'overwork' => $total_kecepatan
-            ]
+            'total_jam_pegawai' => $users_report
         ]);
     }
     /**
@@ -109,18 +89,18 @@ class LaporanByMonthViewExport implements FromView, WithEvents
         return [
             AfterSheet::class => function (AfterSheet $event) {
                 // Apply array of styles for header title
-                $event->sheet->getDelegate()->getStyle('A1:L100')->applyFromArray([
+                $event->sheet->getDelegate()->getStyle('A1:P1000')->applyFromArray([
                     'size' => 20,
                     'alignment' => [
                         'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
                     ]
                 ]);
-                $event->sheet->getDelegate()->getStyle('A5:L5')->applyFromArray([
+                $event->sheet->getDelegate()->getStyle('A5:P5')->applyFromArray([
                     'alignment' => [
                         'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
                     ]
                 ]);
-                $event->sheet->getDelegate()->getStyle('A5:L5')->applyFromArray([
+                $event->sheet->getDelegate()->getStyle('A5:P5')->applyFromArray([
                     'alignment' => [
                         'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
                     ]
@@ -134,8 +114,7 @@ class LaporanByMonthViewExport implements FromView, WithEvents
                         ]
                     ]
                 ];
-                $event->sheet->getDelegate()->getStyle('A3:L5')->applyFromArray($styleArray);
-                $event->sheet->getDelegate()->getStyle('A8:L10')->applyFromArray($styleArray);
+                $event->sheet->getDelegate()->getStyle('A5:P' . $this->totalRows)->applyFromArray($styleArray);
             }
         ];
     }
