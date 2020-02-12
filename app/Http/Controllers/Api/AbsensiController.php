@@ -110,12 +110,10 @@ class AbsensiController extends Controller
         $this->absensi->keterangan = request('keterangan');
         $this->absensi->status = 'tepat waktu';
         $this->absensi->foto_absensi_masuk = $hashNameImage;
+        $this->absensi->url_absensi_masuk = url($path);
         $this->absensi->latitude_absen_masuk = request('latitude_absensi_masuk');
         $this->absensi->longitude_absen_masuk = request('longitude_absensi_masuk');
         $this->absensi->save();
-        $this->absensi->url_absensi_keluar = url($path);
-
-
 
         return response()->json(['status' => 200, 'message' => 'Berhasil absensi masuk!', 'data' => $this->absensi]);
     }
@@ -158,7 +156,7 @@ class AbsensiController extends Controller
                 'absensi_keluar' => $data->absensi_keluar,
                 'keterangan' => $data->keterangan,
                 'status' => $data->status,
-                'foto_absensi_masuk' => $data->foto_absensi_masuk,
+                // 'foto_absensi_masuk' => $data->foto_absensi_masuk,
                 // 'url_absensi_masuk' => url('/storage/attendances_photo/' . $data->foto_absensi_masuk),
                 'foto_absensi_keluar' => $data->foto_absensi_keluar,
                 'url_absensi_keluar' => url('/storage/attendances_photo/' . $hashNameImage),
