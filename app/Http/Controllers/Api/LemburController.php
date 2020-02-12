@@ -100,59 +100,59 @@ class LemburController extends Controller
         ]);
     }
 
-    public function create(Request $request)
-    {
-        $carbon = new Carbon();
-        $lembur = new Lembur();
-        $check_absensi_today = Absensi::where('user_id', '=', Auth::user()->id)->where('tanggal', '=', $carbon->toDateString())->first();
+    // public function create(Request $request)
+    // {
+    //     $carbon = new Carbon();
+    //     $lembur = new Lembur();
+    //     $check_absensi_today = Absensi::where('user_id', '=', Auth::user()->id)->where('tanggal', '=', $carbon->toDateString())->first();
 
-        $check_lembur = Lembur::where('user_id', '=', Auth::user()->id)->where('absensi_id', '=', $check_absensi_today['id'])->first();
+    //     $check_lembur = Lembur::where('user_id', '=', Auth::user()->id)->where('absensi_id', '=', $check_absensi_today['id'])->first();
 
-        if ($check_absensi_today === null) {
-            return response()->json(['status' => 400, 'message' => 'Anda belum absensi hari ini!']);
-        }
+    //     if ($check_absensi_today === null) {
+    //         return response()->json(['status' => 400, 'message' => 'Anda belum absensi hari ini!']);
+    //     }
 
-        if ($check_lembur !== null) {
-            return response()->json(['status' => 400, 'message' => 'Anda sudah mengajukan lembur hari ini!']);
-        }
+    //     if ($check_lembur !== null) {
+    //         return response()->json(['status' => 400, 'message' => 'Anda sudah mengajukan lembur hari ini!']);
+    //     }
 
-        if (!File::isDirectory($this->imagePath)) {
-            File::makeDirectory($this->imagePath);
-        }
+    //     if (!File::isDirectory($this->imagePath)) {
+    //         File::makeDirectory($this->imagePath);
+    //     }
 
-        $input = $request->file('foto');
-        $hashNameImage = time() . '_' . $input->getClientOriginalName();
-        $canvas = Image::canvas(500, 500);
-        $resizeImage = Image::make($input)->resize(500, 500, function ($constraint) {
-            $constraint->aspectRatio();
-        });
-        $canvas->insert($resizeImage, 'center');
-        $canvas->save($this->imagePath . '/' . $hashNameImage);
+    //     $input = $request->file('foto');
+    //     $hashNameImage = time() . '_' . $input->getClientOriginalName();
+    //     $canvas = Image::canvas(500, 500);
+    //     $resizeImage = Image::make($input)->resize(500, 500, function ($constraint) {
+    //         $constraint->aspectRatio();
+    //     });
+    //     $canvas->insert($resizeImage, 'center');
+    //     $canvas->save($this->imagePath . '/' . $hashNameImage);
 
-        $lembur->user_id = Auth::user()->id;
-        $lembur->absensi_id = $check_absensi_today['id'];
-        $lembur->tanggal = Carbon::now()->toDateString();
-        $lembur->lembur_awal = $request->lembur_awal;
-        $lembur->lembur_akhir = $request->lembur_akhir;
-        $lembur->konsumsi = $request->konsumsi_lembur;
-        $lembur->keterangan = $request->keterangan ?: null;
-        $lembur->foto = $hashNameImage;
-        $lembur->status = 'Menunggu';
-        $lembur->save();
+    //     $lembur->user_id = Auth::user()->id;
+    //     $lembur->absensi_id = $check_absensi_today['id'];
+    //     $lembur->tanggal = Carbon::now()->toDateString();
+    //     $lembur->lembur_awal = $request->lembur_awal;
+    //     $lembur->lembur_akhir = $request->lembur_akhir;
+    //     $lembur->konsumsi = $request->konsumsi_lembur;
+    //     $lembur->keterangan = $request->keterangan ?: null;
+    //     $lembur->foto = $hashNameImage;
+    //     $lembur->status = 'Menunggu';
+    //     $lembur->save();
 
-        return response()->json([
-            'status' => 200, 
-            'message' => 'Berhasil lembur!. Mohon tunggu admin untuk mempersetujuinya.',
-            'data' => [
-                'tanggal' => $lembur->tanggal,
-                'jam_mulai' => $lembur->lembur_awal,
-                'jam_selesai' => $lembur->lembur_akhir,
-                'url_foto_lembur' => url('/storage/lembur/' . $hashNameImage),
-                'konsumsi_lembur' => $lembur->konsumsi,
-                'keterangan' => $request->keterangan ?: null
-            ]
-        ]);
-    }
+    //     return response()->json([
+    //         'status' => 200, 
+    //         'message' => 'Berhasil lembur!. Mohon tunggu admin untuk mempersetujuinya.',
+    //         'data' => [
+    //             'tanggal' => $lembur->tanggal,
+    //             'jam_mulai' => $lembur->lembur_awal,
+    //             'jam_selesai' => $lembur->lembur_akhir,
+    //             'url_foto_lembur' => url('/storage/lembur/' . $hashNameImage),
+    //             'konsumsi_lembur' => $lembur->konsumsi,
+    //             'keterangan' => $request->keterangan ?: null
+    //         ]
+    //     ]);
+    // }
 
     public function edit(Request $request, $id)
     {
@@ -188,17 +188,5 @@ class LemburController extends Controller
         }
 
         return response()->json(['status' => 400, 'data' => 'Kata yang anda cari tidak ditemukan!'], 400);
-    }
-
-    public function riwayatLemburById($id) {
-        $lembur = Lembur::where('user_id', $id)->get()->map(function($lembur) {
-            $lembur['lembur_awal'] = Carbon::parse($lembur['tanggal'] . ' ' . $lembur->lembur_awal)->translatedFormat('H:i');
-            $lembur['lembur_akhir'] = Carbon::parse($lembur['tanggal'] . ' ' . $lembur->lembur_akhir)->translatedFormat('H:i');
-            $lembur['tanggal'] = Carbon::parse($lembur->tanggal)->translatedFormat('l, d F Y');
-            $lembur['foto'] = url('/storage/lembur' , $lembur['foto']);
-            return $lembur;
-        });
-
-        return response()->json(['status' => 200, 'data' => $lembur]);
     }
 }

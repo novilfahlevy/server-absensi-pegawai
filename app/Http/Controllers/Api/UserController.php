@@ -136,7 +136,6 @@ class UserController extends Controller
     public function show($id)
     {
         $user = User::with('roles')->where('id', $id)->first();
-        $user["url_profile"] = url('/storage/profiles/' . $user['profile']);
         $user['job'] = Jobdesc::find($user->jobdesc_id)->name;
         $user['has_made_by'] = UserHasMadeBy::where('user_id', $user['id'])->first() ?: null;
         if ($user['has_made_by']) {
@@ -221,11 +220,7 @@ class UserController extends Controller
         ]);
 
         if ($user) {
-            return response()->json(['status' => 200, 'message' => 'Berhasil mengganti password!', 'data' => [
-                'user_id' => $id,
-                'current_password' => $request->current_password,
-                'new_password' => $request->new_password
-            ]]);
+            return response()->json(['status' => 200, 'message' => 'Berhasil mengganti password!']);
         }
 
         return response()->json(['status' => 400, 'message' => 'Password sekarang anda salah!'], 400);
