@@ -161,7 +161,9 @@ class UserController extends Controller
 
     public function login()
     {
-        if (Auth::attempt(['email' => request('keyword'), 'password' => request('password')]) || Auth::attempt(['username' => request('keyword'), 'password' => request('password')])) {
+        if (
+            Auth::attempt(['email' => request('keyword'), 'password' => request('password')]) || Auth::attempt(['username' => request('keyword'), 'password' => request('password')])
+        ) {
             $user = Auth::user();
             $roles = User::with('roles')->where('id', $user->id)->first();
             $success['id'] = $user->id;
@@ -171,11 +173,10 @@ class UserController extends Controller
             Passport::personalAccessTokensExpireIn(now()->addHours(12));
 
             return response()->json(['status' => 200, 'message' => 'Login Berhasil!', 'data' => $success]);
-        } else {
-            return response()->json(['status' => 401, 'message' => 'Email atau password salah!'], 401);
         }
 
-        return response()->json(['message' => 'Unauthorized'], 401);
+        return response()->json(['status' => 401, 'message' => 'Email atau password salah!']);
+        // return response()->json(['message' => 'Unauthorized'], 401);
     }
 
     public function logout(Request $request)
@@ -192,12 +193,26 @@ class UserController extends Controller
         $input['profile'] = 'default.jpg';
         $input['password'] = bcrypt($input['password']);
         $input['jobdesc_id'] = (int) $input['jobdesc_id'];
-        $user = User::create($input);
-        UserHasMadeBy::create(['admin_id' => $request->admin_id, 'user_id' => $user->id]);
-        $role = Role::find($request->role_id);
-        $user->assignRole($role);
 
-        return response()->json(['status' => 200, 'message' => 'Sukses', 'user' => $user]);
+        if ( $user = User::create($input) ) {
+            UserHasMadeBy::create([
+                'admin_id' => $request->admin_id, 
+                'user_id' => $user->id
+            ]);
+            $role = Role::find($request->role_id);
+            $user->assignRole($role);
+
+            return response()->json([
+                'status' => 200, 
+                'message' => 'Pegawai berhasil ditambahkan.', 
+                'user' => $user
+            ]);
+        }
+
+        return response()->json([
+            'status' => 400, 
+            'message' => 'Gagal menambah pegawai.'
+        ]);
     }
 
     public function editPassword(Request $request)
