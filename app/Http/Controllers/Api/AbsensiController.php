@@ -105,7 +105,7 @@ class AbsensiController extends Controller
         $path = '/storage/attendances_photo/' . $hashNameImage;
 
         $this->absensi->user_id = Auth::user()->id;
-        $this->absensi->tanggal = $this->carbon->toDateString();
+        $this->absensi->tanggal = Carbon::parse($this->carbon->toDateString())->translatedFormat('l, d F Y');
         $this->absensi->absensi_masuk = $this->carbon->toTimeString();
         $this->absensi->keterangan = request('keterangan');
         $this->absensi->status = 'tepat waktu';
@@ -151,7 +151,7 @@ class AbsensiController extends Controller
             $res = [
                 'id' => $data->id,
                 'user_id' => $data->user_id,
-                'tanggal' => $data->tanggal,
+                'tanggal' => Carbon::parse($data->tanggal)->translatedFormat('l, d F Y'),
                 'absensi_masuk' => $data->absensi_masuk,
                 'absensi_keluar' => $data->absensi_keluar,
                 'keterangan' => $data->keterangan,
