@@ -105,9 +105,9 @@ class AbsensiController extends Controller
         $path = '/storage/attendances_photo/' . $hashNameImage;
 
         $this->absensi->user_id = Auth::user()->id;
-        $this->absensi->tanggal = $request->tanggal;
-        $this->absensi->absensi_masuk = $request->absensi_masuk;
-        $this->absensi->keterangan = $request->keterangan ?: null;
+        $this->absensi->tanggal = $this->carbon->toDateString();
+        $this->absensi->absensi_masuk = $this->carbon->toTimeString();
+        $this->absensi->keterangan = request('keterangan');
         $this->absensi->status = 'tepat waktu';
         $this->absensi->foto_absensi_masuk = $hashNameImage;
         $this->absensi->latitude_absen_masuk = request('latitude_absensi_masuk');
@@ -145,7 +145,7 @@ class AbsensiController extends Controller
             $canvas->save($this->imagePath . '/' . $hashNameImage);
             $path = $this->imagePath . '/' . $hashNameImage;
 
-            $this->absensi->where(['user_id' => Auth::user()->id, 'tanggal' => $request->tanggal])->update(['absensi_keluar' => $request->absensi_keluar, 'foto_absensi_keluar' => $hashNameImage, 'keterangan' => request('keterangan'), 'latitude_absen_keluar' => request('latitude_absensi_keluar'), 'longitude_absen_keluar' => request('longitude_absensi_keluar')]);
+            $this->absensi->where(['user_id' => Auth::user()->id, 'tanggal' => $this->carbon->toDateString()])->update(['absensi_keluar' => $this->carbon->toTimeString(), 'foto_absensi_keluar' => $hashNameImage, 'keterangan' => request('keterangan'), 'latitude_absen_keluar' => request('latitude_absensi_keluar'), 'longitude_absen_keluar' => request('longitude_absensi_keluar')]);
 
             $data = Absensi::where(['user_id' => Auth::user()->id, 'tanggal' => $this->carbon->toDateString()])->first();
             $res = [
@@ -154,7 +154,7 @@ class AbsensiController extends Controller
                 'tanggal' => $data->tanggal,
                 'absensi_masuk' => $data->absensi_masuk,
                 'absensi_keluar' => $data->absensi_keluar,
-                'keterangan' => $data->keterangan ?: null,
+                'keterangan' => $data->keterangan,
                 'status' => $data->status,
                 // 'foto_absensi_masuk' => $data->foto_absensi_masuk,
                 // 'url_absensi_masuk' => url('/storage/attendances_photo/' . $data->foto_absensi_masuk),
