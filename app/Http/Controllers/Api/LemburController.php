@@ -144,9 +144,9 @@ class LemburController extends Controller
             'status' => 200, 
             'message' => 'Berhasil lembur!. Mohon tunggu admin untuk mempersetujuinya.',
             'data' => [
-                'tanggal' => Carbon::parse($carbon->toDateString())->format('dd MMM YYYY'),
-                'jam_mulai' => Carbon::parse($carbon->toTimeString())->format('dd MMM YYYY'),
-                'jam_selesai' => Carbon::parse($carbon->toTimeString())->format('dd MMM YYYY'),
+                'tanggal' => Carbon::parse($carbon->toDateString())->format('d F Y'),
+                'jam_mulai' => Carbon::parse($carbon->toTimeString())->format('d F Y'),
+                'jam_selesai' => Carbon::parse($carbon->toTimeString())->format('d F Y'),
                 'url_foto_lembur' => url('/storage/lembur/' . $hashNameImage),
                 'konsumsi_lembur' => 50000,
                 'keterangan' => $request->keterangan ?: '-'
