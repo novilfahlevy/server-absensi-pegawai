@@ -199,8 +199,6 @@ class LemburController extends Controller
             return $lembur;
         });
 
-        return response()->json(['status' => 200, 'data' => [
-            'lembur' => $lembur
-        ]]);
+        return response()->json(['status' => 200, 'data' => $lembur]);
     }
 }
