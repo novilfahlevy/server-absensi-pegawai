@@ -280,7 +280,7 @@ class UserController extends Controller
         return response()->json(['status' => 200, 'message' => 'Profil anda berhasil diupdate!', 'data' => url('/storage/profiles/' . $hashNameImage)]);
     }
 
-    public function editKredensial(Request $request, $id)
+    public function editKredensial(RegisterUserRequest $request, $id)
     {
         $user = User::find($id);
         $user->syncRoles([Role::findById($request->role_id)]);
