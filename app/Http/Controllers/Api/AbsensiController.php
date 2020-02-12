@@ -71,7 +71,7 @@ class AbsensiController extends Controller
             }
             return response()->json(['status' => 200, 'absensi' => $absensi]);
         }
-        return response()->json(['status' => 404, 'absensi' => []], 404);
+        return response()->json(['status' => 404, 'absensi' => []]);
     }
 
     // public function absensiMasuk(AbsensiMasukRequest $request)

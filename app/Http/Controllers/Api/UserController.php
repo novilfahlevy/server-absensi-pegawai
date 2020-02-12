@@ -138,11 +138,14 @@ class UserController extends Controller
     public function show($id)
     {
         $user = User::with('roles')->where('id', $id)->first();
+
         $user['job'] = Jobdesc::find($user->jobdesc_id)->name;
+
         $user['has_made_by'] = UserHasMadeBy::where('user_id', $user['id'])->first() ?: null;
-        if ($user['has_made_by']) {
+        if ( $user['has_made_by'] ) {
             $user['has_made_by']['name'] = User::find($user['has_made_by']->admin_id)->name;
         }
+
         $total_jam_per_bulan = $this->getMonthAbsenHours(Carbon::now(), $id);
         $current_month = Carbon::now()->month;
         $current_year = Carbon::now()->year;
