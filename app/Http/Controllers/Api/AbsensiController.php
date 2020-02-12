@@ -296,6 +296,15 @@ class AbsensiController extends Controller
             return strtotime($absen->tanggal) > strtotime(Carbon::now()->subDays(5)->toDateString());
         })->take(5);
 
+        $absensi = $absensi->map(function($absen) {
+            $absen->absensi_masuk = Carbon::parse($absen->tanggal . ' ' . $absen->absensi_masuk)->translatedFormat('H:i');
+            $absen->absensi_keluar = Carbon::parse($absen->tanggal . ' ' . $absen->absensi_keluar)->translatedFormat('H:i');
+            $absen->tanggal = Carbon::parse($absen->tanggal)->translatedFormat('l, d F Y');
+            $absen->foto_absensi_masuk = url('/storage/attendances_photo/' . $absen->foto_absensi_masuk);
+            $absen->foto_absensi_keluar = url('/storage/attendances_photo/' . $absen->foto_absensi_keluar);
+            return $absen;
+        });
+
         return response()->json(['status' => 200, 'data' => $absensi]);
     }
 }
