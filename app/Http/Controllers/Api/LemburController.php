@@ -131,7 +131,7 @@ class LemburController extends Controller
 
         $lembur->user_id = Auth::user()->id;
         $lembur->absensi_id = $check_absensi_today['id'];
-        $lembur->tanggal = $request->tanggal;
+        $lembur->tanggal = Carbon::now()->toDateString();
         $lembur->lembur_awal = $request->lembur_awal;
         $lembur->lembur_akhir = $request->lembur_akhir;
         $lembur->konsumsi = 50000;
