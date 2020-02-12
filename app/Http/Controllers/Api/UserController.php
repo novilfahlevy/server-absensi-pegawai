@@ -115,16 +115,18 @@ class UserController extends Controller
         }
 
         $users = $users->filter(function ($data) use ($request) {
-            if ($request->job !== 'all' && $request->role !== 'all') {
-                return $data->job === $request->job && $data->role[0] === $request->role;
-            }
+            $data->role = $data->role->first();
 
+            if ($request->job !== 'all' && $request->role !== 'all') {
+                return $data->job === $request->job && $data->role === $request->role;
+            }
+            
             if ($request->job !== 'all') {
                 return $data->job === $request->job;
             }
-
+            
             if ($request->role !== 'all') {
-                return $data->role[0] === $request->role;
+                return $data->role === $request->role;
             }
 
             return true;
@@ -296,10 +298,10 @@ class UserController extends Controller
         }
 
         if (!$users->isEmpty()) {
-            return response()->json(['code' => 200, 'message' => 'Berhasil mencari data!', 'data' => $users]);
+            return response()->json(['status' => 200, 'message' => 'Berhasil mencari data!', 'data' => $users]);
         }
 
-        return response()->json(['code' => 400, 'message' => 'Kata yang anda cari tidak ditemukan!'], 400);
+        return response()->json(['status' => 400, 'message' => 'Kata yang anda cari tidak ditemukan!']);
     }
 
     public function destroy($id)
