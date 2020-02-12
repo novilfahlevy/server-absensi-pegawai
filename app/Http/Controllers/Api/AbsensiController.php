@@ -159,7 +159,7 @@ class AbsensiController extends Controller
                 'keterangan' => $data->keterangan,
                 'status' => $data->status,
                 'foto_absensi_masuk' => $data->foto_absensi_masuk,
-                'url_absensi_masuk' => url('/storage/attendances_photo/' . $data->foto_absensi_masuk),
+                // 'url_absensi_masuk' => url('/storage/attendances_photo/' . $data->foto_absensi_masuk),
                 'foto_absensi_keluar' => $data->foto_absensi_keluar,
                 'url_absensi_keluar' => url('/storage/attendances_photo/' . $hashNameImage),
                 'latitude_absen_masuk' => $data->latitude_absen_masuk,
@@ -274,6 +274,7 @@ class AbsensiController extends Controller
 
         $myAbsensi = $myAbsensi->map(function($absen) {
             $absen['url_foto_absensi_masuk'] = url('/storage/attendances_photo/' . $absen['foto_absensi_masuk']);
+            $absen['url_foto_absensi_keluar'] = url('/storage/attendances_photo/' . $absen['foto_absensi_keluar']);
             return $absen;
         });
 
