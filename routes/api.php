@@ -76,6 +76,7 @@ Route::group(['middleware' => ['auth:api']], function () {
         Route::get('/user/absensi', 'Api\AbsensiController@myAbsensi');
         Route::get('/user/{id}', 'Api\UserController@show');
         Route::get('/absensi/user/{id}', 'Api\AbsensiController@absensiHistoryByUserId');
+        Route::get('/absensi/riwayat/last/{id}', 'Api\AbsensiController@riwayatAbsenTerakhir');
     });
 
     Route::group(['middleware' => ['role:User|Project Manager']], function () {

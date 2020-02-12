@@ -278,12 +278,24 @@ class AbsensiController extends Controller
 
         return response()->json(['status' => 200, 'message' => 'Data telah diambil!', 'data' => $myAbsensi]);
     }
-
+    
     public function file($name)
     {
         $file = Storage::get($name);
         $mime = Storage::getMimeType($name);
-
+        
         return response($file, 200)->header('Content-Type', $mime);
+    }
+    
+    public function riwayatAbsenTerakhir($id) {
+        $absensi = $this->history()
+            ->where('user_id', '=', $id)
+            ->get();
+
+        $absensi = $absensi->filter(function($absen) {
+            return strtotime($absen->tanggal) > strtotime(Carbon::now()->subDays(5)->toDateString());
+        })->take(5);
+
+        return response()->json(['status' => 200, 'data' => $absensi]);
     }
 }
