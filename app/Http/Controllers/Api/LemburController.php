@@ -189,4 +189,18 @@ class LemburController extends Controller
 
         return response()->json(['status' => 400, 'data' => 'Kata yang anda cari tidak ditemukan!'], 400);
     }
+
+    public function riwayatLemburById($id) {
+        $lembur = Lembur::where('user_id', $id)->get()->map(function($lembur) {
+            $lembur['lembur_awal'] = Carbon::parse($lembur['tanggal'] . ' ' . $lembur->lembur_awal)->translatedFormat('H:i');
+            $lembur['lembur_akhir'] = Carbon::parse($lembur['tanggal'] . ' ' . $lembur->lembur_akhir)->translatedFormat('H:i');
+            $lembur['tanggal'] = Carbon::parse($lembur->tanggal)->translatedFormat('l, d F Y');
+            $lembur['foto'] = url('/storage/lembur' , $lembur['foto']);
+            return $lembur;
+        });
+
+        return response()->json(['status' => 200, 'data' => [
+            'lembur' => $lembur
+        ]]);
+    }
 }

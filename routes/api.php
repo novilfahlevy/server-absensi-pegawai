@@ -42,6 +42,7 @@ Route::group(['middleware' => ['auth:api']], function () {
         Route::get('/admin/waktuKerja', 'Api\WaktuKerjaController@index');
         Route::post('/admin/waktuKerja', 'Api\WaktuKerjaController@tambahWaktuKerja');
         Route::get('/absensi', 'Api\AbsensiController@index');
+        Route::get('/lembur/riwayat/{id}', 'Api\LemburController@riwayatLemburById');
         Route::get('/lembur/{role}/{id}', 'Api\LemburController@index');
         Route::post('/lembur/{id}', 'Api\LemburController@edit');
 
