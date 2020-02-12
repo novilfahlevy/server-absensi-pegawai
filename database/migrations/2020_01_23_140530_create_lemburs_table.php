@@ -19,9 +19,9 @@ class CreateLembursTable extends Migration
             $table->unsignedBigInteger('absensi_id');
             $table->date('tanggal');
             $table->time('lembur_awal');
-            $table->time('lembur_akhir');
-            $table->string('keterangan');
-            $table->integer('konsumsi');
+            $table->time('lembur_akhir')->nullable();
+            $table->string('keterangan')->nullable();
+            $table->integer('konsumsi')->nullable();
             $table->string('foto');
             $table->string('status');
             $table->timestamps();
