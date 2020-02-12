@@ -273,7 +273,7 @@ class AbsensiController extends Controller
         $myAbsensi = Absensi::where('user_id', '=', Auth::user()->id)->get();
 
         $myAbsensi = $myAbsensi->map(function($absen) {
-            $absen['url_foto_absensi_masuk'] = url('/storage/attendances_photo/' . $absen['foro_absesnsi_masuk']);
+            $absen['url_foto_absensi_masuk'] = url('/storage/attendances_photo/' . $absen['foto_absensi_masuk']);
             return $absen;
         });
 
