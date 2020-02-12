@@ -135,12 +135,23 @@ class LemburController extends Controller
         $lembur->lembur_awal = $carbon->toTimeString();
         $lembur->lembur_akhir = $carbon->toTimeString();
         $lembur->konsumsi = 50000;
-        $lembur->keterangan = 'Lembur';
+        $lembur->keterangan = $request->keterangan ?: '-';
         $lembur->foto = $hashNameImage;
         $lembur->status = 'Menunggu';
         $lembur->save();
 
-        return response()->json(['status' => 200, 'message' => 'Berhasil lembur!. Mohon tunggu admin untuk mempersetujuinya.']);
+        return response()->json([
+            'status' => 200, 
+            'message' => 'Berhasil lembur!. Mohon tunggu admin untuk mempersetujuinya.',
+            'data' => [
+                'tanggal' => Carbon::parse($carbon->toDateString())->format('dd MMM YYYY'),
+                'jam_mulai' => Carbon::parse($carbon->toTimeString())->format('dd MMM YYYY'),
+                'jam_selesai' => Carbon::parse($carbon->toTimeString())->format('dd MMM YYYY'),
+                'url_foto_lembur' => url('/storage/lembur/' . $hashNameImage),
+                'konsumsi_lembur' => 50000,
+                'keterangan' => $request->keterangan ?: '-'
+            ]
+        ]);
     }
 
     public function edit(Request $request, $id)
