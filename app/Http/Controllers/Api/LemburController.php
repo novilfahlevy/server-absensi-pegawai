@@ -179,7 +179,7 @@ class LemburController extends Controller
             $lembur[] = Lembur::where('user_id', '=', $user_id)->get();
         }
 
-        if (isset($lembur[0])) {
+        if (count($lembur) > 0) {
             $lembur = $lembur[0];
             foreach ($lembur as $key => $absen) {
                 $lembur[$key]['name'] = User::find($absen->user_id)->name;
@@ -187,6 +187,6 @@ class LemburController extends Controller
             return response()->json(['status' => 200, 'message' => 'Sukses', 'data' => $lembur]);
         }
 
-        return response()->json(['status' => 400, 'data' => 'Kata yang anda cari tidak ditemukan!'], 400);
+        return response()->json(['status' => 200, 'message' => 'Kata yang anda cari tidak ditemukan!', 'data' => $lembur]);
     }
 }
