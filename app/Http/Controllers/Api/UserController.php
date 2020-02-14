@@ -121,11 +121,11 @@ class UserController extends Controller
             if ($request->job !== 'all' && $request->role !== 'all') {
                 return $data->job === $request->job && $data->role === $request->role;
             }
-            
+
             if ($request->job !== 'all') {
                 return $data->job === $request->job;
             }
-            
+
             if ($request->role !== 'all') {
                 return $data->role === $request->role;
             }
@@ -143,7 +143,7 @@ class UserController extends Controller
         $user['job'] = Jobdesc::find($user->jobdesc_id)->name;
 
         $user['has_made_by'] = UserHasMadeBy::where('user_id', $user['id'])->first() ?: null;
-        if ( $user['has_made_by'] ) {
+        if ($user['has_made_by']) {
             $user['has_made_by']['name'] = User::find($user['has_made_by']->admin_id)->name;
         }
 
@@ -200,23 +200,23 @@ class UserController extends Controller
         $input['password'] = bcrypt($input['password']);
         $input['jobdesc_id'] = (int) $input['jobdesc_id'];
 
-        if ( $user = User::create($input) ) {
+        if ($user = User::create($input)) {
             UserHasMadeBy::create([
-                'admin_id' => $request->admin_id, 
+                'admin_id' => $request->admin_id,
                 'user_id' => $user->id
             ]);
             $role = Role::find($request->role_id);
             $user->assignRole($role);
 
             return response()->json([
-                'status' => 200, 
-                'message' => 'Pegawai berhasil ditambahkan.', 
+                'status' => 200,
+                'message' => 'Pegawai berhasil ditambahkan.',
                 'user' => $user
             ]);
         }
 
         return response()->json([
-            'status' => 400, 
+            'status' => 400,
             'message' => 'Gagal menambah pegawai.'
         ]);
     }
@@ -305,7 +305,7 @@ class UserController extends Controller
             return response()->json(['status' => 200, 'message' => 'Berhasil mencari data!', 'data' => $users]);
         }
 
-        return response()->json(['status' => 400, 'message' => 'Kata yang anda cari tidak ditemukan!']);
+        return response()->json(['status' => 400, 'message' => 'Kata yang anda cari tidak ditemukan!'], 400);
     }
 
     public function destroy($id)

@@ -19,6 +19,19 @@ Route::get('unauthorized', 'Api\UserController@unauthorized')->name('unauthorize
 Route::get('/absensi/laporan/export', 'Api\LaporanController@export');
 Route::get('/absensi/laporan/export/{month}/{year}', 'Api\LaporanController@exportSelected');
 
+// Android API
+Route::group(['prefix' => 'mobile'], function () {
+    Route::post('/auth/login', 'Api\Android\UserController@login');
+
+    Route::group(['middleware' => ['auth:api']], function () {
+        Route::post('/absensiMasuk', 'Api\Android\AbsensiController@absensiMasuk');
+        Route::get('/cekAbsensi/{user_id}', 'Api\Android\AbsensiController@cekAbsensi');
+        Route::get('/getProfile/{id}', 'Api\Android\UserController@getProfile');
+        Route::get('/getRiwayatAbsensi/{user_id}', 'Api\Android\AbsensiController@getRiwayatAbsensi');
+        Route::get('/getDetailAbsensi/{user_id}/{tanggal}', 'Api\Android\AbsensiController@getDetailAbsensi');
+    });
+});
+
 Route::group(['middleware' => ['auth:api']], function () {
     Route::get('/file/{name}', 'AbsensiController@file');
     Route::post('auth/logout', 'Api\UserController@logout');
@@ -26,7 +39,7 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::group(['middleware' => ['role:Admin']], function () {
         Route::post('/user/destroy/{id}', 'Api\UserController@destroy');
         Route::post('/user/edit/{id}', 'Api\UserController@editKredensial');
-        
+
         // Job
         Route::post('/jobdesc/store', 'Api\JobdescController@store');
         Route::get('/jobdesc/{id}/show', 'Api\JobdescController@show');
@@ -55,7 +68,7 @@ Route::group(['middleware' => ['auth:api']], function () {
         Route::get('/lembur/{role}/{id}', 'Api\LemburController@index');
         Route::post('/lembur/{id}', 'Api\LemburController@edit');
         Route::get('/lembur/filter/{role}/{id}/{month}/{year}', 'Api\LemburController@filter');
-        
+
         // Absensi
         Route::get('/absensi', 'Api\AbsensiController@index');
         Route::get('/absensi/laporan', 'Api\LaporanController@index');
@@ -66,7 +79,7 @@ Route::group(['middleware' => ['auth:api']], function () {
         Route::get('/absensi/riwayat/filter/{year}/{month}', 'Api\AbsensiController@filterHistory');
         Route::get('/absensi/riwayat/search/{name}', 'Api\AbsensiController@searchHistory');
         Route::get('/absensi/{keyword}', 'Api\AbsensiController@cari');
-        
+
         // Projet Manager
         Route::get('/user/pm', 'Api\ProjectManagerController@showPegawai');
         Route::get('/user/pm/filter/member/{id}/{job}', 'Api\ProjectManagerController@filterMember');
@@ -76,7 +89,7 @@ Route::group(['middleware' => ['auth:api']], function () {
         Route::get('/user/pm/search/{keyword}', 'Api\ProjectManagerController@searchPegawai');
         Route::post('/user/pm', 'Api\ProjectManagerController@store');
         Route::delete('/user/pm/{pm_id}/{user_id}', 'Api\ProjectManagerController@destroy');
-    
+
         Route::get('/jobdesc', 'Api\JobdescController@index');
         Route::get('/role', 'Api\RoleController@index');
     });
@@ -87,13 +100,13 @@ Route::group(['middleware' => ['auth:api']], function () {
         Route::get('/user/absensi', 'Api\AbsensiController@myAbsensi');
         Route::get('/user/{id}', 'Api\UserController@show');
     });
-    
-    Route::group(['middleware' => ['role:User|Project Manager']], function () {
-        // Android API
-        Route::post('/user/absensiMasuk', 'Api\AbsensiController@absensiMasuk');
-        Route::post('/user/absensiKeluar', 'Api\AbsensiController@absensiKeluar');
-        Route::post('/user/ajukanLembur', 'Api\LemburController@create');
-        // Route::get('/absensi/riwayat/last/{id}', 'Api\AbsensiController@riwayatAbsenTerakhir');
-        // Route::get('/absensi/riwayat/user/{id}', 'Api\AbsensiController@absensiHistoryByUserId');
-    });
+
+    // Route::group(['middleware' => ['role:User|Project Manager']], function () {
+    //     // Android API
+    //     Route::post('/user/absensiMasuk', 'Api\AbsensiController@absensiMasuk');
+    //     Route::post('/user/absensiKeluar', 'Api\AbsensiController@absensiKeluar');
+    //     Route::post('/user/ajukanLembur', 'Api\LemburController@create');
+    //     // Route::get('/absensi/riwayat/last/{id}', 'Api\AbsensiController@riwayatAbsenTerakhir');
+    //     // Route::get('/absensi/riwayat/user/{id}', 'Api\AbsensiController@absensiHistoryByUserId');
+    // });
 });
