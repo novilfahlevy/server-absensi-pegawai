@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\RegisterUserRequest;
+use App\Http\Requests\EditUserRequest;
 use App\Jobdesc;
 use App\ProjectManager;
 use Intervention\Image\Facades\Image;
@@ -280,7 +281,7 @@ class UserController extends Controller
         return response()->json(['status' => 200, 'message' => 'Profil anda berhasil diupdate!', 'data' => url('/storage/profiles/' . $hashNameImage)]);
     }
 
-    public function editKredensial(RegisterUserRequest $request, $id)
+    public function editKredensial(EditUserRequest $request, $id)
     {
         $user = User::find($id);
         $user->syncRoles([Role::findById($request->role_id)]);
