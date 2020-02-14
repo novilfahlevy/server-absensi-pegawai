@@ -17,14 +17,12 @@ class LaporanViewExport implements FromView, WithEvents
 {
     protected $carbon;
     protected $attendance;
-    protected $imagePath;
     protected $totalRows;
     public function __construct()
     {
-        $this->totalRows = count(User::all()) + 13;
+        $this->totalRows = count(User::all()) + 5;
         $this->carbon = new Carbon();
         $this->absensi = new Absensi();
-        $this->imagePath = public_path() . '/storage/attendances_photo/';
     }
     /**
      * @return \Illuminate\Support\Collection
@@ -37,57 +35,67 @@ class LaporanViewExport implements FromView, WithEvents
         }
         return DB::select(DB::raw("SELECT * FROM absensis WHERE MONTH(tanggal) = " . $month . " AND YEAR(tanggal) = " . $year . " AND user_id = " . $user_id . " AND DAY(tanggal) BETWEEN " . $startDate . " AND " . $endDate));
     }
-    private function getMonthAbsenHours($date)
+    private function getMonthlyLemburHours($year, $month, $user_id)
     {
-        // Get the last date of the current month
+        $lembur_hours = [];
+        $total_lemburs = DB::select(DB::raw("SELECT * FROM absensis WHERE MONTH(tanggal) = " . $month . " AND YEAR(tanggal) = " . $year . " AND user_id = " . $user_id));
+        foreach ($total_lemburs as $key => $lembur) {
+            $lembur_hours[$key] = $this->carbon->parse($lembur->lembur_akhir)->diffInHours($this->carbon->parse($lembur->lembur_awal));
+        }
+        return array_sum($lembur_hours);
+    }
+    // private function getMonthAbsenHours($date)
+    // {
+    //     // Get the last date of the current month
 
-        $first_date = $date->firstOfMonth()->day;
-        $last_date = $date->lastOfMonth()->day;
-        $fourth_week_start = $date->firstOfMonth()->addDays(21)->day;
-        $third_week_start = $date->firstOfMonth()->addDays(14)->day;
-        $second_week_start = $date->firstOfMonth()->addDays(7)->day;
-        // Array of all hours
-        $first_week_hours = [];
-        $second_week_hours = [];
-        $third_week_hours = [];
-        $fourth_week_hours = [];
-        // Absens of all weeks
-        $year = $date->year;
-        $month = $date->month;
-        $first_week_absen = $this->getWeeklyAbsen($year, $month, $first_date, $second_week_start);
-        $second_week_absen = $this->getWeeklyAbsen($year, $month, $second_week_start, $third_week_start);
-        $third_week_absen = $this->getWeeklyAbsen($year, $month, $third_week_start, $fourth_week_start);
-        $fourth_week_absen = $this->getWeeklyAbsen($year, $month, $fourth_week_start, $last_date);
-        // foreach and input it to array above
-        foreach ($first_week_absen as $key => $absen) {
-            $first_week_hours[$key] = $this->carbon->parse($absen->absensi_keluar)->diffInHours($this->carbon->parse($absen->absensi_masuk));
-        }
-        foreach ($second_week_absen as $key => $absen) {
-            $second_week_hours[$key] = $this->carbon->parse($absen->absensi_keluar)->diffInHours($this->carbon->parse($absen->absensi_masuk));
-        }
-        foreach ($third_week_absen as $key => $absen) {
-            $third_week_hours[$key] = $this->carbon->parse($absen->absensi_keluar)->diffInHours($this->carbon->parse($absen->absensi_masuk));
-        }
-        foreach ($fourth_week_absen as $key => $absen) {
-            $fourth_week_hours[$key] = $this->carbon->parse($absen->absensi_keluar)->diffInHours($this->carbon->parse($absen->absensi_masuk));
-        }
-        // Final output in hour
-        $first_week_hours_total = array_sum($first_week_hours);
-        $second_week_hours_total = array_sum($second_week_hours);
-        $third_week_hours_total = array_sum($third_week_hours);
-        $fourth_week_hours_total = array_sum($fourth_week_hours);
-        return  [$first_week_hours_total, $second_week_hours_total, $third_week_hours_total, $fourth_week_hours_total];
-    }
-    private function getDataByStatus($year, $month, $status)
-    {
-        return count(DB::select(DB::raw("SELECT * FROM absensis WHERE MONTH(tanggal) = " . $month . " AND YEAR(tanggal) = " . $year . " AND status = " . "'$status'")));
-    }
+    //     $first_date = $date->firstOfMonth()->day;
+    //     $last_date = $date->lastOfMonth()->day;
+    //     $fourth_week_start = $date->firstOfMonth()->addDays(21)->day;
+    //     $third_week_start = $date->firstOfMonth()->addDays(14)->day;
+    //     $second_week_start = $date->firstOfMonth()->addDays(7)->day;
+    //     // Array of all hours
+    //     $first_week_hours = [];
+    //     $second_week_hours = [];
+    //     $third_week_hours = [];
+    //     $fourth_week_hours = [];
+    //     // Absens of all weeks
+    //     $year = $date->year;
+    //     $month = $date->month;
+    //     $first_week_absen = $this->getWeeklyAbsen($year, $month, $first_date, $second_week_start);
+    //     $second_week_absen = $this->getWeeklyAbsen($year, $month, $second_week_start, $third_week_start);
+    //     $third_week_absen = $this->getWeeklyAbsen($year, $month, $third_week_start, $fourth_week_start);
+    //     $fourth_week_absen = $this->getWeeklyAbsen($year, $month, $fourth_week_start, $last_date);
+    //     // foreach and input it to array above
+    //     foreach ($first_week_absen as $key => $absen) {
+    //         $first_week_hours[$key] = $this->carbon->parse($absen->absensi_keluar)->diffInHours($this->carbon->parse($absen->absensi_masuk));
+    //     }
+    //     foreach ($second_week_absen as $key => $absen) {
+    //         $second_week_hours[$key] = $this->carbon->parse($absen->absensi_keluar)->diffInHours($this->carbon->parse($absen->absensi_masuk));
+    //     }
+    //     foreach ($third_week_absen as $key => $absen) {
+    //         $third_week_hours[$key] = $this->carbon->parse($absen->absensi_keluar)->diffInHours($this->carbon->parse($absen->absensi_masuk));
+    //     }
+    //     foreach ($fourth_week_absen as $key => $absen) {
+    //         $fourth_week_hours[$key] = $this->carbon->parse($absen->absensi_keluar)->diffInHours($this->carbon->parse($absen->absensi_masuk));
+    //     }
+    //     // Final output in hour
+    //     $first_week_hours_total = array_sum($first_week_hours);
+    //     $second_week_hours_total = array_sum($second_week_hours);
+    //     $third_week_hours_total = array_sum($third_week_hours);
+    //     $fourth_week_hours_total = array_sum($fourth_week_hours);
+    //     return  [$first_week_hours_total, $second_week_hours_total, $third_week_hours_total, $fourth_week_hours_total];
+    // }
+    // private function getDataByStatus($year, $month, $status)
+    // {
+    //     return count(DB::select(DB::raw("SELECT * FROM absensis WHERE MONTH(tanggal) = " . $month . " AND YEAR(tanggal) = " . $year . " AND status = " . "'$status'")));
+    // }
     public function view(): View
     {
         // Data Pegawai
         $first_date = $this->carbon->now()->firstOfMonth()->day;
         $last_date = $this->carbon->now()->lastOfMonth()->day;
         $current_month = Carbon::now()->month;
+        $total_days = $this->carbon->now()->daysInMonth;
         $current_year = Carbon::now()->year;
         $users = User::all();
         $users_report = [];
@@ -100,27 +108,29 @@ class LaporanViewExport implements FromView, WithEvents
             }
             $users_report[$i] = [
                 'name' => $user->name,
-                'total_jam_kerja' => array_sum($total_hours) . ' Jam',
                 'total_terlambat' => count(DB::select(DB::raw("SELECT * FROM absensis WHERE MONTH(tanggal) = " . $current_month . " AND YEAR(tanggal) = " . $current_year . " AND status = 'terlambat' AND user_id = " . $user->id))) . ' Kali',
                 'total_tepat_waktu' => count(DB::select(DB::raw("SELECT * FROM absensis WHERE MONTH(tanggal) = " . $current_month . " AND YEAR(tanggal) = " . $current_year . " AND status = 'tepat waktu' AND user_id = " . $user->id))) . ' Kali',
                 'total_lembur' => count(DB::select(DB::raw("SELECT * FROM lemburs WHERE MONTH(tanggal) = " . $current_month . " AND YEAR(tanggal) = " . $current_year . " AND user_id = " . $user->id))) . ' Kali',
+                'total_tidak_hadir' => ($total_days - count(DB::select(DB::raw("SELECT * FROM absensis WHERE MONTH(tanggal) = " . $current_month . " AND YEAR(tanggal) = " . $current_year . " AND user_id = " . $user->id)))) . ' Kali',
+                'total_jam_lembur' => $this->getMonthlyLemburHours($current_month, $current_year, $user->id) . ' Jam',
+                'total_jam_kerja' => array_sum($total_hours) . ' Jam',
             ];
             $i++;
         }
-        $total_jam_per_bulan = $this->getMonthAbsenHours($this->carbon->now());
-        // Status Pegawai
-        $total_terlambat = $this->getDataByStatus($current_year, $current_month, 'terlambat');
-        $total_tepat_waktu = $this->getDataByStatus($current_year, $current_month, 'tepat waktu');
-        $total_kecepatan = $this->getDataByStatus($current_year, $current_month, 'kecepatan');
+        // $total_jam_per_bulan = $this->getMonthAbsenHours($this->carbon->now());
+        // // Status Pegawai
+        // $total_terlambat = $this->getDataByStatus($current_year, $current_month, 'terlambat');
+        // $total_tepat_waktu = $this->getDataByStatus($current_year, $current_month, 'tepat waktu');
+        // $total_kecepatan = $this->getDataByStatus($current_year, $current_month, 'kecepatan');
         return view('laporan', [
             'nama_bulan' => Carbon::now()->format('F'),
             'total_jam_pegawai' => $users_report,
-            'total_jam_per_bulan' => $total_jam_per_bulan,
-            'status_pegawai' => [
-                'terlambat' => $total_terlambat,
-                'tepat_waktu' => $total_tepat_waktu,
-                'overwork' => $total_kecepatan
-            ]
+            // 'total_jam_per_bulan' => $total_jam_per_bulan,
+            // 'status_pegawai' => [
+            //     'terlambat' => $total_terlambat,
+            //     'tepat_waktu' => $total_tepat_waktu,
+            //     'overwork' => $total_kecepatan
+            // ]
         ]);
     }
     /**
@@ -156,9 +166,9 @@ class LaporanViewExport implements FromView, WithEvents
                         ]
                     ]
                 ];
-                $event->sheet->getDelegate()->getStyle('A3:L5')->applyFromArray($styleArray);
-                $event->sheet->getDelegate()->getStyle('A8:L10')->applyFromArray($styleArray);
-                $event->sheet->getDelegate()->getStyle('A13:L' . $this->totalRows)->applyFromArray($styleArray);
+                // $event->sheet->getDelegate()->getStyle('A3:P5')->applyFromArray($styleArray);
+                // $event->sheet->getDelegate()->getStyle('A8:P10')->applyFromArray($styleArray);
+                $event->sheet->getDelegate()->getStyle('A5:P' . $this->totalRows)->applyFromArray($styleArray);
             }
         ];
     }
