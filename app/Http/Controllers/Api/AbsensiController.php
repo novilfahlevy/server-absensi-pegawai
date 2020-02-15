@@ -16,6 +16,7 @@ use App\User;
 use App\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Request as FacadesRequest;
 
 class AbsensiController extends Controller
 {
@@ -309,24 +310,16 @@ class AbsensiController extends Controller
         ])->count();
 
         if ( $check_duplicate_data > 0 ) {
-            $user = User::where('id', $request->userId)->first();
-            $name = $user->name;
             $date = Carbon::parse($request->tanggal)->translatedFormat('l, d F Y');
 
             return response()->json([
                 'status' => 400, 
-                'message' => "User '$name' telah melakukan absen masuk pada $date.",
+                'message' => "User telah melakukan absen masuk pada $date.",
                 'data' => [
                     'absen_id' => Absensi::where('user_id', $request->userId)->first()->id
                 ]
             ]);
         }
-
-        // $imagePath = public_path() . '/storage/attendances_photo/';
-
-        // if (!File::isDirectory($imagePath)) {
-        //     File::makeDirectory($imagePath);
-        // }
 
         $tanggal = $request->tanggal . ' ' . $request->jamAbsen;
         if (
@@ -341,16 +334,6 @@ class AbsensiController extends Controller
             $status = 'terlambat';
         }
 
-        // $input = $request->file('foto_absensi_masuk');
-        // $hashNameImage = time() . '_' . $input->getClientOriginalName();
-        // $canvas = Image::canvas(500, 500);
-        // $resizeImage = Image::make($input)->resize(500, 500, function ($constraint) {
-        //     $constraint->aspectRatio();
-        // });
-        // $canvas->insert($resizeImage, 'center');
-        // $canvas->save($imagePath . $hashNameImage);
-        // $path = '/storage/attendances_photo/' . $hashNameImage;
-
         $absensi = new Absensi();
         $absensi->user_id = $request->userId;
         $absensi->tanggal = $request->tanggal;
@@ -358,16 +341,76 @@ class AbsensiController extends Controller
         $absensi->keterangan = $request->keterangan;
         $absensi->status = $status;
         $absensi->absen_oleh_admin = Auth::user()->id;
-        // $absensi->foto_absensi_masuk = $hashNameImage;
-        // $absensi->latitude_absen_masuk = request('latitude_absensi_masuk');
-        // $absensi->longitude_absen_masuk = request('longitude_absensi_masuk');
         if ( $absensi->save() ) {
             return response()->json(['status' => 200, 'message' => 'Berhasil absensi masuk!', 'data' => $absensi]);
         }
-        // $absensi->tanggal = Carbon::parse($absensi->tanggal)->translatedFormat('l, d F Y');
-        // $absensi->url_foto_absensi_masuk = url($path);
 
         return response()->json(['status' => 400, 'message' => 'Gagal Absen user!']);
+    }
+
+    public function getAbsensiByAdmin() {
+        $absensi = Absensi::where('absensi_keluar', null)->get();
+        return response()->json([
+            'status' => 200,
+            'message' => 'Data berhasil diambil',
+            'data' => $absensi
+        ]);
+    }
+
+    public function searchUsersAbsensiByAdmin($name) {
+        $users = User::where('name', 'LIKE', "%$name%")->get();
+
+        $absensi = $users
+        ->filter(function ($user) {
+            return Absensi::where('user_id', $user->id)
+            ->where('absensi_keluar', null)
+            ->count();
+        })
+        ->values()
+        ->map(function ($user) {
+            $absen = Absensi::where('user_id', $user->id)
+                ->where('absensi_keluar', null)
+                ->first();
+
+            return [
+                'id' => $absen->id,
+                'name' => $absen->user->name,
+                'tanggal' => Carbon::parse($absen->tanggal)->translatedFormat('l, d F Y'),
+                'profile' => $absen->user->profile
+            ];
+        });
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'Data berhasil diambil',
+            'data' => $absensi
+        ]);
+    }
+
+    public function absenKeluarByAdmin(Request $request) {
+        $absen = $this->absensi->where(['id' => $request->absenId]);
+        if ( $absen->count() ) {
+            if ( $absen->where('absensi_keluar', null)->count() ) {
+                if ( $absen->update(['absensi_keluar' => $request->jamAbsen]) ) {
+                    return response()->json([
+                        'status' => 200,
+                        'message' => 'Absen keluar berhasil'
+                    ]);
+                }
+                return response()->json([
+                    'status' => 400,
+                    'message' => 'Absen keluar gagal'
+                ]);
+            }
+            return response()->json([
+                'status' => 400,
+                'message' => 'User telah melakukan absen keluar.'
+            ]);
+        }
+        return response()->json([
+            'status' => 404,
+            'message' => 'Absen tidak ditemukan'
+        ]);
     }
     
     public function file($name)
