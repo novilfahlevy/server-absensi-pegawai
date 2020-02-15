@@ -48,9 +48,10 @@ Route::group(['middleware' => ['auth:api']], function () {
         Route::put('/jobdesc/{replaced_job_id}/{new_job_id}', 'Api\JobdescController@replaceAllWith');
 
         // Absensi
-        Route::get('/users/absen-by-admin', 'Api\AbsensiController@getUsersAbsenByAdmin');
+        Route::get('/users/absen-masuk/by-admin', 'Api\AbsensiController@getUsersAbsenByAdmin');
         Route::get('/search/user/{name}/absen-by-admin', 'Api\AbsensiController@searchUsersAbsenByAdmin');
         Route::post('/absen-masuk/by-admin', 'Api\AbsensiController@absenMasukByAdmin');
+        Route::post('/users/absen-keluar/by-admin', 'Api\AbsensiController@absenMasukByAdmin');
 
         Route::get('/dashboard', 'Api\DashboardController@index');
     });
