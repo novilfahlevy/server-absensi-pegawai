@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\File;
 use Intervention\Image\Facades\Image;
 use App\Http\Requests\AbsensiMasukRequest;
 use App\User;
+use App\Role;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class AbsensiController extends Controller
@@ -256,6 +258,116 @@ class AbsensiController extends Controller
     {
         $myAbsensi = Absensi::where('user_id', '=', Auth::user()->id)->get();
         return response()->json(['status' => 200, 'message' => 'Data telah diambil!', 'data' => $myAbsensi]);
+    }
+
+    public function getUsersAbsenByAdmin() {
+        $users = User::all()
+        ->filter(function ($user) {
+            return Role::find($user->id)['id'] !== 1;
+        })
+        ->values()
+        ->map(function ($user) {
+            return [
+                'id' => $user->id,
+                'name' => $user->name,
+                'profile' => $user->profile
+            ];
+        });
+
+        return response()->json([
+            'status' => 200, 
+            'message' => 'Data user berhasil diambil',
+            'data' => $users
+        ]);
+    }
+
+    public function searchUsersAbsenByAdmin($name) {
+        $users = User::where('name', 'LIKE', "%$name%")->get()
+        ->filter(function ($user) {
+            return Role::find($user->id)['id'] !== 1;
+        })
+        ->values()
+        ->map(function ($user) {
+            return [
+                'id' => $user->id,
+                'name' => $user->name,
+                'profile' => $user->profile
+            ];
+        });
+
+        return response()->json([
+            'status' => 200, 
+            'message' => 'Data user berhasil diambil',
+            'data' => $users
+        ]);
+    }
+
+    public function absenMasukByAdmin(Request $request) {
+        $check_duplicate_data = Absensi::where([
+            'user_id' => $request->userId, 
+            'tanggal' => Carbon::parse($request->tanggal . ' ' . $request->jamAbsen)->toDateString()
+        ])->count();
+
+        if ( $check_duplicate_data > 0 ) {
+            $user = User::where('id', $request->userId)->first();
+            $name = $user->name;
+            $date = Carbon::parse($request->tanggal)->translatedFormat('l, d F Y');
+
+            return response()->json([
+                'status' => 400, 
+                'message' => "User '$name' telah melakukan absen masuk pada $date.",
+                'data' => [
+                    'absen_id' => Absensi::where('user_id', $request->userId)->first()->id
+                ]
+            ]);
+        }
+
+        // $imagePath = public_path() . '/storage/attendances_photo/';
+
+        // if (!File::isDirectory($imagePath)) {
+        //     File::makeDirectory($imagePath);
+        // }
+
+        $tanggal = $request->tanggal . ' ' . $request->jamAbsen;
+        if (
+            Carbon::parse($tanggal)->format('H:i') >= '08:00' 
+            && 
+            Carbon::parse($tanggal)->format('H:i') <= '08:20'
+        ) {
+            $status = 'tepat waktu';
+        } else if ( Carbon::parse($tanggal)->format('H:i') < '08:00' ) {
+            $status = 'kecepatan';
+        } else {
+            $status = 'terlambat';
+        }
+
+        // $input = $request->file('foto_absensi_masuk');
+        // $hashNameImage = time() . '_' . $input->getClientOriginalName();
+        // $canvas = Image::canvas(500, 500);
+        // $resizeImage = Image::make($input)->resize(500, 500, function ($constraint) {
+        //     $constraint->aspectRatio();
+        // });
+        // $canvas->insert($resizeImage, 'center');
+        // $canvas->save($imagePath . $hashNameImage);
+        // $path = '/storage/attendances_photo/' . $hashNameImage;
+
+        $absensi = new Absensi();
+        $absensi->user_id = $request->userId;
+        $absensi->tanggal = $request->tanggal;
+        $absensi->absensi_masuk = $request->jamAbsen;
+        $absensi->keterangan = $request->keterangan;
+        $absensi->status = $status;
+        $absensi->absen_oleh_admin = Auth::user()->id;
+        // $absensi->foto_absensi_masuk = $hashNameImage;
+        // $absensi->latitude_absen_masuk = request('latitude_absensi_masuk');
+        // $absensi->longitude_absen_masuk = request('longitude_absensi_masuk');
+        if ( $absensi->save() ) {
+            return response()->json(['status' => 200, 'message' => 'Berhasil absensi masuk!', 'data' => $absensi]);
+        }
+        // $absensi->tanggal = Carbon::parse($absensi->tanggal)->translatedFormat('l, d F Y');
+        // $absensi->url_foto_absensi_masuk = url($path);
+
+        return response()->json(['status' => 400, 'message' => 'Gagal Absen user!']);
     }
     
     public function file($name)
