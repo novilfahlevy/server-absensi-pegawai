@@ -13,7 +13,10 @@ use Illuminate\Support\Facades\File;
 use Intervention\Image\Facades\Image;
 use App\Http\Requests\AbsensiMasukRequest;
 use App\User;
+use App\Role;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Request as FacadesRequest;
 
 class AbsensiController extends Controller
 {
@@ -256,6 +259,158 @@ class AbsensiController extends Controller
     {
         $myAbsensi = Absensi::where('user_id', '=', Auth::user()->id)->get();
         return response()->json(['status' => 200, 'message' => 'Data telah diambil!', 'data' => $myAbsensi]);
+    }
+
+    public function getUsersAbsenByAdmin() {
+        $users = User::all()
+        ->filter(function ($user) {
+            return Role::find($user->id)['id'] !== 1;
+        })
+        ->values()
+        ->map(function ($user) {
+            return [
+                'id' => $user->id,
+                'name' => $user->name,
+                'profile' => $user->profile
+            ];
+        });
+
+        return response()->json([
+            'status' => 200, 
+            'message' => 'Data user berhasil diambil',
+            'data' => $users
+        ]);
+    }
+
+    public function searchUsersAbsenByAdmin($name) {
+        $users = User::where('name', 'LIKE', "%$name%")->get()
+        ->filter(function ($user) {
+            return Role::find($user->id)['id'] !== 1;
+        })
+        ->values()
+        ->map(function ($user) {
+            return [
+                'id' => $user->id,
+                'name' => $user->name,
+                'profile' => $user->profile
+            ];
+        });
+
+        return response()->json([
+            'status' => 200, 
+            'message' => 'Data user berhasil diambil',
+            'data' => $users
+        ]);
+    }
+
+    public function absenMasukByAdmin(Request $request) {
+        $check_duplicate_data = Absensi::where([
+            'user_id' => $request->userId, 
+            'tanggal' => Carbon::parse($request->tanggal . ' ' . $request->jamAbsen)->toDateString()
+        ])->count();
+
+        if ( $check_duplicate_data > 0 ) {
+            $date = Carbon::parse($request->tanggal)->translatedFormat('l, d F Y');
+
+            return response()->json([
+                'status' => 400, 
+                'message' => "User telah melakukan absen masuk pada $date.",
+                'data' => [
+                    'absen_id' => Absensi::where('user_id', $request->userId)->first()->id
+                ]
+            ]);
+        }
+
+        $tanggal = $request->tanggal . ' ' . $request->jamAbsen;
+        if (
+            Carbon::parse($tanggal)->format('H:i') >= '08:00' 
+            && 
+            Carbon::parse($tanggal)->format('H:i') <= '08:20'
+        ) {
+            $status = 'tepat waktu';
+        } else if ( Carbon::parse($tanggal)->format('H:i') < '08:00' ) {
+            $status = 'kecepatan';
+        } else {
+            $status = 'terlambat';
+        }
+
+        $absensi = new Absensi();
+        $absensi->user_id = $request->userId;
+        $absensi->tanggal = $request->tanggal;
+        $absensi->absensi_masuk = $request->jamAbsen;
+        $absensi->keterangan = $request->keterangan;
+        $absensi->status = $status;
+        $absensi->absen_oleh_admin = Auth::user()->id;
+        if ( $absensi->save() ) {
+            return response()->json(['status' => 200, 'message' => 'Berhasil absensi masuk!', 'data' => $absensi]);
+        }
+
+        return response()->json(['status' => 400, 'message' => 'Gagal Absen user!']);
+    }
+
+    public function getAbsensiByAdmin() {
+        $absensi = Absensi::where('absensi_keluar', null)->get();
+        return response()->json([
+            'status' => 200,
+            'message' => 'Data berhasil diambil',
+            'data' => $absensi
+        ]);
+    }
+
+    public function searchUsersAbsensiByAdmin($name) {
+        $users = User::where('name', 'LIKE', "%$name%")->get();
+
+        $absensi = $users
+        ->filter(function ($user) {
+            return Absensi::where('user_id', $user->id)
+            ->where('absensi_keluar', null)
+            ->count();
+        })
+        ->values()
+        ->map(function ($user) {
+            $absen = Absensi::where('user_id', $user->id)
+                ->where('absensi_keluar', null)
+                ->first();
+
+            return [
+                'id' => $absen->id,
+                'name' => $absen->user->name,
+                'tanggal' => Carbon::parse($absen->tanggal)->translatedFormat('l, d F Y'),
+                'profile' => $absen->user->profile
+            ];
+        });
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'Data berhasil diambil',
+            'data' => $absensi
+        ]);
+    }
+
+    public function absenKeluarByAdmin(Request $request) {
+        $absen = $this->absensi->where(['id' => $request->absenId]);
+        if ( $absen->count() ) {
+            if ( $absen->where('absensi_keluar', null)->count() ) {
+                if ( $absen->update(['absensi_keluar' => $request->jamAbsen]) ) {
+                    return response()->json([
+                        'status' => 200,
+                        'message' => 'Absen keluar berhasil'
+                    ]);
+                }
+                return response()->json([
+                    'status' => 400,
+                    'message' => 'Absen keluar gagal'
+                ]);
+            }
+            return response()->json([
+                'status' => 400,
+                'message' => 'User telah melakukan absen keluar.'
+            ]);
+        }
+        return response()->json([
+            'status' => 404,
+            'message' => 'Absen tidak ditemukan'
+        ]);
     }
     
     public function file($name)
