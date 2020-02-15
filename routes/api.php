@@ -66,9 +66,9 @@ Route::group(['middleware' => ['auth:api']], function () {
         Route::get('/lembur/{id}/detail', 'Api\LemburController@show');
         Route::get('/lembur/riwayat/{id}', 'Api\LemburController@riwayatLemburById');
         Route::get('/lembur/{role}/{id}', 'Api\LemburController@index');
+        Route::post('/lembur/byAdmin', 'Api\LemburController@lemburByAdmin');
         Route::post('/lembur/{id}', 'Api\LemburController@edit');
         Route::get('/lembur/filter/{role}/{id}/{month}/{year}', 'Api\LemburController@filter');
-
         // Absensi
         Route::get('/absensi', 'Api\AbsensiController@index');
         Route::get('/absensi/laporan', 'Api\LaporanController@index');

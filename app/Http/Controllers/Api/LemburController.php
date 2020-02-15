@@ -154,6 +154,27 @@ class LemburController extends Controller
     //     ]);
     // }
 
+    // Lembur yang dibuatkan oleh admin itu sendiri
+    public function lemburByAdmin(Request $request)
+    {
+        $tanggal = Carbon::parse($request->tanggal)->addHours(8)->format('Y-m-d');
+        $absensi = Absensi::where(['tanggal' => $tanggal, 'user_id' => $request->id])->get();
+        if (count($absensi) < 1) {
+            return response()->json(['status' => 400, 'message' => 'Absensi tidak ada!'], 400);
+        }
+        $lembur = new Lembur();
+        $lembur->user_id = $request->id;
+        $lembur->absensi_id = $absensi[0]->id;
+        $lembur->tanggal = Carbon::parse($request->tanggal)->addHours(8)->format('Y-m-d');
+        $lembur->lembur_awal = Carbon::parse($request->waktu_mulai)->addHours(8)->format('H:i:s');
+        $lembur->lembur_akhir = Carbon::parse($request->waktu_selesai)->addHours(8)->format('H:i:s');
+        $lembur->keterangan = $request->keterangan;
+        $lembur->konsumsi = $request->konsumsi;
+        $lembur->foto = 'default.jpg';
+        $lembur->status = 'diterima';
+        $lembur->save();
+        return response()->json(['status' => 200, 'message' => 'Lembur berhasil dibuat!', 'data' => $lembur], 200);
+    }
     public function edit(Request $request, $id)
     {
         Lembur::where('id', '=', $id)->update(['status' => $request->status]);
