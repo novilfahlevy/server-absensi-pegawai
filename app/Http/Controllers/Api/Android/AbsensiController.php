@@ -124,6 +124,7 @@ class AbsensiController extends Controller
             }
             return response()->json(['status' => 200, 'message' => 'Berhasil mengambil riwayat absensi!', 'data' => $data]);
         }
+        return response()->json(['status' => 200, 'message' => 'Berhasil mengambil riwayat absensi!', 'data' => []]);
     }
 
     public function getDetailAbsensi($user_id, $tanggal)
@@ -143,5 +144,6 @@ class AbsensiController extends Controller
             }
             return response()->json(['status' => 200, 'message' => 'Berhasil mengambil riwayat absensi!', 'data' => $data]);
         }
+        return response()->json(['status' => 200, 'message' => 'Berhasil mengambil riwayat absensi!', 'data' => []]);
     }
 }
