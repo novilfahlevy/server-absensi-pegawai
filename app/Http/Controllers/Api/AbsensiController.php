@@ -350,6 +350,16 @@ class AbsensiController extends Controller
 
     public function getAbsensiByAdmin() {
         $absensi = Absensi::where('absensi_keluar', null)->get();
+
+        $absensi = $absensi->map(function($absen) {
+            return [
+                'id' => $absen->id,
+                'name' => $absen->user->name,
+                'profile' => $absen->user->profile,
+                'tanggal' => $absen->tanggal
+            ];
+        });
+
         return response()->json([
             'status' => 200,
             'message' => 'Data berhasil diambil',
