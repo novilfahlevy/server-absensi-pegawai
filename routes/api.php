@@ -28,6 +28,7 @@ Route::group(['prefix' => 'mobile'], function () {
         Route::get('/cekAbsensi/{user_id}', 'Api\Android\AbsensiController@cekAbsensi');
         Route::get('/getProfile/{id}', 'Api\Android\UserController@getProfile');
         Route::get('/getRiwayatAbsensi/{user_id}', 'Api\Android\AbsensiController@getRiwayatAbsensi');
+        Route::get('/getDetailAbsensi/{user_id}', 'Api\Android\AbsensiController@getDetailAbsensiTodayDate');
         Route::get('/getDetailAbsensi/{user_id}/{tanggal}', 'Api\Android\AbsensiController@getDetailAbsensi');
     });
 });
@@ -51,7 +52,7 @@ Route::group(['middleware' => ['auth:api']], function () {
         Route::get('/users/absen-masuk/by-admin', 'Api\AbsensiController@getUsersAbsenByAdmin');
         Route::get('/search/user/{name}/absen-by-admin', 'Api\AbsensiController@searchUsersAbsenByAdmin');
         Route::post('/absen-masuk/by-admin', 'Api\AbsensiController@absenMasukByAdmin');
-        
+
         Route::get('/users/absen-keluar/by-admin', 'Api\AbsensiController@getAbsensiByAdmin');
         Route::get('/search/absensi/{name}/absen-by-admin', 'Api\AbsensiController@searchUsersAbsensiByAdmin');
         Route::post('/absen-keluar/by-admin', 'Api\AbsensiController@absenKeluarByAdmin');
