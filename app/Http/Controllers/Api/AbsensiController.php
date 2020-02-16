@@ -356,7 +356,7 @@ class AbsensiController extends Controller
                 'id' => $absen->id,
                 'name' => $absen->user->name,
                 'profile' => $absen->user->profile,
-                'tanggal' => $absen->tanggal
+                'tanggal' => Carbon::parse($absen->tanggal)->translatedFormat('l, d F Y')
             ];
         });
 
