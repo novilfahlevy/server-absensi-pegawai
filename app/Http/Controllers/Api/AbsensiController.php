@@ -340,7 +340,7 @@ class AbsensiController extends Controller
         $absensi->absensi_masuk = $request->jamAbsen;
         $absensi->keterangan = $request->keterangan;
         $absensi->status = $status;
-        $absensi->absen_oleh_admin = Auth::user()->id;
+        $absensi->absen_masuk_oleh_admin = Auth::user()->id;
         if ( $absensi->save() ) {
             return response()->json(['status' => 200, 'message' => 'Berhasil absensi masuk!', 'data' => $absensi]);
         }
@@ -401,7 +401,12 @@ class AbsensiController extends Controller
         $absen = $this->absensi->where(['id' => $request->absenId]);
         if ( $absen->count() ) {
             if ( $absen->where('absensi_keluar', null)->count() ) {
-                if ( $absen->update(['absensi_keluar' => $request->jamAbsen]) ) {
+                if ( 
+                    $absen->update([
+                        'absensi_keluar' => $request->jamAbsen,
+                        'absen_keluar_oleh_admin' => Auth::user()->id
+                    ]) 
+                ) {
                     return response()->json([
                         'status' => 200,
                         'message' => 'Absen keluar berhasil'

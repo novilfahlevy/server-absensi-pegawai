@@ -19,7 +19,9 @@ class AbsensiSeeder extends Seeder
         $status_data = ['tepat waktu', 'terlambat', 'kecepatan'];
 
         for ($i = 1; $i <= 30; $i++) {
-            $isAbsenByAdmin = $i % 5 === 0;
+            $absenMasukByAdmin = rand(1, 4) === 1;
+            $absenKeluarByAdmin = rand(1, 4) === 1;
+
             Absensi::create([
                 'user_id' => rand(3, 50),
                 'tanggal' => $carbon->createFromDate(2020, rand(2, 12), rand(8, 32))->toDateString(),
@@ -27,13 +29,14 @@ class AbsensiSeeder extends Seeder
                 'absensi_keluar' => $carbon->createFromTime(rand(15, 17), rand(1, 59,), rand(1, 59))->toTimeString(),
                 'keterangan' => 'Absensi',
                 'status' => array_random($status_data),
-                'foto_absensi_masuk' => $isAbsenByAdmin ? null : uniqid() . '_' . 'masuk.jpg',
-                'foto_absensi_keluar' => $isAbsenByAdmin ? null : uniqid() . '_' . 'keluar.jpg',
-                'latitude_absen_masuk' => $isAbsenByAdmin ? null : $faker->latitude(),
-                'longitude_absen_masuk' => $isAbsenByAdmin ? null : $faker->longitude(),
-                'latitude_absen_keluar' => $isAbsenByAdmin ? null : $faker->latitude(),
-                'longitude_absen_keluar' => $isAbsenByAdmin ? null : $faker->longitude(),
-                'absen_oleh_admin' => $isAbsenByAdmin ? 1 : null
+                'foto_absensi_masuk' => $absenMasukByAdmin ? null : uniqid() . '_' . 'masuk.jpg',
+                'foto_absensi_keluar' => $absenKeluarByAdmin ? null : uniqid() . '_' . 'keluar.jpg',
+                'latitude_absen_masuk' => $absenMasukByAdmin ? null : $faker->latitude(),
+                'longitude_absen_masuk' => $absenMasukByAdmin ? null : $faker->longitude(),
+                'latitude_absen_keluar' => $absenKeluarByAdmin ? null : $faker->latitude(),
+                'longitude_absen_keluar' => $absenKeluarByAdmin ? null : $faker->longitude(),
+                'absen_masuk_oleh_admin' => $absenMasukByAdmin ? 1 : null,
+                'absen_keluar_oleh_admin' => $absenKeluarByAdmin ? 1 : null
             ]);
         }
     }

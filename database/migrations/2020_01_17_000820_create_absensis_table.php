@@ -27,11 +27,13 @@ class CreateAbsensisTable extends Migration
             $table->string('longitude_absen_masuk')->nullable();
             $table->string('latitude_absen_keluar')->nullable();
             $table->string('longitude_absen_keluar')->nullable();
-            $table->unsignedBigInteger('absen_oleh_admin')->nullable();
+            $table->unsignedBigInteger('absen_masuk_oleh_admin')->nullable();
+            $table->unsignedBigInteger('absen_keluar_oleh_admin')->nullable();
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('absen_oleh_admin')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('absen_masuk_oleh_admin')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('absen_keluar_oleh_admin')->references('id')->on('users')->onDelete('cascade');
         });
     }
 
