@@ -3,6 +3,8 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class EditUserRequest extends FormRequest
 {
@@ -13,7 +15,7 @@ class EditUserRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -28,8 +30,8 @@ class EditUserRequest extends FormRequest
             'jobdesc_id' => 'required|numeric',
             'role_id' => 'required|numeric',
             'username' => 'required',
-            'email' => 'required|email,email',
-            'nomor_handphone' => 'required|numeric',
+            'email' => 'required|email',
+            'nomor_handphone' => 'required',
             'alamat' => 'required'
         ];
     }
@@ -45,8 +47,17 @@ class EditUserRequest extends FormRequest
             'email.required' => 'Email tidak boleh kosong!',
             'email.email' => 'Format email yang anda masukan salah!',
             'nomor_handphone.required' => 'Nomor handphone tidak boleh kosong!',
-            'nomor_handphone.numeric' => 'Nomor handphone harus angka!',
             'alamat.required' => 'Alamat tidak boleh kosong!'
         ];
+    }
+
+    protected function failedValidation(Validator $validator)
+    {
+        throw new HttpResponseException(
+            response()->json([
+                'status' => 422,
+                'message' => $validator->errors()->first()
+            ])
+        );
     }
 }
