@@ -63,7 +63,6 @@ class AbsensiController extends Controller
         $absensi->save();
         $absensi->tanggal = Carbon::parse($absensi->tanggal)->translatedFormat('l, d F Y');
         $absensi->url_foto_absensi_masuk = url('/storage/absensi/' . $hashNameImage);
-        dd($absensi);
 
         return response()->json(['status' => 200, 'message' => 'Berhasil absensi masuk!', 'data' => $absensi]);
     }
