@@ -24,12 +24,19 @@ Route::group(['prefix' => 'mobile'], function () {
     Route::post('/auth/login', 'Api\Android\UserController@login');
 
     Route::group(['middleware' => ['auth:api']], function () {
+        // User API
+        Route::get('/getProfile/{id}', 'Api\Android\UserController@getProfile');
+
+        // Absensi API
         Route::post('/absensiMasuk', 'Api\Android\AbsensiController@absensiMasuk');
         Route::get('/cekAbsensi/{user_id}', 'Api\Android\AbsensiController@cekAbsensi');
-        Route::get('/getProfile/{id}', 'Api\Android\UserController@getProfile');
         Route::get('/getRiwayatAbsensi/{user_id}', 'Api\Android\AbsensiController@getRiwayatAbsensi');
         Route::get('/getDetailAbsensi/{user_id}', 'Api\Android\AbsensiController@getDetailAbsensiTodayDate');
         Route::get('/getDetailAbsensi/{user_id}/{tanggal}', 'Api\Android\AbsensiController@getDetailAbsensi');
+
+        // Lembur API
+        Route::post('/lembur', 'Api\Android\LemburController@lembur');
+        Route::get('/riwayatLembur/{user_id}', 'Api\Android\LemburController@riwayatLembur');
     });
 });
 

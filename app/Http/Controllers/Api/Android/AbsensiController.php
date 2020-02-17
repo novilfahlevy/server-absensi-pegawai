@@ -19,6 +19,13 @@ use Illuminate\Support\Facades\Date;
 
 class AbsensiController extends Controller
 {
+    private $attendancePath;
+
+    public function __construct()
+    {
+        $this->attendancePath = public_path() . '/storage/absensi';
+    }
+
     public function absensiMasuk(Request $request)
     {
         $check_duplicate_data = Absensi::where(['user_id' => Auth::user()->id, 'tanggal' => Carbon::now()->toDateString()])->count();
@@ -27,10 +34,8 @@ class AbsensiController extends Controller
             return response()->json(['status' => 400, 'message' => 'Absensi masuk hanya boleh 1 kali!'], 400);
         }
 
-        $imagePath = public_path() . '/storage/attendances_photo/';
-
-        if (!File::isDirectory($imagePath)) {
-            File::makeDirectory($imagePath);
+        if (!File::isDirectory($this->attendancePath)) {
+            File::makeDirectory($this->attendancePath);
         }
 
         if (Carbon::now()->format('H:i') >= '08:00' && Carbon::now()->format('H:i') <= '08:20') {
@@ -43,18 +48,13 @@ class AbsensiController extends Controller
 
         $input = $request->file('foto_absensi_masuk');
         $hashNameImage = time() . '_' . $input->getClientOriginalName();
-        $canvas = Image::canvas(500, 500);
-        $resizeImage = Image::make($input)->resize(500, 500, function ($constraint) {
-            $constraint->aspectRatio();
-        });
-        $canvas->insert($resizeImage, 'center');
-        $canvas->save($imagePath . $hashNameImage);
-        $path = '/storage/attendances_photo/' . $hashNameImage;
+        Image::make($input)->save($this->attendancePath . '/' . $hashNameImage);
 
         $absensi = new Absensi();
         $absensi->user_id = Auth::user()->id;
         $absensi->tanggal = Carbon::now()->toDateString();
-        $absensi->absensi_masuk = Carbon::now()->toTimeString();
+        $absensi->absensi_masuk = request('jam_datang');
+        $absensi->absensi_keluar = request('jam_datang');
         $absensi->keterangan = request('keterangan');
         $absensi->status = $status;
         $absensi->foto_absensi_masuk = $hashNameImage;
@@ -62,7 +62,7 @@ class AbsensiController extends Controller
         $absensi->longitude_absen_masuk = request('longitude_absensi_masuk');
         $absensi->save();
         $absensi->tanggal = Carbon::parse($absensi->tanggal)->translatedFormat('l, d F Y');
-        $absensi->url_foto_absensi_masuk = url($path);
+        $absensi->url_foto_absensi_masuk = url('/storage/absensi/' . $hashNameImage);
 
         return response()->json(['status' => 200, 'message' => 'Berhasil absensi masuk!', 'data' => $absensi]);
     }
