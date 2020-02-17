@@ -66,4 +66,9 @@ class LemburController extends Controller
             ]
         ]);
     }
+
+    public function riwayatLembur($user_id)
+    {
+        return response()->json(['status' => 200, 'message' => 'Berhasil mengambil riwayat lembur!', 'data' => Lembur::where('user_id', $user_id)->get()]);
+    }
 }
