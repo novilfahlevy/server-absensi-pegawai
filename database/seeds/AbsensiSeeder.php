@@ -26,7 +26,7 @@ class AbsensiSeeder extends Seeder
                 'user_id' => rand(3, 50),
                 'tanggal' => $carbon->createFromDate(2020, rand(2, 12), rand(8, 32))->toDateString(),
                 'absensi_masuk' => $carbon->createFromTime(rand(8, 12), rand(1, 59), rand(1, 59))->toTimeString(),
-                'absensi_keluar' => $carbon->createFromTime(rand(15, 17), rand(1, 59,), rand(1, 59))->toTimeString(),
+                'absensi_keluar' => $carbon->createFromTime(rand(15, 17), rand(1, 59), rand(1, 59))->toTimeString(),
                 'keterangan' => 'Absensi',
                 'status' => array_random($status_data),
                 'foto_absensi_masuk' => $absenMasukByAdmin ? null : uniqid() . '_' . 'masuk.jpg',
