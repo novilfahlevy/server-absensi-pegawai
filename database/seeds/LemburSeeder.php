@@ -22,7 +22,7 @@ class LemburSeeder extends Seeder
                 'absensi_id' => rand(1, 23),
                 'tanggal' => $carbon->createFromDate(2020, rand(2, 12), rand(8, 32))->toDateString(),
                 'lembur_awal' => $carbon->createFromTime(rand(8, 12), rand(1, 59), rand(1, 59))->toTimeString(),
-                'lembur_akhir' => $carbon->createFromTime(rand(15, 17), rand(1, 59,), rand(1, 59))->toTimeString(),
+                'lembur_akhir' => $carbon->createFromTime(rand(15, 17), rand(1, 59), rand(1, 59))->toTimeString(),
                 'keterangan' => 'Lembur',
                 'konsumsi' => random_int(50000, 100000),
                 'foto' => uniqid() . '_' . 'lembur.jpg',
