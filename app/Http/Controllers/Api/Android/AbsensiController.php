@@ -15,6 +15,7 @@ use App\Http\Requests\AbsensiMasukRequest;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Date;
 
 class AbsensiController extends Controller
 {
@@ -106,9 +107,43 @@ class AbsensiController extends Controller
         return response()->json(['status' => 200, 'message' => 'Berhasil mengambil riwayat absensi!', 'data' => $data]);
     }
 
+    public function getDetailAbsensiTodayDate($user_id)
+    {
+        $absensi = Absensi::where('user_id', $user_id)->where('tanggal', Carbon::now()->toDateString())->get();
+
+        if (count($absensi) > 0) {
+            foreach ($absensi as $key => $absen) {
+                $data[$key] = [
+                    'user_id' => $absen->user_id,
+                    'absensi_masuk' => $absen->absensi_masuk,
+                    'absensi_keluar' => $absen->absensi_keluar,
+                    'tanggal' => Carbon::parse($absen->tanggal)->translatedFormat('l, d F Y'),
+                    'foto_absensi_masuk' => url('storage/attendances_photo/' . $absen->foto_absensi_masuk),
+                    'foto_absensi_keluar' => url('storage/attendances_photo/' . $absen->foto_absensi_keluar),
+                ];
+            }
+            return response()->json(['status' => 200, 'message' => 'Berhasil mengambil riwayat absensi!', 'data' => $data]);
+        }
+        return response()->json(['status' => 200, 'message' => 'Berhasil mengambil riwayat absensi!', 'data' => []]);
+    }
+
     public function getDetailAbsensi($user_id, $tanggal)
     {
         $absensi = Absensi::where('user_id', $user_id)->where('tanggal', $tanggal)->get();
-        dd($absensi);
+
+        if (count($absensi) > 0) {
+            foreach ($absensi as $key => $absen) {
+                $data[$key] = [
+                    'user_id' => $absen->user_id,
+                    'absensi_masuk' => $absen->absensi_masuk,
+                    'absensi_keluar' => $absen->absensi_keluar,
+                    'tanggal' => Carbon::parse($absen->tanggal)->translatedFormat('l, d F Y'),
+                    'foto_absensi_masuk' => url('storage/attendances_photo/' . $absen->foto_absensi_masuk),
+                    'foto_absensi_keluar' => url('storage/attendances_photo/' . $absen->foto_absensi_keluar),
+                ];
+            }
+            return response()->json(['status' => 200, 'message' => 'Berhasil mengambil riwayat absensi!', 'data' => $data]);
+        }
+        return response()->json(['status' => 200, 'message' => 'Berhasil mengambil riwayat absensi!', 'data' => []]);
     }
 }
