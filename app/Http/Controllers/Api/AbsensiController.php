@@ -356,7 +356,8 @@ class AbsensiController extends Controller
                 'id' => $absen->id,
                 'name' => $absen->user->name,
                 'profile' => $absen->user->profile,
-                'tanggal' => Carbon::parse($absen->tanggal)->translatedFormat('l, d F Y')
+                'tanggal' => Carbon::parse($absen->tanggal)->translatedFormat('l, d F Y'),
+                'jamMasuk' => Carbon::parse("$absen->tanggal $absen->absensi_masuk")->translatedFormat('H:i')
             ];
         });
 
@@ -386,7 +387,8 @@ class AbsensiController extends Controller
                 'id' => $absen->id,
                 'name' => $absen->user->name,
                 'tanggal' => Carbon::parse($absen->tanggal)->translatedFormat('l, d F Y'),
-                'profile' => $absen->user->profile
+                'profile' => $absen->user->profile,
+                'jamMasuk' => Carbon::parse("$absen->tanggal $absen->absensi_masuk")->translatedFormat('H:i')
             ];
         });
 
