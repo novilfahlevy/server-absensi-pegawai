@@ -53,7 +53,7 @@ class AbsensiController extends Controller
         $absensi = new Absensi();
         $absensi->user_id = Auth::user()->id;
         $absensi->tanggal = Carbon::now()->toDateString();
-        $absensi->absensi_masuk = request('jam_datang');
+        $absensi->absensi_masuk = Carbon::now()->toTimeString();
         $absensi->absensi_keluar = request('jam_pulang');
         $absensi->keterangan = request('keterangan');
         $absensi->status = $status;
