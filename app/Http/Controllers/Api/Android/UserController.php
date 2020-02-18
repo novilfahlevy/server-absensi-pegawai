@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use App\User;
 use Laravel\Passport\Passport;
 use App\Jobdesc;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
