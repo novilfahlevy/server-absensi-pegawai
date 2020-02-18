@@ -71,4 +71,26 @@ class LemburController extends Controller
     {
         return response()->json(['status' => 200, 'message' => 'Berhasil mengambil riwayat lembur!', 'data' => Lembur::where('user_id', $user_id)->get()]);
     }
+
+    public function detailLembur($user_id, $tanggal)
+    {
+        $lemburs = Lembur::where('user_id', $user_id)->where('tanggal', $tanggal)->get();
+
+        if (count($lemburs) > 0) {
+            foreach ($lemburs as $key => $lembur) {
+                $data[$key] = [
+                    'user_id' => $lembur->user_id,
+                    'jam_mulai' => $lembur->lembur_awal,
+                    'jam_selesai' => $lembur->lembur_akhir,
+                    'konsumsi' => $lembur->konsumsi,
+                    'keterangan' => $lembur->keterangan,
+                    'status' => $lembur->status,
+                    'tanggal' => Carbon::parse($lembur->tanggal)->translatedFormat('l, d F Y'),
+                    'foto_lembur' => url('/storage/lembur/' . $lembur->foto)
+                ];
+            }
+            return response()->json(['status' => 200, 'message' => 'Berhasil mengambil detail absensi!', 'data' => $data]);
+        }
+        return response()->json(['status' => 200, 'message' => 'Berhasil mengambil detail absensi!', 'data' => []]);
+    }
 }
