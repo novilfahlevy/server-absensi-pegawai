@@ -37,6 +37,7 @@ Route::group(['prefix' => 'mobile'], function () {
         // Lembur API
         Route::post('/lembur', 'Api\Android\LemburController@lembur');
         Route::get('/riwayatLembur/{user_id}', 'Api\Android\LemburController@riwayatLembur');
+        Route::get('/detailLembur/{user_id}/{tanggal}', 'Api\Android\LemburController@detailLembur');
     });
 });
 
