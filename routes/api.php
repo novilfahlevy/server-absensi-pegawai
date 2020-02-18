@@ -26,6 +26,7 @@ Route::group(['prefix' => 'mobile'], function () {
     Route::group(['middleware' => ['auth:api']], function () {
         // User API
         Route::get('/getProfile/{id}', 'Api\Android\UserController@getProfile');
+        Route::post('/gantiPassword', 'Api\Android\UserController@gantiPassword');
 
         // Absensi API
         Route::post('/absensiMasuk', 'Api\Android\AbsensiController@absensiMasuk');
@@ -37,6 +38,7 @@ Route::group(['prefix' => 'mobile'], function () {
         // Lembur API
         Route::post('/lembur', 'Api\Android\LemburController@lembur');
         Route::get('/riwayatLembur/{user_id}', 'Api\Android\LemburController@riwayatLembur');
+        Route::get('/detailLembur/{user_id}/{tanggal}', 'Api\Android\LemburController@detailLembur');
     });
 });
 

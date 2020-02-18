@@ -43,4 +43,18 @@ class UserController extends Controller
         }
         return response()->json(['status' => 400, 'message' => 'Gagal mengambil data profile!'], 400);
     }
+
+    public function gantiPassword(Request $request)
+    {
+        $user_id = $request->user_id;
+        $user = User::find($user_id)->update([
+            'password' => Hash::make($request->new_password),
+        ]);
+
+        if ($user) {
+            return response()->json(['status' => 200, 'message' => 'Berhasil mengganti password!']);
+        }
+
+        return response()->json(['status' => 400, 'message' => 'Password sekarang anda salah!'], 400);
+    }
 }
