@@ -46,8 +46,8 @@ class UserController extends Controller
 
     public function gantiPassword(Request $request)
     {
-        $id = $request->user_id;
-        $user = User::find($id)->update([
+        $user_id = $request->user_id;
+        $user = User::find($user_id)->update([
             'password' => Hash::make($request->new_password),
         ]);
 
