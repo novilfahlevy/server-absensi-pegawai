@@ -18,7 +18,6 @@ class DatabaseSeeder extends Seeder
         $this->call(AbsensiSeeder::class);
         $this->call(LemburSeeder::class);
         $this->call(UserHasMadeBySeeder::class);
-        $this->call(IzinPerjamSeeder::class);
-        $this->call(IzinPerhariSeeder::class);
+        $this->call(IzinSeeder::class);
     }
 }

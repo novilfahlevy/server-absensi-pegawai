@@ -1,10 +1,10 @@
 <?php
 
-use App\IzinPerhari;
+use App\Izin;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 
-class IzinPerhariSeeder extends Seeder
+class IzinSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -15,7 +15,7 @@ class IzinPerhariSeeder extends Seeder
     {
         $carbon = Carbon::now();
 
-        IzinPerhari::create([
+        Izin::create([
             'user_id' => 32,
             'tanggal_mulai' => Carbon::createFromDate(2020, $carbon->month, 12)->toDateString(),
             'tanggal_selesai' => Carbon::createFromDate(2020, $carbon->month, 25)->toDateString(),
@@ -24,7 +24,7 @@ class IzinPerhariSeeder extends Seeder
             'izin_by' => 1
         ]);
 
-        IzinPerhari::create([
+        Izin::create([
             'user_id' => 35,
             'tanggal_mulai' => Carbon::createFromDate(2020, $carbon->month, 4)->toDateString(),
             'tanggal_selesai' => Carbon::createFromDate(2020, $carbon->month, 19)->toDateString(),

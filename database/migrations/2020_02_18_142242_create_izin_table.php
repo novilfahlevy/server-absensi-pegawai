@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateIzinPerhariTable extends Migration
+class CreateIzinTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateIzinPerhariTable extends Migration
      */
     public function up()
     {
-        Schema::create('izin_perharis', function (Blueprint $table) {
+        Schema::create('izins', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('user_id');
             $table->date('tanggal_mulai');
@@ -35,6 +35,6 @@ class CreateIzinPerhariTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('izin_perharis');
+        Schema::dropIfExists('izins');
     }
 }
