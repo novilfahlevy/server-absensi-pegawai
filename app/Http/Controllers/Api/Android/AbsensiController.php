@@ -58,23 +58,13 @@ class AbsensiController extends Controller
         $absensi->keterangan = request('keterangan');
         $absensi->status = $status;
         $absensi->foto_absensi_masuk = $hashNameImage;
-        $absensi->latitude_absen_masuk = request('latitude');
-        $absensi->longitude_absen_masuk = request('longitude');
+        $absensi->latitude_absen_masuk = request('latitude_absensi_masuk');
+        $absensi->longitude_absen_masuk = request('longitude_absensi_masuk');
         $absensi->save();
+        $absensi->tanggal = Carbon::parse($absensi->tanggal)->translatedFormat('l, d F Y');
+        $absensi->url_foto_absensi_masuk = url('/storage/absensi/' . $hashNameImage);
 
-        return response()->json([
-            'status' => 200,
-            'message' => 'Berhasil absensi masuk!.',
-            'data' => [
-                'user_id' => $absensi->user_id,
-                'tanggal' => Carbon::parse($absensi->tanggal)->translatedFormat('l, d F Y'),
-                'absensi_masuk' => $absensi->absensi_masuk,
-                'keterangan' => $absensi->keterangan,
-                'url_foto_absensi_masuk' => url('/storage/absensi/' . $absensi->foto_absensi_masuk),
-                'latitude_absen_masuk' => $absensi->latitude_absen_masuk,
-                'longitude_absen_keluar' => $absensi->longitude_absen_keluar,
-            ]
-        ]);
+        return response()->json(['status' => 200, 'message' => 'Berhasil absensi masuk!', 'data' => $absensi]);
     }
 
     public function cekAbsensi($user_id)
