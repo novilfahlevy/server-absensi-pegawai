@@ -112,7 +112,7 @@ Route::group(['middleware' => ['auth:api']], function () {
         // Izin
         Route::get('/users/to-izin', 'Api\IzinController@getUserToIzin');
         Route::get('/search/users/{name}/to-izin', 'Api\IzinController@searchUserToIzin');
-        Route::post('/izin', 'Api\IzinController@izin');
+        Route::post('/user/izin', 'Api\IzinController@izinUser');
 
         Route::get('/jobdesc', 'Api\JobdescController@index');
         Route::get('/role', 'Api\RoleController@index');
