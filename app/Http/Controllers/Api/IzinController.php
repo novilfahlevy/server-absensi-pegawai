@@ -19,6 +19,14 @@ class IzinController extends Controller
         $this->now = Carbon::now();
     }
 
+    private function isAdmin() {
+        return User::with('roles')
+        ->where('id', Auth::user()->id)
+        ->first()
+        ->roles
+        ->first()['id'] === 1;
+    }
+
     private function responseError($message) {
         return response()->json(['status' => 400, 'message' => $message]);
     }
@@ -37,17 +45,28 @@ class IzinController extends Controller
         ]);
     }
 
+    // Admin
+
     public function getUserToIzin() {
-        $users = User::all()
+        $users = User::select('id', 'name', 'profile')
+        ->get()
         ->filter(function($user) {
             return Role::find($user->id)['id'] !== 1;
         })
         ->values()
         ->map(function($user) {
+            $lastIzin = Izin::select('tanggal_mulai')
+            ->where('user_id', $user->id)
+            ->orderBy('id', 'desc')
+            ->first();
+
+            $lastIzin = $lastIzin ? Carbon::parse($lastIzin['tanggal_mulai'])->translatedFormat('l, d F Y') : null;
+
             return [
                 'id' => $user->id,
                 'name' => $user->name,
-                'profile' => $user->profile
+                'profile' => $user->profile,
+                'izin_terakhir' => $lastIzin
             ];
         });
 
@@ -131,5 +150,75 @@ class IzinController extends Controller
         }
 
         return $this->responseError('User telah absen diantara tanggal izin');
+    }
+
+    public function getCurrentIzin() {
+        $izins = Izin::where(DB::raw('UNIX_TIMESTAMP(tanggal_mulai)'), '<=', $this->now->unix())
+        ->where(DB::raw('(UNIX_TIMESTAMP(tanggal_selesai) + 60 * 60 * 24)'), '>=', $this->now->unix())
+        ->get();
+
+        foreach ( $izins as $izin ) {
+            $izin->user;
+            $izin->izinBy;
+        }
+
+        return $this->responseSuccess('Data berhasil diambil', $izins);
+    }
+
+    public function getIzinRiwayat() {
+        $izins = Izin::where(DB::raw('(UNIX_TIMESTAMP(tanggal_selesai) + 60 * 60 * 24)'), '<', $this->now->unix())->get();
+
+        foreach ( $izins as $izin ) {
+            $izin->user;
+            $izin->izinBy;
+        }
+
+        return $this->responseSuccess('Data berhasil diambil', $izins);
+    }
+
+    public function searchIzinRiwayat($name) {
+        $izins = Izin::join('users', 'users.id', '=', 'izins.user_id')
+        ->where('users.name', 'LIKE', "%$name%")
+        ->where(DB::raw('(UNIX_TIMESTAMP(izins.tanggal_selesai) + 60 * 60 * 24)'), '<', $this->now->unix())->get();
+
+        foreach ( $izins as $izin ) {
+            $izin->user;
+            $izin->izinBy;
+        }
+
+        return $this->responseSuccess('Data berhasil diambil', $izins);
+    }
+
+    // PM
+
+    public function getAnggotaToIzin() {
+        $users = User::join('project_managers', 'project_managers.user_id', '=', 'users.id')
+        ->where('project_managers.pm_id', Auth::user()->id)
+        ->get()
+        ->map(function($user) {
+            $lastIzin = Izin::select('tanggal_mulai')
+            ->where('user_id', $user->id)
+            ->orderBy('id', 'desc')
+            ->first();
+
+            $lastIzin = $lastIzin ? Carbon::parse($lastIzin['tanggal_mulai'])->translatedFormat('l, d F Y') : null;
+
+            return [
+                'id' => $user->id,
+                'name' => $user->name,
+                'profile' => $user->profile,
+                'izin_terakhir' => $lastIzin
+            ];
+        });
+
+        return $this->responseSuccess('Data berhasil diambil', $users);
+    }
+
+    // Middleware
+    public function getUserToIzinByRole() {
+        if ( $this->isAdmin() ) {
+            return $this->getUserToIzin();
+        }
+        return $this->getAnggotaToIzin();
     }
 }

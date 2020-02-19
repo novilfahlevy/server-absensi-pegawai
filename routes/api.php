@@ -110,9 +110,12 @@ Route::group(['middleware' => ['auth:api']], function () {
         Route::delete('/user/pm/{pm_id}/{user_id}', 'Api\ProjectManagerController@destroy');
 
         // Izin
-        Route::get('/users/to-izin', 'Api\IzinController@getUserToIzin');
+        Route::get('/users/to-izin', 'Api\IzinController@getUserToIzinByRole');
         Route::get('/search/users/{name}/to-izin', 'Api\IzinController@searchUserToIzin');
         Route::post('/user/izin', 'Api\IzinController@izinUser');
+        Route::get('/users/izin', 'Api\IzinController@getCurrentIzin');
+        Route::get('/users/izin/riwayat', 'Api\IzinController@getIzinRiwayat');
+        Route::get('/search/users/{name}/izin/riwayat', 'Api\IzinController@searchIzinRiwayat');
 
         Route::get('/jobdesc', 'Api\JobdescController@index');
         Route::get('/role', 'Api\RoleController@index');
