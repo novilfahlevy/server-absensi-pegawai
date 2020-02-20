@@ -111,11 +111,12 @@ Route::group(['middleware' => ['auth:api']], function () {
 
         // Izin
         Route::get('/users/to-izin', 'Api\IzinController@getUserToIzinByRole');
-        Route::get('/search/users/{name}/to-izin', 'Api\IzinController@searchUserToIzin');
+        Route::get('/search/users/{name}/to-izin', 'Api\IzinController@searchUserToIzinByRole');
         Route::post('/user/izin', 'Api\IzinController@izinUser');
-        Route::get('/users/izin', 'Api\IzinController@getCurrentIzin');
-        Route::get('/users/izin/riwayat', 'Api\IzinController@getIzinRiwayat');
-        Route::get('/search/users/{name}/izin/riwayat', 'Api\IzinController@searchIzinRiwayat');
+        Route::get('/users/izin', 'Api\IzinController@getCurrentIzinByRole');
+        Route::get('/users/izin/riwayat', 'Api\IzinController@getIzinRiwayatByRole');
+        Route::get('/search/users/{name}/izin/riwayat', 'Api\IzinController@searchIzinRiwayatByRole');
+        Route::delete('/izin/{id}/cancel', 'Api\IzinController@destroy');
 
         Route::get('/jobdesc', 'Api\JobdescController@index');
         Route::get('/role', 'Api\RoleController@index');
