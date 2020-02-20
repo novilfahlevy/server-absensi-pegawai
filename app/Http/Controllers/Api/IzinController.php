@@ -113,7 +113,7 @@ class IzinController extends Controller
                 !Izin::where('user_id', $request->user_id)
                 ->select('tanggal_mulai', 'tanggal_selesai')
                 ->where(DB::raw('UNIX_TIMESTAMP(tanggal_mulai)'), '<=', $this->now->unix())
-                ->where(DB::raw('UNIX_TIMESTAMP(tanggal_selesai)'), '>=', $this->now->unix())
+                ->where(DB::raw('(UNIX_TIMESTAMP(tanggal_selesai) + (60 * 60 * 24))'), '>=', $this->now->unix())
                 ->count()
             ) {
                 if ( 
@@ -125,8 +125,9 @@ class IzinController extends Controller
                         $this->now->unix()
                     ) {
                         if (
-                            !Izin::where('tanggal_mulai', $request->tanggal_mulai)
-                            ->where('tanggal_selesai', $request->tanggal_selesai)
+                            !Izin::where('user_id', $request->user_id)
+                            ->where(DB::raw('UNIX_TIMESTAMP(tanggal_mulai)'), '>=',$request->tanggal_mulai)
+                            ->where(DB::raw('UNIX_TIMESTAMP(tanggal_selesai)'), '<=', $request->tanggal_selesai)
                             ->count()
                         ) {
                             $izin = new Izin();
