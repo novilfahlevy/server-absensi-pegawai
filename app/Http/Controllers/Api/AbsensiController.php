@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Intervention\Image\Facades\Image;
 use App\Http\Requests\AbsensiMasukRequest;
+use App\Izin;
 use App\User;
 use App\Role;
 use Illuminate\Http\Request;
@@ -318,6 +319,18 @@ class AbsensiController extends Controller
                 'data' => [
                     'absen_id' => Absensi::where('user_id', $request->userId)->first()->id
                 ]
+            ]);
+        }
+
+        $check_izin = Izin::join('users', 'users.id', '=', 'izins.user_id')
+        ->where('users.id', $request->userId)
+        ->where(DB::raw('UNIX_TIMESTAMP(tanggal_mulai)'), '<=', Carbon::parse($request->tanggal)->unix())
+        ->where(DB::raw('(UNIX_TIMESTAMP(tanggal_selesai) + 60 * 60 * 24)'), '>=', Carbon::parse($request->tanggal)->unix());
+
+        if ( $check_izin ) {
+            return response()->json([
+                'status' => 400, 
+                'message' => "User melakukan izin pada tanggal absen ini."
             ]);
         }
 

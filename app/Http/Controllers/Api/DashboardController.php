@@ -7,8 +7,10 @@ use App\Http\Controllers\Controller;
 use App\User;
 use App\Role;
 use App\Absensi;
+use App\Izin;
 use Carbon\Carbon;
 use App\Lembur;
+use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
@@ -38,15 +40,19 @@ class DashboardController extends Controller
             }
         }
 
+        $izin = Izin::join('users', 'users.id', '=', 'izins.user_id')
+        ->where(DB::raw('UNIX_TIMESTAMP(tanggal_mulai)'), '<=', Carbon::now()->unix())
+        ->where(DB::raw('(UNIX_TIMESTAMP(tanggal_selesai) + 60 * 60 * 24)'), '>=', Carbon::now()->unix());
+
         return response()->json([
             'status' => 200,
             'data' => [
                 'total_pegawai' => $total_pegawai,
                 'total_pegawai_absen' => $total_pegawai_absen,
-                'total_pegawai_belum_absen' => $total_pegawai - $total_pegawai_absen,
+                'total_pegawai_izin' => $izin->count(),
                 'total_pegawai_lembur' => Lembur::where('tanggal', Carbon::now()->toDateString())->count(),
                 'pegawai_sudah_absen' => $sudah_absensi,
-                'pegawai_belum_absen' => collect($belum_absensi)->take(5)
+                'pegawai_izin' => collect($izin->get())->take(5)
             ]
         ]);
     }

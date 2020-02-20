@@ -14,8 +14,8 @@ use App\Helpers\ApiResponse;
 |
 */
 
-Route::post('auth/login', 'Api\UserController@login')->name('login');
-Route::get('unauthorized', 'Api\UserController@unauthorized')->name('unauthorized');
+Route::post('/auth/login', 'Api\UserController@login')->name('login');
+Route::get('/unauthorized', 'Api\UserController@unauthorized')->name('unauthorized');
 Route::get('/absensi/laporan/export', 'Api\LaporanController@export');
 Route::get('/absensi/laporan/export/{month}/{year}', 'Api\LaporanController@exportSelected');
 
@@ -44,7 +44,7 @@ Route::group(['prefix' => 'mobile'], function () {
 
 Route::group(['middleware' => ['auth:api']], function () {
     Route::get('/file/{name}', 'AbsensiController@file');
-    Route::post('auth/logout', 'Api\UserController@logout');
+    Route::post('/auth/logout', 'Api\UserController@logout');
 
     Route::group(['middleware' => ['role:Admin']], function () {
         Route::post('/user/destroy/{id}', 'Api\UserController@destroy');
@@ -109,13 +109,22 @@ Route::group(['middleware' => ['auth:api']], function () {
         Route::post('/user/pm', 'Api\ProjectManagerController@store');
         Route::delete('/user/pm/{pm_id}/{user_id}', 'Api\ProjectManagerController@destroy');
 
+        // Izin
+        Route::get('/users/to-izin', 'Api\IzinController@getUserToIzinByRole');
+        Route::get('/search/users/{name}/to-izin', 'Api\IzinController@searchUserToIzinByRole');
+        Route::post('/user/izin', 'Api\IzinController@izinUser');
+        Route::get('/users/izin', 'Api\IzinController@getCurrentIzinByRole');
+        Route::get('/users/izin/riwayat', 'Api\IzinController@getIzinRiwayatByRole');
+        Route::get('/search/users/{name}/izin/riwayat', 'Api\IzinController@searchIzinRiwayatByRole');
+        Route::delete('/izin/{id}/cancel', 'Api\IzinController@destroy');
+
         Route::get('/jobdesc', 'Api\JobdescController@index');
         Route::get('/role', 'Api\RoleController@index');
     });
 
     Route::group(['middleware' => ['role:Admin|User|Project Manager']], function () {
-        Route::post('user/password', 'Api\UserController@editPassword');
-        Route::post('user/edit', 'Api\UserController@editProfile');
+        Route::post('/user/password', 'Api\UserController@editPassword');
+        Route::post('/user/edit', 'Api\UserController@editProfile');
         Route::get('/user/absensi', 'Api\AbsensiController@myAbsensi');
         Route::get('/user/{id}', 'Api\UserController@show');
     });
