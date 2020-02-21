@@ -28,7 +28,7 @@ class UserController extends Controller
             return response()->json(['status' => 200, 'message' => 'Login Berhasil!', 'data' => $success]);
         }
 
-        return response()->json(['status' => 400, 'message' => 'Username atau password salah!']);
+        return response()->json(['status' => 400, 'message' => 'Username atau password salah!'], 400);
     }
 
     public function getProfile($id)
