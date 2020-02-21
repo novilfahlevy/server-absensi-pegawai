@@ -122,30 +122,32 @@ class IzinController extends Controller
 
         $check_izin = !Izin::where('user_id', $request->user_id)
         ->where(function($query) use ($request) {
-            $query
-            ->where(
-                DB::raw('UNIX_TIMESTAMP(tanggal_mulai)'), 
-                '<=',
-                Carbon::parse($request->tanggal_mulai)->unix()
-            )
-            ->where(
-                DB::raw('UNIX_TIMESTAMP(tanggal_selesai)'), 
-                '>=', 
-                Carbon::parse($request->tanggal_mulai)->unix()
-            );
-        })
-        ->orWhere(function($query) use ($request) {
-            $query
-            ->where(
-                DB::raw('UNIX_TIMESTAMP(tanggal_mulai)'), 
-                '<=',
-                Carbon::parse($request->tanggal_selesai)->unix()
-            )
-            ->where(
-                DB::raw('UNIX_TIMESTAMP(tanggal_selesai)'), 
-                '>=', 
-                Carbon::parse($request->tanggal_selesai)->unix()
-            );
+            $query->where(function($query) use ($request) {
+                $query
+                ->where(
+                    DB::raw('UNIX_TIMESTAMP(tanggal_mulai)'), 
+                    '<=',
+                    Carbon::parse($request->tanggal_mulai)->unix()
+                )
+                ->where(
+                    DB::raw('UNIX_TIMESTAMP(tanggal_selesai)'), 
+                    '>=', 
+                    Carbon::parse($request->tanggal_mulai)->unix()
+                );
+            })
+            ->orWhere(function($query) use ($request) {
+                $query
+                ->where(
+                    DB::raw('UNIX_TIMESTAMP(tanggal_mulai)'), 
+                    '<=',
+                    Carbon::parse($request->tanggal_selesai)->unix()
+                )
+                ->where(
+                    DB::raw('UNIX_TIMESTAMP(tanggal_selesai)'), 
+                    '>=', 
+                    Carbon::parse($request->tanggal_selesai)->unix()
+                );
+            });
         })
         ->count();
 
