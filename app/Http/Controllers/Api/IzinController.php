@@ -100,36 +100,60 @@ class IzinController extends Controller
     }
 
     public function izinUser(IzinRequest $request) {
-        if (
-            !Absensi::where('user_id', $request->user_id)
-            ->select('tanggal')
-            ->whereBetween(DB::raw('UNIX_TIMESTAMP(tanggal)'), [
-                Carbon::parse($request->tanggal_mulai)->unix(),
+        $check_absensi = !Absensi::where('user_id', $request->user_id)
+        ->select('tanggal')
+        ->whereBetween(DB::raw('UNIX_TIMESTAMP(tanggal)'), [
+            Carbon::parse($request->tanggal_mulai)->unix(),
+            Carbon::parse($request->tanggal_selesai)->unix()
+        ])
+        ->count();
+
+        $check_current_izin = !Izin::where('user_id', $request->user_id)
+        ->select('tanggal_mulai', 'tanggal_selesai')
+        ->where(DB::raw('UNIX_TIMESTAMP(tanggal_mulai)'), '<=', $this->now->unix())
+        ->where(DB::raw('(UNIX_TIMESTAMP(tanggal_selesai) + (60 * 60 * 24))'), '>=', $this->now->unix())
+        ->count();
+
+        $check_izin_date = !(Carbon::parse($request->tanggal_mulai)->unix() >
+        Carbon::parse($request->tanggal_selesai)->unix());
+
+        $check_date_no_more_than_today = Carbon::parse($request->tanggal_mulai)->unix() <=
+        $this->now->unix();
+
+        $check_izin = !Izin::where('user_id', $request->user_id)
+        ->where(function($query) use ($request) {
+            $query
+            ->where(
+                DB::raw('UNIX_TIMESTAMP(tanggal_mulai)'), 
+                '<=',
+                Carbon::parse($request->tanggal_mulai)->unix()
+            )
+            ->where(
+                DB::raw('UNIX_TIMESTAMP(tanggal_selesai)'), 
+                '>=', 
+                Carbon::parse($request->tanggal_mulai)->unix()
+            );
+        })
+        ->orWhere(function($query) use ($request) {
+            $query
+            ->where(
+                DB::raw('UNIX_TIMESTAMP(tanggal_mulai)'), 
+                '<=',
                 Carbon::parse($request->tanggal_selesai)->unix()
-            ])
-            ->count()
-        ) {
-            if (
-                !Izin::where('user_id', $request->user_id)
-                ->select('tanggal_mulai', 'tanggal_selesai')
-                ->where(DB::raw('UNIX_TIMESTAMP(tanggal_mulai)'), '<=', $this->now->unix())
-                ->where(DB::raw('(UNIX_TIMESTAMP(tanggal_selesai) + (60 * 60 * 24))'), '>=', $this->now->unix())
-                ->count()
-            ) {
-                if ( 
-                    !(Carbon::parse($request->tanggal_mulai)->unix() >
-                    Carbon::parse($request->tanggal_selesai)->unix())
-                ) {
-                    if (
-                        Carbon::parse($request->tanggal_mulai)->unix() <=
-                        $this->now->unix()
-                    ) {
-                        if (
-                            !Izin::where('user_id', $request->user_id)
-                            ->where(DB::raw('UNIX_TIMESTAMP(tanggal_mulai)'), '>=',$request->tanggal_mulai)
-                            ->where(DB::raw('UNIX_TIMESTAMP(tanggal_selesai)'), '<=', $request->tanggal_selesai)
-                            ->count()
-                        ) {
+            )
+            ->where(
+                DB::raw('UNIX_TIMESTAMP(tanggal_selesai)'), 
+                '>=', 
+                Carbon::parse($request->tanggal_selesai)->unix()
+            );
+        })
+        ->count();
+
+        if ( $check_absensi ) {
+            if ( $check_current_izin ) {
+                if ( $check_izin_date ) {
+                    if ( $check_date_no_more_than_today ) {
+                        if ( $check_izin ) {
                             $izin = new Izin();
 
                             $izin->user_id = $request->user_id;
