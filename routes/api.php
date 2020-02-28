@@ -27,6 +27,7 @@ Route::group(['prefix' => 'mobile'], function () {
         // User API
         Route::get('/getProfile/{id}', 'Api\Android\UserController@getProfile');
         Route::post('/gantiPassword', 'Api\Android\UserController@gantiPassword');
+        Route::post('/changeProfilePicture', 'Api\Android\UserController@changeProfilePicture');
 
         // Absensi API
         Route::post('/absensiMasuk', 'Api\Android\AbsensiController@absensiMasuk');
