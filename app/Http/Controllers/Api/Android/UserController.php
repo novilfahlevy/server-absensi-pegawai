@@ -41,7 +41,7 @@ class UserController extends Controller
 
     public function getProfile($id)
     {
-        $users = User::where('id', $id)->get(['jobdesc_id', 'name', 'email', 'nomor_handphone']);
+        $users = User::where('id', $id)->get(['jobdesc_id', 'name', 'email', 'nomor_handphone', 'profile']);
 
         if (count($users) > 0) {
             foreach ($users as $key => $user) {
