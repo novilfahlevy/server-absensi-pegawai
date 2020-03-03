@@ -150,25 +150,14 @@ class AbsensiController extends Controller
 
     public function getAbsensiTerakhir($user_id)
     {
-        $absensi = Absensi::where('user_id', $user_id)->latest()->take(1)->get();
+        $absensi = Absensi::select(['tanggal', 'absensi_masuk', 'absensi_keluar', 'latitude_absen_masuk', 'longitude_absen_masuk', 'latitude_absen_masuk', 'latitude_absen_keluar', 'longitude_absen_keluar'])->where('user_id', $user_id)->latest()->take(1)->first();
 
-        if (count($absensi) > 0) {
-            foreach ($absensi as $key => $absen) {
-                $data[$key] = [
-                    'tanggal' => Carbon::parse($absen->tanggal)->translatedFormat('l, d F Y'),
-                    'absensi_masuk' => $absen->absensi_masuk,
-                    'absensi_keluar' => $absen->absensi_keluar,
-                    'url_absensi_masuk' => url('storage/attendances_photo/' . $absen->foto_absensi_masuk),
-                    'latitude_absen_masuk' => $absen->latitude_absen_masuk,
-                    'longitude_absen_masuk' => $absen->longitude_absen_masuk,
-                    'url_absensi_keluar' => url('storage/attendances_photo/' . $absen->foto_absensi_keluar),
-                    'latitude_absen_keluar' => $absen->latitude_absen_keluar,
-                    'longitude_absen_keluar' => $absen->longitude_absen_keluar
-                ];
-            }
-            return response()->json(['status' => 200, 'message' => 'Berhasil mengambil riwayat absensi!', 'data' => $data]);
+        if ($absensi) {
+            $absensi->foto_absensi_masuk = url('storage/attendances_photo/' . $absensi->foto_absensi_masuk);
+            $absensi->foto_absensi_keluar = url('storage/attendances_photo/' . $absensi->foto_absensi_keluar);
+
+            return response()->json(['status' => 200, 'message' => 'Berhasil mengambil riwayat absensi!', 'data' => $absensi]);
         }
-
         return response()->json(['status' => 200, 'message' => 'Berhasil mengambil absensi terakhir!', 'data' => []]);
     }
 }
