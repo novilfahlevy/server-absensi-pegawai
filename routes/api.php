@@ -35,6 +35,7 @@ Route::group(['prefix' => 'mobile'], function () {
         Route::get('/getRiwayatAbsensi/{user_id}', 'Api\Android\AbsensiController@getRiwayatAbsensi');
         Route::get('/getDetailAbsensi/{user_id}', 'Api\Android\AbsensiController@getDetailAbsensiTodayDate');
         Route::get('/getDetailAbsensi/{user_id}/{tanggal}', 'Api\Android\AbsensiController@getDetailAbsensi');
+        Route::get('/getAbsensiTerakhir/{user_id}', 'Api\Android\AbsensiController@getAbsensiTerakhir');
 
         // Lembur API
         Route::post('/lembur', 'Api\Android\LemburController@lembur');
