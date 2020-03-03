@@ -22,6 +22,7 @@ Route::get('/absensi/laporan/export/{month}/{year}', 'Api\LaporanController@expo
 // Android API
 Route::group(['prefix' => 'mobile'], function () {
     Route::post('/auth/login', 'Api\Android\UserController@login');
+    Route::post('/auth/logout', 'Api\Android\UserController@logout');
 
     Route::group(['middleware' => ['auth:api']], function () {
         // User API
