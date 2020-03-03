@@ -153,9 +153,10 @@ class AbsensiController extends Controller
         $absensi = Absensi::select(['tanggal', 'absensi_masuk', 'absensi_keluar', 'latitude_absen_masuk', 'longitude_absen_masuk', 'latitude_absen_masuk', 'latitude_absen_keluar', 'longitude_absen_keluar'])->where('user_id', $user_id)->latest()->take(1)->first();
 
         if ($absensi) {
+            $absensi->tanggaldb = $absensi->tanggal;
             $absensi->foto_absensi_masuk = url('storage/attendances_photo/' . $absensi->foto_absensi_masuk);
             $absensi->foto_absensi_keluar = url('storage/attendances_photo/' . $absensi->foto_absensi_keluar);
-
+            $absensi->tanggal = Carbon::parse($absensi->tanggal)->translatedFormat('l, d F Y');
             return response()->json(['status' => 200, 'message' => 'Berhasil mengambil riwayat absensi!', 'data' => $absensi]);
         }
         return response()->json(['status' => 200, 'message' => 'Berhasil mengambil absensi terakhir!', 'data' => []]);
