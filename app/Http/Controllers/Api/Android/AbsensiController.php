@@ -100,6 +100,7 @@ class AbsensiController extends Controller
                 'absensi_masuk' => $absen->absensi_masuk,
                 'absensi_keluar' => $absen->absensi_keluar,
                 'tanggal' => Carbon::parse($absen->tanggal)->translatedFormat('l, d F Y'),
+                'tanggaldb' => $absen->tanggal,
                 'foto_absensi_masuk' => url('storage/attendances_photo/' . $absen->foto_absensi_masuk),
                 'foto_absensi_keluar' => url('storage/attendances_photo/' . $absen->foto_absensi_keluar),
             ];
