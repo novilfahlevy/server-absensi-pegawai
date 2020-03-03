@@ -9,9 +9,17 @@ use App\User;
 use Laravel\Passport\Passport;
 use App\Jobdesc;
 use Illuminate\Support\Facades\Hash;
+use Intervention\Image\Facades\Image;
+use Illuminate\Support\Facades\File;
 
 class UserController extends Controller
 {
+    private $imagePath;
+
+    public function __construct()
+    {
+        $this->imagePath = public_path() . '/storage/profiles/';
+    }
     public function login()
     {
         if (
@@ -33,7 +41,7 @@ class UserController extends Controller
 
     public function getProfile($id)
     {
-        $users = User::where('id', $id)->get(['jobdesc_id', 'name', 'email', 'nomor_handphone']);
+        $users = User::where('id', $id)->get(['jobdesc_id', 'name', 'email', 'nomor_handphone', 'profile']);
 
         if (count($users) > 0) {
             foreach ($users as $key => $user) {
@@ -57,5 +65,39 @@ class UserController extends Controller
         }
 
         return response()->json(['status' => 400, 'message' => 'Password sekarang anda salah!'], 400);
+    }
+
+    public function changeProfilePicture(Request $request)
+    {
+        $request->validate(
+            [
+                'profile' => 'required|image|mimes:jpeg,png,svg|max:2048',
+            ],
+            [
+                'profile.required' => 'Masukkan gambar terlebih dahulu!',
+                'profile.image' => 'File harus gambar!',
+                'profile.mimes' => 'Ekstensi gambar tidak valid!',
+                'profile.max' => 'Profile anda sudah melebihi batas ukuran!'
+            ]
+        );
+
+        if (!File::isDirectory($this->imagePath)) {
+            File::makeDirectory($this->imagePath);
+        }
+
+        $user = new User();
+
+        $input = $request->file('profile');
+        $hashNameImage = time() . '_' . $input->getClientOriginalName();
+        $canvas = Image::canvas(500, 500);
+        $resizeImage = Image::make($input)->resize(500, 500, function ($constraint) {
+            $constraint->aspectRatio();
+        });
+        $canvas->insert($resizeImage, 'center');
+        $canvas->save($this->imagePath . '/' . $hashNameImage);
+        $user->profile = $hashNameImage;
+        $user->where('email', '=', Auth::user()->email)->update(['profile' => $hashNameImage]);
+
+        return response()->json(['status' => 200, 'message' => 'Profil anda berhasil diupdate!', 'data' => url('/storage/profiles/' . $hashNameImage)]);
     }
 }

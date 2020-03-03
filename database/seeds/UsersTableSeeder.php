@@ -60,20 +60,20 @@ class UsersTableSeeder extends Seeder
         ]);
         $project_manager->assignRole(Role::find(3));
 
-        $faker = Faker::create('id_ID');
+        // $faker = Faker::create('id_ID');
 
-        for ($i = 1; $i <= 50; $i++) {
-            $user = User::create([
-                'name' => $faker->name,
-                'jobdesc_id' => rand(1, 3),
-                'username' => $faker->userName,
-                'email' => $faker->freeEmail,
-                'nomor_handphone' => $faker->phoneNumber,
-                'alamat' => $faker->address,
-                'password' => $faker->password,
-                'profile' => 'default.jpg'
-            ]);
-            $user->assignRole(Role::find(2));
-        }
+        // for ($i = 1; $i <= 50; $i++) {
+        //     $user = User::create([
+        //         'name' => $faker->name,
+        //         'jobdesc_id' => rand(1, 3),
+        //         'username' => $faker->userName,
+        //         'email' => $faker->freeEmail,
+        //         'nomor_handphone' => $faker->phoneNumber,
+        //         'alamat' => $faker->address,
+        //         'password' => $faker->password,
+        //         'profile' => 'default.jpg'
+        //     ]);
+        //     $user->assignRole(Role::find(2));
+        // }
     }
 }
