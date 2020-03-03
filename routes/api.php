@@ -61,6 +61,7 @@ Route::group(['middleware' => ['auth:api']], function () {
         Route::get('/users/absen-masuk/by-admin', 'Api\AbsensiController@getUsersAbsenByAdmin');
         Route::get('/search/user/{name}/absen-by-admin', 'Api\AbsensiController@searchUsersAbsenByAdmin');
         Route::post('/absen-masuk/by-admin', 'Api\AbsensiController@absenMasukByAdmin');
+        Route::get('/users/belum-absen', 'Api\AbsensiController@belumAbsen');
 
         Route::get('/users/absen-keluar/by-admin', 'Api\AbsensiController@getAbsensiByAdmin');
         Route::get('/search/absensi/{name}/absen-by-admin', 'Api\AbsensiController@searchUsersAbsensiByAdmin');

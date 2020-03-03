@@ -78,103 +78,6 @@ class AbsensiController extends Controller
         return response()->json(['status' => 404, 'absensi' => []]);
     }
 
-    // public function absensiMasuk(AbsensiMasukRequest $request)
-    // {
-    //     $check_duplicate_data = Absensi::where(['user_id' => Auth::user()->id, 'tanggal' => $this->carbon->toDateString()])->count();
-
-    //     if ($check_duplicate_data > 0) {
-    //         return response()->json(['status' => 400, 'message' => 'Absensi masuk hanya boleh 1 kali!'], 400);
-    //     }
-
-    //     if (!File::isDirectory($this->imagePath)) {
-    //         File::makeDirectory($this->imagePath);
-    //     }
-
-    //     // if ($this->carbon->now()->format('H') === 8) {
-    //     //     $status = 'tepat waktu';
-    //     // } else if ($this->carbon->now()->format('H') < 8) {
-    //     //     $status = 'kecepatan';
-    //     // } else {
-    //     //     $status = 'terlambat';
-    //     // }
-
-    //     $input = $request->file('foto_absensi_masuk');
-    //     $hashNameImage = time() . '_' . $input->getClientOriginalName();
-    //     $canvas = Image::canvas(500, 500);
-    //     $resizeImage = Image::make($input)->resize(500, 500, function ($constraint) {
-    //         $constraint->aspectRatio();
-    //     });
-    //     $canvas->insert($resizeImage, 'center');
-    //     $canvas->save($this->imagePath . '/' . $hashNameImage);
-    //     $path = '/storage/attendances_photo/' . $hashNameImage;
-
-    //     $this->absensi->user_id = Auth::user()->id;
-    //     $this->absensi->tanggal = $this->carbon->toDateString();
-    //     $this->absensi->absensi_masuk = $this->carbon->toTimeString();
-    //     $this->absensi->keterangan = request('keterangan');
-    //     $this->absensi->status = 'tepat waktu';
-    //     $this->absensi->foto_absensi_masuk = $hashNameImage;
-    //     $this->absensi->latitude_absen_masuk = request('latitude_absensi_masuk');
-    //     $this->absensi->longitude_absen_masuk = request('longitude_absensi_masuk');
-    //     $this->absensi->save();
-    //     $this->absensi->tanggal = Carbon::parse($this->absensi->tanggal)->translatedFormat('l, d F Y');
-    //     $this->absensi->url_absensi_masuk = url($path);
-
-    //     return response()->json(['status' => 200, 'message' => 'Berhasil absensi masuk!', 'data' => $this->absensi]);
-    // }
-
-    // public function absensiKeluar(AbsensiKeluarRequest $request)
-    // {
-    //     if (!File::isDirectory($this->imagePath)) {
-    //         File::makeDirectory($this->imagePath);
-    //     }
-
-    //     $check_attendance_in = Absensi::where('user_id', '=', Auth::user()->id)->where('tanggal', '=', $this->carbon->toDateString())->get();
-
-    //     if ($check_attendance_in->isEmpty()) {
-    //         return response()->json(['status' => 400, 'message' => 'Anda belum absensi masuk!'], 400);
-    //     } else {
-    //         $check_attendance_out = Absensi::where('user_id', '=', Auth::user()->id)->where('tanggal', '=', $this->carbon->toDateString())->where('absensi_keluar', '!=', null)->get();
-
-    //         if (!$check_attendance_out->isEmpty()) {
-    //             return response()->json(['status' => 400, 'message' => 'Absensi masuk hanya boleh 1 kali!'], 400);
-    //         }
-
-    //         $input = $request->file('foto_absensi_keluar');
-    //         $hashNameImage = time() . '_' . $input->getClientOriginalName();
-    //         $canvas = Image::canvas(500, 500);
-    //         $resizeImage = Image::make($input)->resize(500, 500, function ($constraint) {
-    //             $constraint->aspectRatio();
-    //         });
-    //         $canvas->insert($resizeImage, 'center');
-    //         $canvas->save($this->imagePath . '/' . $hashNameImage);
-    //         $path = $this->imagePath . '/' . $hashNameImage;
-
-    //         $this->absensi->where(['user_id' => Auth::user()->id, 'tanggal' => $this->carbon->toDateString()])->update(['absensi_keluar' => $this->carbon->toTimeString(), 'foto_absensi_keluar' => $hashNameImage, 'keterangan' => request('keterangan'), 'latitude_absen_keluar' => request('latitude_absensi_keluar'), 'longitude_absen_keluar' => request('longitude_absensi_keluar')]);
-
-    //         $data = Absensi::where(['user_id' => Auth::user()->id, 'tanggal' => $this->carbon->toDateString()])->first();
-    //         $res = [
-    //             'id' => $data->id,
-    //             'user_id' => $data->user_id,
-    //             'tanggal' => Carbon::parse($data->tanggal)->translatedFormat('l, d F Y'),
-    //             'absensi_masuk' => $data->absensi_masuk,
-    //             'absensi_keluar' => $data->absensi_keluar,
-    //             'keterangan' => $data->keterangan,
-    //             'status' => $data->status,
-    //             'foto_absensi_masuk' => $data->foto_absensi_masuk,
-    //             'foto_absensi_keluar' => $data->foto_absensi_keluar,
-    //             'latitude_absen_masuk' => $data->latitude_absen_masuk,
-    //             'longitude_absen_masuk' => $data->longitude_absen_masuk,
-    //             'latitude_absen_keluar' => $data->latitude_absen_keluar,
-    //             'longitude_absen_keluar' => $data->longitude_absen_keluar,
-    //             'created_at' => $data->created_at,
-    //             'updated_at' => $data->updated_at,
-    //         ];
-
-    //         return response()->json(['status' => 200, 'message' => 'Berhasil absensi keluar!', 'data' => $res]);
-    //     }
-    // }
-
     public function history()
     {
         return Absensi::where('tanggal', '!=', Carbon::now()->toDateString());
@@ -450,4 +353,22 @@ class AbsensiController extends Controller
         
         return response($file, 200)->header('Content-Type', $mime);
     }
+
+    // public function belumAbsen() {
+    //     $users = User::join('absensis', 'absensis.user_id', '=', 'users.id')
+    //     ->select('users.id', 'users.name')
+    //     ->get()
+    //     ->filter(function($user) {
+    //         return Absensi::where('user_id', $user->id)
+    //         ->where(DB::raw('MONTH(tanggal)'), '03')
+    //         ->where(DB::raw('YEAR(tanggal)'), '2020')
+    //         ->count();
+    //     })
+    //     ->values();
+
+    //     return response()->json([
+    //         'status' => 200,
+    //         'data' => $users
+    //     ]);
+    // }
 }
