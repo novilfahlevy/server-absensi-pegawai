@@ -100,4 +100,11 @@ class UserController extends Controller
 
         return response()->json(['status' => 200, 'message' => 'Profil anda berhasil diupdate!', 'data' => url('/storage/profiles/' . $hashNameImage)]);
     }
+
+    public function logout(Request $request)
+    {
+        $request->user()->token()->revoke();
+
+        return response()->json(['status' => 200, 'message' => 'Logout berhasil!']);
+    }
 }
