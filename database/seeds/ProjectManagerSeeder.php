@@ -12,10 +12,10 @@ class ProjectManagerSeeder extends Seeder
      */
     public function run()
     {
-        for ($i = 1; $i <= 49; $i++) {
+        for ($i = 1; $i <= 6; $i++) {
             ProjectManager::create([
                 'pm_id' => 2,
-                'user_id' => rand(4, 49)
+                'user_id' => rand(10, 15)
             ]);
         }
     }

@@ -12,7 +12,7 @@ class UserHasMadeBySeeder extends Seeder
      */
     public function run()
     {
-        for ($i = 3; $i <= 50; $i++) {
+        for ($i = 2; $i <= 19; $i++) {
             UserHasMadeBy::create([
                 'admin_id' => 1,
                 'user_id' => $i
