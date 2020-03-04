@@ -18,13 +18,13 @@ class AbsensiSeeder extends Seeder
         $faker = Faker::create();
         $status_data = ['tepat waktu', 'terlambat', 'kecepatan'];
 
-        for ($i = 5; $i <= 10; $i++) {
+        for ($i = 2; $i <= 20; $i++) {
             $absenMasukByAdmin = rand(1, 4) === 1;
             $absenKeluarByAdmin = rand(1, 4) === 1;
 
             Absensi::create([
                 'user_id' => $i,
-                'tanggal' => $carbon->createFromDate(2020, rand(2, 12), rand(8, 32))->toDateString(),
+                'tanggal' => $carbon->now()->toDateString(),
                 'absensi_masuk' => $carbon->createFromTime(rand(8, 12), rand(1, 59), rand(1, 59))->toTimeString(),
                 'absensi_keluar' => $carbon->createFromTime(rand(15, 17), rand(1, 59), rand(1, 59))->toTimeString(),
                 'keterangan' => 'Absensi',

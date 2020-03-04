@@ -13,12 +13,10 @@ class IzinSeeder extends Seeder
      */
     public function run()
     {
-        $carbon = Carbon::now();
-
         Izin::create([
-            'user_id' => 18,
-            'tanggal_mulai' => Carbon::createFromDate($carbon->year, $carbon->month, 12)->toDateString(),
-            'tanggal_selesai' => Carbon::createFromDate($carbon->year, $carbon->month, 25)->toDateString(),
+            'user_id' => 13,
+            'tanggal_mulai' => Carbon::now()->addDays(3)->toDateString(),
+            'tanggal_selesai' => Carbon::now()->addDays(6)->toDateString(),
             'alasan' => 'Liburan',
             'keterangan' => null,
             'izin_by' => 1

@@ -30,6 +30,20 @@ class AbsensiController extends Controller
     {
         $check_duplicate_data = Absensi::where(['user_id' => Auth::user()->id, 'tanggal' => Carbon::now()->toDateString()])->count();
 
+        $check_izin = Izin::where('user_id', $request->userId)
+        ->where(DB::raw('UNIX_TIMESTAMP(tanggal_mulai)'), '<=', Carbon::now()->unix())
+        ->where(DB::raw('UNIX_TIMESTAMP(tanggal_selesai)'), '>=', Carbon::now()->unix());
+
+        if ( $check_izin->count() ) {
+            $izin = $check_izin->first();
+            $tanggal_mulai = Carbon::parse($izin->tanggal_mulai)->translatedFormat('l, d F Y');
+            $tanggal_selesai = Carbon::parse($izin->tanggal_selesai)->translatedFormat('l, d F Y');
+            return response()->json([
+                'status' => 400,
+                'message' => "Anda telah izin hari ini ($tanggal_mulai s.d. $tanggal_selesai)."
+            ], 400);
+        }
+
         if ($check_duplicate_data > 0) {
             return response()->json(['status' => 400, 'message' => 'Absensi masuk hanya boleh 1 kali!'], 400);
         }

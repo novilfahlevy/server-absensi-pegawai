@@ -208,9 +208,10 @@ class AbsensiController extends Controller
     }
 
     public function absenMasukByAdmin(Request $request) {
+        $tanggal = $request->tanggal . ' ' . $request->jamAbsen;
         $check_duplicate_data = Absensi::where([
             'user_id' => $request->userId, 
-            'tanggal' => Carbon::parse($request->tanggal . ' ' . $request->jamAbsen)->toDateString()
+            'tanggal' => Carbon::parse($tanggal)->toDateString()
         ])->count();
 
         if ( $check_duplicate_data > 0 ) {
@@ -225,19 +226,20 @@ class AbsensiController extends Controller
             ]);
         }
 
-        $check_izin = Izin::join('users', 'users.id', '=', 'izins.user_id')
-        ->where('users.id', $request->userId)
-        ->where(DB::raw('UNIX_TIMESTAMP(tanggal_mulai)'), '<=', Carbon::parse($request->tanggal)->unix())
-        ->where(DB::raw('(UNIX_TIMESTAMP(tanggal_selesai) + 60 * 60 * 24)'), '>=', Carbon::parse($request->tanggal)->unix());
+        $check_izin = Izin::where('user_id', $request->userId)
+        ->where(DB::raw('UNIX_TIMESTAMP(tanggal_mulai)'), '<=', Carbon::parse($tanggal)->unix())
+        ->where(DB::raw('UNIX_TIMESTAMP(tanggal_selesai) + (60 * 60 * 24)'), '>=', Carbon::parse($tanggal)->unix());
 
-        if ( $check_izin ) {
+        if ( $check_izin->count() ) {
+            $izin = $check_izin->first();
+            $tanggal_mulai = Carbon::parse($izin->tanggal_mulai)->translatedFormat('l, d F Y');
+            $tanggal_selesai = Carbon::parse($izin->tanggal_selesai)->translatedFormat('l, d F Y');
             return response()->json([
-                'status' => 400, 
-                'message' => "User melakukan izin pada tanggal absen ini."
+                'status' => 400,
+                'message' => "User melakukan izin pada $tanggal_mulai s.d. $tanggal_selesai."
             ]);
         }
 
-        $tanggal = $request->tanggal . ' ' . $request->jamAbsen;
         if (
             Carbon::parse($tanggal)->format('H:i') >= '08:00' 
             && 

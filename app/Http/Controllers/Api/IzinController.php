@@ -27,7 +27,10 @@ class IzinController extends Controller
         ->first()['id'] === 1;
     }
 
-    private function responseError($message) {
+    private function responseError($message, $data = null) {
+        if ( $data ) {
+            return response()->json(['status' => 400, 'message' => $message, 'data' => $data]);
+        }
         return response()->json(['status' => 400, 'message' => $message]);
     }
 
@@ -100,13 +103,12 @@ class IzinController extends Controller
     }
 
     public function izinUser(IzinRequest $request) {
-        $check_absensi = !Absensi::where('user_id', $request->user_id)
-        ->select('tanggal')
+        $check_absensi = Absensi::select('tanggal', 'id')
+        ->where('user_id', $request->user_id)
         ->whereBetween(DB::raw('UNIX_TIMESTAMP(tanggal)'), [
             Carbon::parse($request->tanggal_mulai)->unix(),
             Carbon::parse($request->tanggal_selesai)->unix()
-        ])
-        ->count();
+        ]);
 
         $check_current_izin = !Izin::where('user_id', $request->user_id)
         ->select('tanggal_mulai', 'tanggal_selesai')
@@ -116,9 +118,6 @@ class IzinController extends Controller
 
         $check_izin_date = !(Carbon::parse($request->tanggal_mulai)->unix() >
         Carbon::parse($request->tanggal_selesai)->unix());
-
-        $check_date_no_more_than_today = Carbon::parse($request->tanggal_mulai)->unix() <=
-        $this->now->unix();
 
         $check_izin = !Izin::where('user_id', $request->user_id)
         ->where(function($query) use ($request) {
@@ -151,31 +150,27 @@ class IzinController extends Controller
         })
         ->count();
 
-        if ( $check_absensi ) {
+        if ( !$check_absensi->count() ) {
             if ( $check_current_izin ) {
                 if ( $check_izin_date ) {
-                    if ( $check_date_no_more_than_today ) {
-                        if ( $check_izin ) {
-                            $izin = new Izin();
+                    if ( $check_izin ) {
+                        $izin = new Izin();
 
-                            $izin->user_id = $request->user_id;
-                            $izin->tanggal_mulai = $request->tanggal_mulai;
-                            $izin->tanggal_selesai = $request->tanggal_selesai;
-                            $izin->alasan = $request->alasan;
-                            $izin->keterangan = $request->keterangan ?: null;
-                            $izin->izin_by = Auth::user()->id;
+                        $izin->user_id = $request->user_id;
+                        $izin->tanggal_mulai = $request->tanggal_mulai;
+                        $izin->tanggal_selesai = $request->tanggal_selesai;
+                        $izin->alasan = $request->alasan;
+                        $izin->keterangan = $request->keterangan ?: null;
+                        $izin->izin_by = Auth::user()->id;
 
-                            if ( $izin->save() ) {
-                                return $this->responseSuccess('Izin berhasil');
-                            }
-
-                            return $this->responseError('Izin gagal, silakan coba lagi.');
+                        if ( $izin->save() ) {
+                            return $this->responseSuccess('Izin berhasil');
                         }
 
-                        return $this->responseError('Izin sudah pernah dilakukan pada tanggal ini');
+                        return $this->responseError('Izin gagal, silakan coba lagi.');
                     }
 
-                    return $this->responseError('Tanggal mulai izin tidak bisa lebih dari hari ini');
+                    return $this->responseError('Izin sudah pernah dilakukan pada tanggal ini');
                 }
 
                 return $this->responseError('Tanggal izin tidak benar');
@@ -184,7 +179,9 @@ class IzinController extends Controller
             return $this->responseError('User masih dalam izin');
         }
 
-        return $this->responseError('User telah absen diantara tanggal izin');
+        return $this->responseError('User telah absen diantara tanggal izin', [
+            'absen_id' => $check_absensi->first()['id']
+        ]);
     }
 
     private function getCurrentIzin() {
@@ -445,7 +442,7 @@ class IzinController extends Controller
 
     public function destroy($id) {
         $izin = Izin::find($id);
-        if ( $izin->count() ) {
+        if ( $izin ) {
             if ( $izin->delete() ) {
                 return $this->responseSuccess('Data berhasil dihapus');
             }
