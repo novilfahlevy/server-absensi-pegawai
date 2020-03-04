@@ -71,7 +71,7 @@ class UsersTableSeeder extends Seeder
                 'nomor_handphone' => $faker->phoneNumber,
                 'alamat' => $faker->address,
                 'password' => $faker->password,
-                'profile' => '/storage/dummy/default.png'
+                'profile' => '/dummy/default.png'
             ]);
             $user->assignRole(Role::find(2));
         }
