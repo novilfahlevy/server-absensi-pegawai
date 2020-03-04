@@ -32,7 +32,7 @@ class UsersTableSeeder extends Seeder
             'nomor_handphone' => '081234567890',
             'alamat' => 'Jl. Semangka',
             'password' => bcrypt('secret'),
-            'profile' => 'default.jpg'
+            'profile' => '/storage/dummy/default.png'
         ]);
         $admin->assignRole(Role::find(1));
 
@@ -44,7 +44,7 @@ class UsersTableSeeder extends Seeder
             'nomor_handphone' => '089283748128',
             'alamat' => 'Jl. Marmut',
             'password' => bcrypt('secret'),
-            'profile' => 'default.jpg'
+            'profile' => '/storage/dummy/default.png'
         ]);
         $normal_user->assignRole(Role::find(2));
 
@@ -56,7 +56,7 @@ class UsersTableSeeder extends Seeder
             'nomor_handphone' => '081212121212',
             'alamat' => 'Jl. Langsat',
             'password' => bcrypt('secret'),
-            'profile' => 'default.jpg'
+            'profile' => '/storage/dummy/default.png'
         ]);
         $project_manager->assignRole(Role::find(3));
 
@@ -71,7 +71,7 @@ class UsersTableSeeder extends Seeder
                 'nomor_handphone' => $faker->phoneNumber,
                 'alamat' => $faker->address,
                 'password' => $faker->password,
-                'profile' => 'default.jpg'
+                'profile' => '/storage/dummy/default.png'
             ]);
             $user->assignRole(Role::find(2));
         }
