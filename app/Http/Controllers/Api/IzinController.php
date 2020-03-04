@@ -179,8 +179,11 @@ class IzinController extends Controller
             return $this->responseError('User masih dalam izin');
         }
 
-        return $this->responseError('User telah absen diantara tanggal izin', [
-            'absen_id' => $check_absensi->first()['id']
+        $absen = $check_absensi->first();
+        $tanggal_absen = Carbon::parse($absen['tanggal'])->translatedFormat('l, d F Y');
+
+        return $this->responseError("User telah absen diantara tanggal izin, pada $tanggal_absen", [
+            'absen_id' => $absen['id']
         ]);
     }
 
