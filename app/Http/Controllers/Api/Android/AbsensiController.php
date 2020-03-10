@@ -31,10 +31,10 @@ class AbsensiController extends Controller
         $check_duplicate_data = Absensi::where(['user_id' => Auth::user()->id, 'tanggal' => Carbon::now()->toDateString()])->count();
 
         $check_izin = Izin::where('user_id', $request->userId)
-        ->where(DB::raw('UNIX_TIMESTAMP(tanggal_mulai)'), '<=', Carbon::now()->unix())
-        ->where(DB::raw('UNIX_TIMESTAMP(tanggal_selesai)'), '>=', Carbon::now()->unix());
+            ->where(DB::raw('UNIX_TIMESTAMP(tanggal_mulai)'), '<=', Carbon::now()->unix())
+            ->where(DB::raw('UNIX_TIMESTAMP(tanggal_selesai)'), '>=', Carbon::now()->unix());
 
-        if ( $check_izin->count() ) {
+        if ($check_izin->count()) {
             $izin = $check_izin->first();
             $tanggal_mulai = Carbon::parse($izin->tanggal_mulai)->translatedFormat('l, d F Y');
             $tanggal_selesai = Carbon::parse($izin->tanggal_selesai)->translatedFormat('l, d F Y');
@@ -61,8 +61,10 @@ class AbsensiController extends Controller
         }
 
         $input = $request->file('foto_absensi_masuk');
-        $hashNameImage = time() . '_' . $input->getClientOriginalName();
-        Image::make($input)->save($this->attendancePath . '/' . $hashNameImage);
+        if ($input !== null) {
+            $hashNameImage = time() . '_' . $input->getClientOriginalName();
+            Image::make($input)->save($this->attendancePath . '/' . $hashNameImage);
+        }
 
         $absensi = new Absensi();
         $absensi->user_id = Auth::user()->id;
