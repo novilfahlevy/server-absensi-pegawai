@@ -74,7 +74,7 @@ class AbsensiController extends Controller
         $absensi->absensi_keluar = request('jam_pulang');
         $absensi->keterangan = request('keterangan');
         $absensi->status = $status;
-        $absensi->foto_absensi_masuk = $hashNameImage;
+        $absensi->foto_absensi_masuk = $hashNameImage ?? '';
         $absensi->latitude_absen_masuk = request('latitude_absensi_masuk');
         $absensi->longitude_absen_masuk = request('longitude_absensi_masuk');
         $absensi->save();
