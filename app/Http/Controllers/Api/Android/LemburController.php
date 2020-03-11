@@ -61,7 +61,7 @@ class LemburController extends Controller
                 'foto' => url('/storage/lembur/' . $hashNameImage),
                 'jam_mulai' => $lembur->lembur_awal,
                 'jam_selesai' => $lembur->lembur_akhir,
-                'konsumsi_lembur' => $lembur->konsumsi,
+                'konsumsi_lembur' => "Rp " . number_format($lembur->konsumsi, 0, ',', '.'),
                 'keterangan' => $request->keterangan
             ]
         ]);
