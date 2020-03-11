@@ -86,23 +86,27 @@ class AbsensiController extends Controller
 
     public function cekAbsensi($user_id)
     {
-        $absensi = Absensi::where('user_id', $user_id)->get(['absensi_masuk', 'absensi_keluar']);
+        $absensi = Absensi::where('user_id', $user_id)->first();
+        if ($absensi !== null) {
 
-        if (count($absensi) > 0) {
-
-            if ($absensi[0]['absensi_masuk'] !== null) {
-                $absensi[0]['absensi_masuk'] = true;
+            if ($absensi->absensi_masuk !== null) {
+                $absensi->absensi_masuk = true;
             } else {
-                $absensi[0]['absensi_masuk'] = false;
+                $absensi->absensi_masuk = false;
             }
 
-            if ($absensi[0]['absensi_keluar'] !== null) {
-                $absensi[0]['absensi_keluar'] = true;
+            if ($absensi->absensi_keluar !== null) {
+                $absensi->absensi_keluar = true;
             } else {
-                $absensi[0]['absensi_keluar'] = false;
+                $absensi->absensi_keluar = false;
             }
 
-            return response()->json(['status' => 200, 'message' => 'Berhasil mengecek absensi!', 'data' => $absensi]);
+            $data = [
+                'absensi_masuk' => $absensi->absensi_masuk,
+                'absensi_keluar' => $absensi->absensi_keluar
+            ];
+
+            return response()->json(['status' => 200, 'message' => 'Berhasil mengecek absensi!', 'data' => $data]);
         }
         return response()->json(['status' => 400, 'message' => 'Gagal mengecek absensi!'], 400);
     }
