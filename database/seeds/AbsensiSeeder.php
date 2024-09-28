@@ -28,7 +28,7 @@ class AbsensiSeeder extends Seeder
                 'absensi_masuk' => $carbon->createFromTime(rand(8, 12), rand(1, 59), rand(1, 59))->toTimeString(),
                 'absensi_keluar' => $carbon->createFromTime(rand(15, 17), rand(1, 59), rand(1, 59))->toTimeString(),
                 'keterangan' => 'Absensi',
-                'status' => array_random($status_data),
+                'status' => array_rand($status_data),
                 'foto_absensi_masuk' => $absenMasukByAdmin ? null : '/dummy/masuk.jpeg',
                 'foto_absensi_keluar' => $absenKeluarByAdmin ? null : '/dummy/keluar.jpeg',
                 'latitude_absen_masuk' => $absenMasukByAdmin ? null : $faker->latitude(),
